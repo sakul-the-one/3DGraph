@@ -62,7 +62,8 @@ void DrawUI()
     D3G_DrawLine(RIGHT, LEFT);
     D3G_DrawLine(FORWARD, BACKWART);
 }
-void D3G_DrawPoint(Vector3 pos) 
+#if Debug
+void D3G_DrawDebugPoint(Vector3 pos) 
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
@@ -83,6 +84,12 @@ void D3G_DrawPoint(Vector3 pos)
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
+}
+#endif
+void D3G_DrawPoint(Vector3 pos) 
+{
+    Vector2 Point = project(pos);
+    gfx_SetPixel(Point.x, Point.y);
 }
 void D3G_DrawLine(Vector3 pos1, Vector3 pos2) 
 {
@@ -106,7 +113,24 @@ void D3G_Destroy()
 Vector2 project(Vector3 point) {
 
     Vector2 screenPoint = {((point.x*fov)/(point.z+fov))+160, ((point.y*fov)/(point.z+fov))+120};
-    //screenPoint.x = ((point.x*fov)/(point.z+fov))+160;
-    //screenPoint.y = ((point.y*fov)/(point.z+fov))+120;
+    /*
+    * The equation in a Nutshell (Works for X and Y the same):
+    *
+    * X-------------|               We care just about the Ratios. The Picture on the left is just a weak example, but imagine it would work
+    *  \            | 
+    *   \           |   Z           PX         X
+    *    \          |               ---  =  -------     | * FOV
+    *     \         |               FOV     FOV + Z
+    *      \---PX---|               
+    *       \       |                       X * FOV
+    *        \      |               PX   =  --------
+    *         \     |                       FOV + Z
+    *          \    |   FOV
+    *           \   |
+    *            \  |               As we can see, it is the same as on the line above.
+    *             \ |               The +160 or +120 are just half of the screen Width/Height added on top, to center the projection.
+    *              \|
+    * 
+    */
     return screenPoint;
 }

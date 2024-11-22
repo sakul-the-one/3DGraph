@@ -1,3 +1,6 @@
+#ifndef D3GRAPHICS_H
+#define D3GRAPHICS_H
+#define Debug true
 #include <graphx.h>
 
 typedef struct 
@@ -25,4 +28,9 @@ void D3G_DrawLine(Vector3 pos1,  Vector3 pos2);
 void D3G_Redraw();
 void D3G_Destroy();
 
+#if Debug
+void D3G_DrawDebugPoint(Vector3 pos);
+#endif
+
 Vector2 project(Vector3 point);
+#endif
