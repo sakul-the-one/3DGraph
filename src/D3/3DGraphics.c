@@ -1,4 +1,4 @@
-#include "3D/3DGraphics.h"
+#include "D3/3DGraphics.h"
 #include <graphx.h>
 #include <math.h>
 #define PI 3.14159265358979323846
@@ -85,7 +85,7 @@ void D3G_DrawFunc()
 {
 
 }
-void D3G_Redraw () 
+void D3G_Redraw() 
 {
 
 }

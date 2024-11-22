@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <ti/getkey.h>
 #include <ti/vars.h>
-#include "3D/3DGraphics.h"
+#include "D3/3DGraphics.h"
 
 int main() 
 {
