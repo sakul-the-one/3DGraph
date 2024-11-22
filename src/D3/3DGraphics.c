@@ -65,11 +65,11 @@ void D3G_DrawPoint(Vector3 pos)
     Vector2 Point = project(pos);
     //gfx_SetPixel(Point.x, Point.y);
     gfx_Circle(Point.x, Point.y,3);
-    char * Debug1 = "               ";
-    char * Debug2 = "               ";
+    char  Debug1[16];
+    char  Debug2[16];
     intToStr(Point.x, Debug1);
     intToStr(Point.y, Debug2);
-    gfx_PrintStringXY("test1", 200, 100);
+    gfx_PrintStringXY("test2", 200, 100);
     gfx_PrintStringXY(Debug1, 100, 200);
     gfx_PrintStringXY(Debug2, 200, 200);
     //gfx_PrintStringXY("test2", 200, 100);
@@ -96,6 +96,8 @@ void D3G_Destroy()
 
 Vector2 project(Vector3 point) {
 
-    Vector2 screenPoint = {(point.x/point.z)+160, ((point.y*fov)/(point.z+fov))+120};
+    Vector2 screenPoint ;//= {((point.x*fov)/(point.z+fov))+160, ((point.y*fov)/(point.z+fov))+120};
+    screenPoint.x = ((point.x*fov)/(point.z+fov))+160;
+    screenPoint.y = ((point.y*fov)/(point.z+fov))+120;
     return screenPoint;
 }

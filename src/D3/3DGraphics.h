@@ -1,11 +1,14 @@
 #include <graphx.h>
 typedef struct 
 {
-    float x,y,z;
+    float x;
+    float y;
+    float z;
 } Vector3;
 typedef struct 
 {
-    float x,y;
+    float x;
+    float y;
 } Vector2;
 int border = 30;
 int ExtraBorder = 20; //For buttons
