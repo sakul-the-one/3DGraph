@@ -27,6 +27,8 @@ void D3G_DrawPoint(Vector3 pos);
 void D3G_DrawLine(Vector3 pos1,  Vector3 pos2);
 void D3G_Redraw();
 void D3G_Destroy();
+void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation);
+Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation);
 
 #if Debug
 void D3G_DrawDebugPoint(Vector3 pos);

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <ti/getkey.h>
 #include <ti/vars.h>
+//#include <ti/screen.h>
+#include <ti/getcsc.h>
 #include "D3/3DGraphics.h"
 
 
@@ -16,7 +18,20 @@ int main()
     Vector3 Point3 = {5,10,1};
     D3G_DrawDebugPoint(Point1);
     D3G_DrawLine(Point2, Point3);
-    os_GetKey();
+    //os_GetKey();
+   // int i = 0;
+    //Vector3 pos = {10,50,80};
+    Vector3 rot ={20,50,30};
+    D3G_DrawCube(Point1, 50, rot);
+    while (!os_GetCSC())
+    {
+       // i++;
+       // rot.x = i%360;
+        //rot.y = (i/2)%360;
+        //rot.z = (i/4)%360;
+       
+       // if (i >= 360*4) i=0;
+    }
     D3G_Destroy();
     return 0;
 }
