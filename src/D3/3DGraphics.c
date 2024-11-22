@@ -60,7 +60,7 @@ void DrawUI()
 
 void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation) 
 {
-    D3G_Redraw();
+    //D3G_Redraw();
     float halfsize = size /2.f;
     Vector3 vertices[8];
      // Front face vertices
@@ -138,7 +138,7 @@ void D3G_DrawDebugPoint(Vector3 pos)
     char  Debug2[16];
     intToStr(Point.x, Debug1);
     intToStr(Point.y, Debug2);
-    gfx_PrintStringXY("test2", 200, 100);
+    gfx_PrintStringXY("test3", 200, 100);
     gfx_PrintStringXY(Debug1, 100, 200);
     gfx_PrintStringXY(Debug2, 200, 200);
     //gfx_PrintStringXY("test2", 200, 100);
@@ -170,7 +170,7 @@ void D3G_Redraw()
     gfx_FillScreen(gfx_white);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
-    void DrawUI();
+    DrawUI();
     D3G_DrawFunc();
 }
 void D3G_Destroy()
