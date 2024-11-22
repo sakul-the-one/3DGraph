@@ -1,4 +1,5 @@
 #include <graphx.h>
+
 typedef struct 
 {
     float x;

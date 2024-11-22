@@ -18,3 +18,4 @@ PREFER_OS_CRT = NO #Copies Data from flash (RTC)
 # ----------------------------
 
 include $(shell cedev-config --makefile)
+
