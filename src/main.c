@@ -4,11 +4,13 @@
 #include <ti/getcsc.h>
 #include "D3/3DGraphics.h"
 #include "D3Handler.h"
+#include <sys/timers.h>
 
 
 int main() 
 {
     //D3G_Init();
+    Init();
     real_t x,y,z;
     real_t rx,ry,rz;
     os_GetMatrixElement(OS_VAR_MAT_I, 1,1, &x);
@@ -24,19 +26,38 @@ int main()
     D3G_DrawDebugPoint(Point1);
     D3G_DrawLine(Point2, Point3);
     //os_GetKey();
-   // int i = 0;
+    int i = 0;
     //Vector3 pos = {10,50,80};
     //Vector3 rot ={0,0,0};
-    D3G_DrawCube(Point1, 25, rot);
+    //D3G_DrawCube(Point1, 25, rot);
+    D3G_SetSSD(false);
+
+    char rxt[16];
+    char ryt[16];
+    char rzt[16];
+
     while (!os_GetCSC())
     {
-       // i++;
-       // rot.x = i%360;
-        //rot.y = (i/2)%360;
-        //rot.z = (i/4)%360;
-       
-       // if (i >= 360*4) i=0;
+        RedrawSaved();
+        i+=5;
+        rot.x = i%90; //For normal stuff 360, BUT a Cube is the same, every 90° Degrees!
+        rot.y = (i*2)%90;
+        rot.z = (i*4)%90;
+        intToStr((int)rot.x, &rxt);
+        gfx_PrintStringXY(rxt, 10, 10);
+
+        intToStr((int)rot.y, &ryt);
+        gfx_PrintStringXY(rxt, 10, 20);
+
+        intToStr((int)rot.z, &rzt);
+        gfx_PrintStringXY(rxt, 10, 30);
+
+        D3G_DrawCube(Point1, 25, rot);
+        if (i >= 90*4) i=0;
+        sleep(1);
     }
+    RedrawSaved();
+    sleep(1);
     D3G_Destroy();
     return 0;
 }

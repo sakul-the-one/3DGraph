@@ -6,10 +6,17 @@ void Init()
 {
     D3G_Init();
     Redraw();
+    //D3G_SSD = true; //Linker Error, apperently this doesn't work
+    D3G_SetSSD(true);
 }
+
 void DrawFunc() 
 {
 
+}
+void RedrawSaved() 
+{
+    D3G_Redraw();
 }
 void Redraw() 
 {

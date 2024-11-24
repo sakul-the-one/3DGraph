@@ -5,4 +5,6 @@
 
 void Redraw();
 void DrawUI();
+void Init();
+void RedrawSaved();
 #endif
