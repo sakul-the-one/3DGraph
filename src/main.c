@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <ti/getkey.h>
 #include <ti/vars.h>
-//#include <ti/screen.h>
 #include <ti/getcsc.h>
 #include "D3/3DGraphics.h"
+#include "D3Handler.h"
 
 
 int main() 
 {
-    D3G_Init();
+    //D3G_Init();
     real_t x,y,z;
     real_t rx,ry,rz;
     os_GetMatrixElement(OS_VAR_MAT_I, 1,1, &x);

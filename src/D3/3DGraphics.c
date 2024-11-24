@@ -3,6 +3,7 @@
 #include <math.h>
 #define PI 3.14159265358979323846
 
+#if Debug
 void intToStr(int N, char *str) {
     int i = 0;
     // Save the copy of the number for sign
@@ -32,30 +33,11 @@ void intToStr(int N, char *str) {
         str[k] = temp;
     }
 }
+#endif
 
 void D3G_Init() 
 {
     gfx_Begin();
-    D3G_Redraw();
-}
-void DrawUI() 
-{
-    //Draw Square:
-    //          x               y                           x              y
-    gfx_Line(border,        border,                     320-border,    border);                 //UL-UR
-    gfx_Line(border,        border,                     border,        240-border-ExtraBorder); //UL-DL
-    gfx_Line(320-border,    border,                     320-border,    240-border-ExtraBorder); //UR-DR
-    gfx_Line(border,        240 -border -ExtraBorder,   320-border,    240-border-ExtraBorder); //DL-DR
-
-    Vector3 TOP = {0,100,0};
-    Vector3 DOWN = {0,-100,0};
-    Vector3 RIGHT = {100,0,0};
-    Vector3 LEFT = {-100,0,0};
-    Vector3 FORWARD = {0,0,100};
-    Vector3 BACKWART = {0,0,-100};
-    D3G_DrawLine(TOP, DOWN);
-    D3G_DrawLine(RIGHT, LEFT);
-    D3G_DrawLine(FORWARD, BACKWART);
 }
 
 void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation) 
@@ -80,20 +62,19 @@ void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation)
         (vertices[i]) = D3G_RotatePoint(vertices[i], rotation);
 
     //Draw them
-    // Draw edges
-    // Front face
+    //Front face
     D3G_DrawLine(vertices[0], vertices[1]);
     D3G_DrawLine(vertices[1], vertices[2]);
     D3G_DrawLine(vertices[2], vertices[3]);
     D3G_DrawLine(vertices[3], vertices[0]);
 
-    // Back face
+    //Back face
     D3G_DrawLine(vertices[4], vertices[5]);
     D3G_DrawLine(vertices[5], vertices[6]);
     D3G_DrawLine(vertices[6], vertices[7]);
     D3G_DrawLine(vertices[7], vertices[4]);
 
-    // Connecting edges
+    //Connecting edges
     D3G_DrawLine(vertices[0], vertices[4]);
     D3G_DrawLine(vertices[1], vertices[5]);
     D3G_DrawLine(vertices[2], vertices[6]);
@@ -159,20 +140,7 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
     Vector2 Point2 = project(pos2);
     gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
 }
-void D3G_DrawFunc() 
-{
 
-}
-void D3G_Redraw() 
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-W#pragma-messages"
-    gfx_FillScreen(gfx_white);
-    gfx_SetColor(gfx_black);
-#pragma GCC diagnostic pop
-    DrawUI();
-    D3G_DrawFunc();
-}
 void D3G_Destroy()
 {
     gfx_End();
