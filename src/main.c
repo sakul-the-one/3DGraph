@@ -14,9 +14,9 @@ int main()
     os_GetMatrixElement(OS_VAR_MAT_I, 1,1, &x);
     os_GetMatrixElement(OS_VAR_MAT_I, 1,2, &y);
     os_GetMatrixElement(OS_VAR_MAT_I, 1,3, &z);
-    os_GetMatrixElement(OS_VAR_MAT_I, 2,1, &x);
-    os_GetMatrixElement(OS_VAR_MAT_I, 2,2, &y);
-    os_GetMatrixElement(OS_VAR_MAT_I, 2,3, &z);
+    os_GetMatrixElement(OS_VAR_MAT_I, 2,1, &rx);
+    os_GetMatrixElement(OS_VAR_MAT_I, 2,2, &ry);
+    os_GetMatrixElement(OS_VAR_MAT_I, 2,3, &rz);
     Vector3 Point1 = {os_RealToFloat(&x),os_RealToFloat(&y),os_RealToFloat(&z)};
     Vector3 rot = {os_RealToFloat(&rx),os_RealToFloat(&ry),os_RealToFloat(&rz)};
     Vector3 Point2 = {2,3,10};
