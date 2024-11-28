@@ -11,6 +11,7 @@ int main()
 {
     //D3G_Init();
     Init();
+    D3G_SetSSD(false);
     real_t x,y,z;
     real_t rx,ry,rz;
     os_GetMatrixElement(OS_VAR_MAT_I, 1,1, &x);
@@ -29,7 +30,7 @@ int main()
     int i = 0;
     //Vector3 pos = {10,50,80};
     //Vector3 rot ={0,0,0};
-    //D3G_DrawCube(Point1, 25, rot);
+    D3G_DrawCube(Point1, 25, rot);
     D3G_SetSSD(false);
 
     char rxt[16];
@@ -38,7 +39,13 @@ int main()
 
     while (!os_GetCSC())
     {
+        i+=5;   
+        sleep(1);
         RedrawSaved();
+        D3G_DrawCube(Point1, 25, (Vector3){i,i*2,i*4});
+        if (i >= 90*4) i=0;
+      ///*  
+        /*RedrawSaved();
         i+=5;
         rot.x = i%90; //For normal stuff 360, BUT a Cube is the same, every 90° Degrees!
         rot.y = (i*2)%90;
@@ -54,10 +61,10 @@ int main()
 
         D3G_DrawCube(Point1, 25, rot);
         if (i >= 90*4) i=0;
-        sleep(1);
+        sleep(1); */
     }
-    RedrawSaved();
-    sleep(1);
+    RedrawSaved();//*/ }
+    //sleep(1);
     D3G_Destroy();
     return 0;
 }

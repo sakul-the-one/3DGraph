@@ -80,10 +80,13 @@ void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation)
     D3G_DrawLine(vertices[2], vertices[6]);
     D3G_DrawLine(vertices[3], vertices[7]);
 }
+Vector3 RotateX(Vector3 point, float angle);
+Vector3 RotateY(Vector3 point, float angle);
+Vector3 RotateZ(Vector3 point, float angle);
 
 Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     /*
-    * Rotation Matrixes:
+    * rotation Matrixes:
     *      [1        0        0     ]
     * RX = [0 cos(angle) -sin(angle)]
     *      [0 sin(angle)  cos(angle)]
@@ -113,51 +116,63 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     * Ram (that we also don't have). So in order to work carefully with the Resources we have,
     * I will put everthing basicly in one line and check if we need even to calculate all of it.
     */
-    //Checks for every element, if we even need to do it.
-    int checker = 0;
-    if(rotation.x != 0) checker +=100
-    if(rotation.y != 0) checker +=10
-    if(rotation.z != 0) checker +=1
 
-    Vector3 ReturnValue;
-    //trust me, it will be more efficent that way. although not that readable...
-    // Something: we mathematically exclude the multiplication, so that we just have to do it one time. 
-    //ToDo: Finish it!:
-    switch (checker) {
-        case 0: return point; break; //nothing
-        case 1: ReturnValue = {(cos(rotation.z) - sin(rotation.z))*Point.x, Point.y*(sin(rotation.z) + cos(rotation.z)), Point.z} break; //Only Z
-        case 10: ReturnValue = {(cos(rotation.y)+sin(rotation.y)) * Point.x, Point.y, (cos(rotation.y)-sin(rotation.y))*Point.z} break;//Only Y
-        case 11: break;//Only YZ
-        case 100: ReturnValue = {Point.x, (cos(Rotation.x)-sin(Rotation.x))*Point.y, (sin(Rotation.x)+cos(Rotation.x))*Point.z} break; //Only X
-        case 101: break; //Only XZ
-        case 110: break; //Only XY
-        case 111: break; //Everything
-        default: gfx_PrintStringXY("Something went horrible worng!", 160, 80); return; break;
-    }
-    return ReturnValue;
-    /* TODO: Delete these GPTs hallunications below.
-    Vector3 rotated = point;
-
-    // Rotate around X-axis
-    float cosX = cos(rotation.x);
-    float sinX = sin(rotation.x);
-    rotated.y = point.y * cosX - point.z * sinX;
-    rotated.z = point.y * sinX + point.z * cosX;
-
-    // Rotate around Y-axis
-    float cosY = cos(rotation.y);
-    float sinY = sin(rotation.y);
-    rotated.x = point.x * cosY + point.z * sinY;
-    rotated.z = -point.x * sinY + point.z * cosY;
-
-    // Rotate around Z-axis
-    float cosZ = cos(rotation.z);
-    float sinZ = sin(rotation.z);
-    rotated.x = point.x * cosZ - point.y * sinZ;
-    rotated.y = point.x * sinZ + point.y * cosZ;
-
-    return rotated;
-*/}
+    //Decleres return Variable
+    Vector3 NP = point;
+    //Check for every Rotation and if it Rotates, then apply Rotation, just as explained before
+    if(rotation.x != 0) NP = RotateX(NP, rotation.x);
+    if(rotation.y != 0) NP = RotateY(NP, rotation.y);
+    if(rotation.z != 0) NP = RotateZ(NP, rotation.z);
+    return NP;
+    
+}
+//trust me, it will be more efficent that way. although not that readable...   
+//Explaination: we mathematically exclude the multiplication, so that we just have to do it one time. 
+Vector3 RotateX(Vector3 point, float angle) 
+{
+    /*
+    *      [1        0        0     ]
+    * RX = [0 cos(angle) -sin(angle)]
+    *      [0 sin(angle)  cos(angle)]
+    */
+    float sinX = sin(angle); float cosX = cos(angle);
+    return (Vector3)
+    {
+        point.x,
+        point.y * cosX - point.z * sinX,
+        point.y * sinX + point.z * cosX
+    };
+}
+Vector3 RotateY(Vector3 point, float angle) 
+{
+    /*
+    *      [cos(angle)  0 sin(angle)]
+    * RY = [0           1     0     ]
+    *      [-sin(angle) 0 cos(angle)]
+    */
+    float sinY = sin(angle); float cosY = cos(angle);
+    return (Vector3)
+    { 
+        point.x * cosY + point.z * sinY,
+        point.y,
+        -point.x * sinY + point.z * cosY
+    };
+}
+Vector3 RotateZ(Vector3 point, float angle) 
+{
+    /*
+    *      [cos(angle) -sin(angle) 0]
+    * RZ = [sin(angle) cos(angle)  0]
+    *      [0           0          1]
+    */
+    float sinZ = sin(angle); float cosZ = cos(angle); 
+    return (Vector3)
+    {
+        point.x * cosZ - point.y * sinZ,
+        point.x * sinZ + point.y * cosZ,
+        point.z
+    };
+}
 
 #if Debug
 void D3G_DrawDebugPoint(Vector3 pos) 
