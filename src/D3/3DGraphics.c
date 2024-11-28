@@ -124,7 +124,6 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     if(rotation.y != 0) NP = RotateY(NP, rotation.y);
     if(rotation.z != 0) NP = RotateZ(NP, rotation.z);
     return NP;
-    
 }
 //trust me, it will be more efficent that way. although not that readable...   
 //Explaination: we mathematically exclude the multiplication, so that we just have to do it one time. 
@@ -173,7 +172,18 @@ Vector3 RotateZ(Vector3 point, float angle)
         point.z
     };
 }
-
+Vector3 D3G_RotatePointNormalized(Vector3 point, Vector3 rotation, Vector3 privot) 
+{
+    //Check D3G_RotatePoint(...) for a better explaination
+    //this is just normalizing the position to 0 0 0, then Rotating and then giving back the position.
+    //More Efficent would be for example to already decleare the normalized pos, rotate it and then put the position. 
+    //With this approach, this function is not needable, but in some cases, having this function doesnt hurt.
+    Vector3 NP = (Vector3){point.x - privot.x,point.y - privot.y,point.z - privot.z};
+    if(rotation.x != 0) NP = RotateX(NP, rotation.x);
+    if(rotation.y != 0) NP = RotateY(NP, rotation.y);
+    if(rotation.z != 0) NP = RotateZ(NP, rotation.z);
+    return (Vector3){NP.x + privot.x, NP.y - privot.y, NP.z - privot.z};
+}
 #if Debug
 void D3G_DrawDebugPoint(Vector3 pos) 
 {
