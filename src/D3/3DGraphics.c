@@ -82,6 +82,60 @@ void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation)
 }
 
 Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
+    /*
+    * Rotation Matrixes:
+    *      [1        0        0     ]
+    * RX = [0 cos(angle) -sin(angle)]
+    *      [0 sin(angle)  cos(angle)]
+    *
+    *      [cos(angle)  0 sin(angle)]
+    * RY = [0           1     0     ]
+    *      [-sin(angle) 0 cos(angle)]
+    *
+    *      [cos(angle) -sin(angle) 0]
+    * RZ = [sin(angle) cos(angle)  0]
+    *      [0           0          1] 
+    *
+    * Example Usage: 
+    * Rotated Point X:
+    * NP.x = OP.x * 1 + OP.y *0 +OP.z *0 // NP = new Point; OP = Old Point
+    * NP.y = OP.x * 0 + OP.y * cos(angle) + OP.z * -sin(angle)
+    * NP.z = OP.x * 0 + OP.y * sin(angle) + OP.z * cos(angle)
+    *
+    * How Matrix Multplation works:
+    *         OP.x   OP.y        OP.z
+    * NP.x = [1     0           0     ]
+    * NP.y = [0   cos(angle) -sin(angle)]
+    * NP.z = [0   sin(angle)  cos(angle)]
+    *
+    * Now, normally you would use a Matrix Multiplication function, but since we need to
+    * do it for every Point, it will cost a lot of space (that we don't have) or a lot of
+    * Ram (that we also don't have). So in order to work carefully with the Resources we have,
+    * I will put everthing basicly in one line and check if we need even to calculate all of it.
+    */
+    //Checks for every element, if we even need to do it.
+    int checker = 0;
+    if(rotation.x != 0) checker +=100
+    if(rotation.y != 0) checker +=10
+    if(rotation.z != 0) checker +=1
+
+    Vector3 ReturnValue;
+    //trust me, it will be more efficent that way. although not that readable...
+    // Something: we mathematically exclude the multiplication, so that we just have to do it one time. 
+    //ToDo: Finish it!:
+    switch (checker) {
+        case 0: return point; break; //nothing
+        case 1: ReturnValue = {(cos(rotation.z) - sin(rotation.z))*Point.x, Point.y*(sin(rotation.z) + cos(rotation.z)), Point.z} break; //Only Z
+        case 10: ReturnValue = {(cos(rotation.y)+sin(rotation.y)) * Point.x, Point.y, (cos(rotation.y)-sin(rotation.y))*Point.z} break;//Only Y
+        case 11: break;//Only YZ
+        case 100: ReturnValue = {Point.x, (cos(Rotation.x)-sin(Rotation.x))*Point.y, (sin(Rotation.x)+cos(Rotation.x))*Point.z} break; //Only X
+        case 101: break; //Only XZ
+        case 110: break; //Only XY
+        case 111: break; //Everything
+        default: gfx_PrintStringXY("Something went horrible worng!", 160, 80); return; break;
+    }
+    return ReturnValue;
+    /* TODO: Delete these GPTs hallunications below.
     Vector3 rotated = point;
 
     // Rotate around X-axis
@@ -103,7 +157,7 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     rotated.y = point.x * sinZ + point.y * cosZ;
 
     return rotated;
-}
+*/}
 
 #if Debug
 void D3G_DrawDebugPoint(Vector3 pos) 
