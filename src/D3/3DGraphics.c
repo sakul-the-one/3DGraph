@@ -55,7 +55,11 @@ void D3G_SetWorldPosition(Vector3 NewPosition)
 {
     WorldPosition  = NewPosition;
 }
-void D3G_AddWorldRotation(Vector3 NewPosition) 
+void D3G_AddWorldRotation(Vector3 NewRotation) 
+{
+    WorldRotation  = (Vector3){WorldRotation.x + NewRotation.x, WorldRotation.y + NewRotation.y, WorldRotation.z + NewRotation.z};
+}
+void D3G_AddWorldPosition(Vector3 NewPosition) 
 {
     WorldPosition  = (Vector3){WorldPosition.x + NewPosition.x, WorldPosition.y + NewPosition.y, WorldPosition.z + NewPosition.z};
 }

@@ -39,10 +39,10 @@ int main()
       switch (key)
       {
         case sk_Clear: exit = false; break;
-        case sk_Up: D3G_AddWorldRotation((Vector3){0,22.5f,0}); gfx_PrintStringXY("test0", 100, 100); break;
-        case sk_Down: D3G_AddWorldRotation((Vector3){0,-22.5f,0}); gfx_PrintStringXY("test1", 100, 100);break;
-        case sk_Right: D3G_AddWorldRotation((Vector3){22.5f,0,0}); gfx_PrintStringXY("test2", 100, 100);break;
-        case sk_Left: D3G_AddWorldRotation((Vector3){-22.5f,0,0}); gfx_PrintStringXY("test3", 100, 100);break;
+        case sk_Up: D3G_AddWorldRotation((Vector3){-22.5f,0,0}); break;
+        case sk_Down: D3G_AddWorldRotation((Vector3){22.5f,0,0}); break;
+        case sk_Right: D3G_AddWorldRotation((Vector3){0,-22.5f,0}); break;
+        case sk_Left: D3G_AddWorldRotation((Vector3){0,22.5f,0}); break;
       }  
       i+=5;   
       sleep(1);
