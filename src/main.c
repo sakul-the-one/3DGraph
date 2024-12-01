@@ -32,15 +32,25 @@ int main()
     //Vector3 rot ={0,0,0};
     D3G_DrawCube(Point1, 25, rot);
     D3G_SetSSD(false);
-
-    while (!os_GetCSC())
+    bool exit = true;
+    while (exit)
     {
-        i+=5;   
-        sleep(1);
-        RedrawSaved();
-        D3G_DrawCube(Point1, 25, (Vector3){i,i*2,i*4});
-        if (i >= 90*4) i=0;
-
+      uint8_t key = os_GetCSC();
+      switch (key)
+      {
+        case sk_Clear: exit = false; break;
+        case sk_Up: D3G_AddWorldRotation((Vector3){0,22.5f,0}); gfx_PrintStringXY("test0", 100, 100); break;
+        case sk_Down: D3G_AddWorldRotation((Vector3){0,-22.5f,0}); gfx_PrintStringXY("test1", 100, 100);break;
+        case sk_Right: D3G_AddWorldRotation((Vector3){22.5f,0,0}); gfx_PrintStringXY("test2", 100, 100);break;
+        case sk_Left: D3G_AddWorldRotation((Vector3){-22.5f,0,0}); gfx_PrintStringXY("test3", 100, 100);break;
+      }  
+      i+=5;   
+      sleep(1);
+      RedrawSaved();
+      D3G_DrawCube(Point1, 25, (Vector3){i,i*2,i*4});
+      D3G_DrawDebugPoint(Point1);
+      D3G_DrawDebugPoint((Vector3){0,0,0});
+      if (i >= 90*4) i=0;
     }
     RedrawSaved();
     D3G_Destroy();

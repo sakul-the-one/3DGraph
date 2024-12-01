@@ -25,7 +25,9 @@ typedef struct
     Vector2 pos2;
 } DrawDataLine; //We dont need for Point, since it is just a Vector 2
 
-float fov;
+float fov = 90.0f;
+Vector3 WorldRotation = {0,0,0};
+Vector3 WorldPosition = {0,0,0};
 //float aspectRatio = 320.0f / 240.0f;
 //float near = 0.1f;
 //float far = 100.0f;
@@ -35,6 +37,13 @@ DrawDataLine * _DLD = NULL; //DrawLineData
 Vector2 * _DPD = NULL; //DrawPointData
 int _DLDCount = 0; //Remember to Count!
 int _DPDCount = 0;
+
+
+void D3G_SetWorldRotation(Vector3 NewRotation);
+void D3G_AddWorldRotation(Vector3 NewRotation);
+Vector3 D3G_GetWorldRotation();
+void D3G_SetWorldPosition(Vector3 NewPosition);
+Vector3 D3G_GetWorldPosition();
 
 /** 
 * @brief Initiates the libary

@@ -39,7 +39,7 @@ void DrawFunc()
             {
                 if(!is_bit_set(FuntionExsists, i)) continue;
                 float zValue = evaluateEquation(i);
-                D3G_DrawPoint((Vector3){x, y, zValue});
+                D3G_DrawPoint((Vector3){x*10, y*10, zValue*10});
             }
         }
    }

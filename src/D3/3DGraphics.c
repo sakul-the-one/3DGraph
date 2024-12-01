@@ -41,9 +41,28 @@ void intToStr(int N, char *str) {
 void D3G_Init() 
 {
     gfx_Begin();
-    fov = 90.0f;
 }
 
+void D3G_SetWorldRotation(Vector3 NewRotation) 
+{
+    WorldRotation  = NewRotation;
+}
+Vector3 D3G_GetWorldRotation() 
+{
+    return WorldRotation;
+}
+void D3G_SetWorldPosition(Vector3 NewPosition) 
+{
+    WorldPosition  = NewPosition;
+}
+void D3G_AddWorldRotation(Vector3 NewPosition) 
+{
+    WorldPosition  = (Vector3){WorldPosition.x + NewPosition.x, WorldPosition.y + NewPosition.y, WorldPosition.z + NewPosition.z};
+}
+Vector3 D3G_GetWorldPosition() 
+{
+    return WorldPosition;
+}
 void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation) 
 {
     //D3G_Redraw();
@@ -63,7 +82,7 @@ void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation)
 
     //Rotate these suckers: 
     for (int i = 0; i < 8; i++)
-        (vertices[i]) = D3G_RotatePoint(vertices[i], rotation);
+        (vertices[i]) = D3G_RotatePointNormalized(vertices[i], rotation, pos); //I'm lazy, so ToDo: Change it back to unnormalized and OPTIMIZE
 
     //Draw them
     //Front face
@@ -195,7 +214,8 @@ void D3G_DrawDebugPoint(Vector3 pos)
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_red);
 #pragma GCC diagnostic pop
-    Vector2 Point = project(pos);
+    Vector3 RotatedPos = D3G_RotatePoint(pos, WorldRotation);
+    Vector2 Point = project(RotatedPos);
     //gfx_SetPixel(Point.x, Point.y);
     gfx_Circle(Point.x, Point.y,3);
     char  Debug1[16];
@@ -214,7 +234,8 @@ void D3G_DrawDebugPoint(Vector3 pos)
 #endif
 void D3G_DrawPoint(Vector3 pos) 
 {
-    Vector2 Point = project(pos);
+    Vector3 RotatedPos = D3G_RotatePoint(pos, WorldRotation);
+    Vector2 Point = project(RotatedPos);
     gfx_SetPixel(Point.x, Point.y);
 
     if (D3G_SSD) 
@@ -233,8 +254,10 @@ void D3G_DrawPoint(Vector3 pos)
 }
 void D3G_DrawLine(Vector3 pos1, Vector3 pos2) 
 {
-    Vector2 Point1 = project(pos1);
-    Vector2 Point2 = project(pos2);
+    Vector3 RotatedPos1 = D3G_RotatePoint(pos1, WorldRotation);
+    Vector3 RotatedPos2 = D3G_RotatePoint(pos2, WorldRotation);
+    Vector2 Point1 = project(RotatedPos1);
+    Vector2 Point2 = project(RotatedPos2);
     gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
 
     if (D3G_SSD) 
