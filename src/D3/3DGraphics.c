@@ -1,9 +1,12 @@
 #include "D3/3DGraphics.h"
 #include <graphx.h>
 #include <math.h>
-#define PI 3.14159265358979323846
 
 #if Debug
+
+#include <debug.h>
+#define HAS_PRINTF = true;
+
 void intToStr(int N, char *str) {
     int i = 0;
     // Save the copy of the number for sign
@@ -38,6 +41,7 @@ void intToStr(int N, char *str) {
 void D3G_Init() 
 {
     gfx_Begin();
+    fov = 90.0f;
 }
 
 void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation) 
@@ -134,7 +138,7 @@ Vector3 RotateX(Vector3 point, float angle)
     * RX = [0 cos(angle) -sin(angle)]
     *      [0 sin(angle)  cos(angle)]
     */
-    float sinX = sin(angle); float cosX = cos(angle);
+    float sinX = sin(angle*DegreeToRadian); float cosX = cos(angle*DegreeToRadian);
     return (Vector3)
     {
         point.x,
@@ -149,7 +153,7 @@ Vector3 RotateY(Vector3 point, float angle)
     * RY = [0           1     0     ]
     *      [-sin(angle) 0 cos(angle)]
     */
-    float sinY = sin(angle); float cosY = cos(angle);
+    float sinY = sin(angle*DegreeToRadian); float cosY = cos(angle*DegreeToRadian);
     return (Vector3)
     { 
         point.x * cosY + point.z * sinY,
@@ -164,7 +168,7 @@ Vector3 RotateZ(Vector3 point, float angle)
     * RZ = [sin(angle) cos(angle)  0]
     *      [0           0          1]
     */
-    float sinZ = sin(angle); float cosZ = cos(angle); 
+    float sinZ = sin(angle*DegreeToRadian); float cosZ = cos(angle*DegreeToRadian); 
     return (Vector3)
     {
         point.x * cosZ - point.y * sinZ,

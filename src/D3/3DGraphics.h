@@ -1,6 +1,9 @@
 #ifndef D3GRAPHICS_H
 #define D3GRAPHICS_H
 #define Debug true
+#define PI 3.14159265358979323846
+#define RadianToDegreee 180/PI
+#define DegreeToRadian PI/180
 #include <graphx.h>
 
 typedef struct 
@@ -22,9 +25,7 @@ typedef struct
     Vector2 pos2;
 } DrawDataLine; //We dont need for Point, since it is just a Vector 2
 
-int border = 30;
-int ExtraBorder = 20; //For buttons
-float fov = 90.0f;
+float fov;
 //float aspectRatio = 320.0f / 240.0f;
 //float near = 0.1f;
 //float far = 100.0f;
