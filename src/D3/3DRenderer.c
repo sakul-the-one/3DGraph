@@ -27,25 +27,26 @@
 void D3R_AddLine(Vector3 pos1, Vector3 pos2) 
 {
     DrawDataLine * Backup = NULL;
-    if(_DLDCount != 0) Backup = _DLD;
+    if (_DLDCount != 0) Backup = _DLD;
     _DLDCount++;
 
-    _DLD = malloc(_DLDCount* sizeof(DrawDataLine));
+    _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
         _DLDCount--;
         if (Backup != NULL) 
             _DLD = Backup; // Restore the old array
         return;
     }
-    if(_DLDCount != 0) 
+    if (_DLDCount != 0) 
     {
-        for(int i = 0; i < _DLDCount-1; i++)
+        for (int i = 0; i < _DLDCount - 1; i++)
             _DLD[i] = Backup[i];
         free(Backup);
     }
+
     DrawDataLine temp;
-    //Bigger pos always first, for easier sorting later on ;)
-    if(pos1.z > pos2.z) 
+    // Bigger pos always first, for easier sorting later on ;)
+    if (pos1.z > pos2.z) 
     {
         temp.pos1 = pos1;
         temp.pos2 = pos2;
@@ -55,8 +56,8 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
         temp.pos1 = pos2;
         temp.pos2 = pos1;
     }
-    if(temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
-    _DLD[_DLDCount-1] = temp;
+    if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
+    _DLD[_DLDCount - 1] = temp;
 }
 
 void D3R_Clear() 
@@ -76,40 +77,24 @@ void swap(DrawDataLine* a, DrawDataLine* b) {
 }
 //Reconstructed for _DLD
 // Partition function
-int partition(DrawDataLine * arr[], float low, int high) {
-    
-    // Choose the pivot
-    float pivot = arr[high]->pos1.z;
-    
-    // Index of smaller element and indicates 
-    // the right position of pivot found so far
+int partition(DrawDataLine* arr, int low, int high) {
+    float pivot = arr[high].pos1.z;
     int i = low - 1;
 
-    // Traverse arr[low..high] and move all smaller
-    // elements to the left side. Elements from low to 
-    // i are smaller after every iteration
     for (int j = low; j <= high - 1; j++) {
-        if (arr[j]->pos1.z < pivot) {
+        if (arr[j].pos1.z < pivot) {
             i++;
-            swap(&arr[i]->pos1.z, &arr[j]->pos1.z);
+            swap(&arr[i], &arr[j]);
         }
     }
-    
-    // Move pivot after smaller elements and
-    // return its position
-    swap(&arr[i + 1], &arr[high]);  
+    swap(&arr[i + 1], &arr[high]);
     return i + 1;
 }
 
-// The QuickSort function implementation
-void quickSort(DrawDataLine * arr[], float low, int high) {
+// Quick sort function for DrawDataLine
+void quickSort(DrawDataLine* arr, int low, int high) {
     if (low < high) {
-        
-        // pi is the partition return index of pivot
         int pi = partition(arr, low, high);
-
-        // Recursion calls for smaller elements
-        // and greater or equals elements
         quickSort(arr, low, pi - 1);
         quickSort(arr, pi + 1, high);
     }
