@@ -23,39 +23,50 @@ void Init()
     //D3G_SSD = true; //Linker Error, apperently this doesn't work
     //D3G_SetSSD(true);
 }
-
+int FunctionsTrue = 10;
 void DrawFunc() 
 {
-   //evaluate(1);
-   //D3G_DrawPoint((Vector3){0,0,1});
-   for (float x = -10; x < 10; x++) 
-   {
+    float max = 10;
+    float min = -10;
+    float Pmin = min * -1;
+    size_t arraySize = (size_t)(Pmin + max);
+    FunctionsTrue = 10;
+    for (int i = 0; i < 10; i++)
+        evaluateEquation(i);
+    if (FunctionsTrue == 0) return;
+    printf("%d",FunctionsTrue);
+    float *OldPoint = malloc(arraySize * sizeof(float)); 
+    if (OldPoint == NULL) {
+        //printf("Error: Memory allocation failed\n");
+        return;
+    }
+
+    D3R_PreMallocLine(Pmin * max * FunctionsTrue);
+    for (float x = min; x < max; x++) 
+    {
         real_t RealX = os_FloatToReal(x);
-        os_SetRealVar(OS_VAR_X, &RealX);
-        float OldPoint[10+10+1];
-        for (float y = -10; y < 10; y++) 
+        os_SetRealVar(OS_VAR_X, &RealX);    
+        for (float y = min; y < max; y++) 
         {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
-            for (int i = 0; i< 10; i++) 
-            {   //Warning: 4 Lines of Doom. Trust me, they are easy to understand, just believe me!
+
+            for (int i = 0; i < 10; i++) 
+            {   
                 if(!is_bit_set(FuntionExsists, i)) continue;
-                float zValue = evaluateEquation(i);
-                if(y != -10) 
-                D3R_AddLine(
-                    (Vector3)
-                    {
-                    (x-1)*10,(y-1)*10,
-                    OldPoint[i+10]
-                    }, 
-                    (Vector3)
-                    {x*10, y*10, zValue*10}
-                    );
-                OldPoint[i+10] = (zValue*10);
+                float zValue = evaluateEquation(i);   
+                ///*
+                if (y != min) D3R_AddLine(
+                        (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i + (int)Pmin]}, 
+                        (Vector3){x * 10, y * 10, zValue * 10}
+                    );//*/
+                OldPoint[i + (int)Pmin] = zValue * 10;
             }
         }
-   }
+    }
+    free(OldPoint);
 }
+
 
 float evaluateEquation(int_fast8_t which) {
     // Variables
@@ -88,9 +99,11 @@ float evaluateEquation(int_fast8_t which) {
     } else {
         // If Y does not Exsist, flip the value
         FuntionExsists = toggle_bit(FuntionExsists, which);
+        FunctionsTrue--;
         return 0;
     }
 }
+
 void Redraw() 
 {
 #pragma GCC diagnostic push
