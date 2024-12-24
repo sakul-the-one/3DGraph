@@ -1,6 +1,7 @@
 #include "D3Handler.h"
 #include <fileioc.h>
 #include "D3/3DGraphics.h"
+#include "D3/3DRenderer.h"
 
 // Function to toggle a specific bit
 uint16_t toggle_bit(uint16_t byte, int bit_position) {
@@ -33,13 +34,15 @@ void DrawFunc()
         os_SetRealVar(OS_VAR_X, &RealX);
         for (float y = -10; y < 0; y++) 
         {
+            float OldPoint[10];
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
             for (int i = 0; i< 10; i++) 
-            {
+            {   //Warning: 4 Lines of Doom. Trust me, they are easy to understand, just believe me!
                 if(!is_bit_set(FuntionExsists, i)) continue;
                 float zValue = evaluateEquation(i);
-                D3G_DrawPoint((Vector3){x*10, y*10, zValue*10});
+                if(y != -10) D3R_AddLine((Vector3){(x-1)*10,(y-1)*10,OldPoint[i]*10}, (Vector3){x*10, y*10, zValue*10});
+                OldPoint[i] = zValue;
             }
         }
    }
@@ -111,7 +114,7 @@ void DrawUI()
     Vector3 LEFT = {-100,0,0};
     Vector3 FORWARD = {0,0,100};
     Vector3 BACKWART = {0,0,-100};
-    D3G_DrawLine(TOP, DOWN);
-    D3G_DrawLine(RIGHT, LEFT);
-    D3G_DrawLine(FORWARD, BACKWART);
+    D3R_AddLine(TOP, DOWN);
+    D3R_AddLine(RIGHT, LEFT);
+    D3R_AddLine(FORWARD, BACKWART);
 }

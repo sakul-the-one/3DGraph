@@ -19,25 +19,12 @@ typedef struct
     float y;
 } Vector2;
 
-typedef struct 
-{
-    Vector2 pos1;
-    Vector2 pos2;
-} DrawDataLine; //We dont need for Point, since it is just a Vector 2
-
 float fov = 90.0f;
 Vector3 WorldRotation = {0,0,0};
 Vector3 WorldPosition = {0,0,0};
 //float aspectRatio = 320.0f / 240.0f;
 //float near = 0.1f;
 //float far = 100.0f;
-bool D3G_SSD = false; //SaveScreenData
-
-DrawDataLine * _DLD = NULL; //DrawLineData
-Vector2 * _DPD = NULL; //DrawPointData
-int _DLDCount = 0; //Remember to Count!
-int _DPDCount = 0;
-
 
 void D3G_SetWorldRotation(Vector3 NewRotation);
 void D3G_AddWorldRotation(Vector3 NewRotation);
@@ -105,7 +92,8 @@ void D3G_Redraw();
  * 
  * @param value The value, the Variable should be set to
 */
-void D3G_SetSSD(bool value);
+//void D3G_SetSSD(bool value);
+
 /**
  * @brief Rotates a point in 3D space using specified rotation angles.
  *

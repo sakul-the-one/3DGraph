@@ -241,20 +241,6 @@ void D3G_DrawPoint(Vector3 pos)
     Vector3 RotatedPos = D3G_RotatePoint(pos, WorldRotation);
     Vector2 Point = project(RotatedPos);
     gfx_SetPixel(Point.x, Point.y);
-
-    if (D3G_SSD) 
-    {        
-        Vector2 * temp = malloc(sizeof(Vector2)*(_DPDCount+1));
-
-        for (int i = 0; i < _DPDCount; i++)
-            temp[i] = _DPD[i];
-        temp[_DPDCount] = Point; 
-
-        if(_DPD != NULL)
-            free(_DPD);
-        _DPD = temp;
-        _DPDCount++;
-    }
 }
 void D3G_DrawLine(Vector3 pos1, Vector3 pos2) 
 {
@@ -263,21 +249,6 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
     Vector2 Point1 = project(RotatedPos1);
     Vector2 Point2 = project(RotatedPos2);
     gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
-
-    if (D3G_SSD) 
-    {
-        DrawDataLine * temp = malloc(sizeof(DrawDataLine)*(_DLDCount+1));
-
-        DrawDataLine _temp = {Point1, Point2};
-        for (int i = 0; i < _DLDCount; i++)
-            temp[i] = _DLD[i];
-        temp[_DLDCount] = _temp; 
-
-        if(_DLD != NULL)
-            free(_DLD);
-        _DLD = temp;
-       _DLDCount++;
-    }
 }
 
 void D3G_Redraw() 
@@ -287,30 +258,16 @@ void D3G_Redraw()
     gfx_FillScreen(gfx_white);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
-
-    for (int i = 0; i < _DLDCount; i++)
-        gfx_Line(_DLD[i].pos1.x, _DLD[i].pos1.y,_DLD[i].pos2.x, _DLD[i].pos2.y);
-
-    for (int i = 0; i < _DPDCount; i++)
-        gfx_SetPixel(_DPD[i].x,_DPD[i].y);
 }
 
-void D3G_SetSSD(bool value) 
-{
-    D3G_SSD = value;
-}
 void D3G_Destroy()
 {
-    free(_DLD);
-    free(_DPD);
     gfx_End();
     /*Technically not needed, since 
     * 1. Programm closes probably after that
     * 2. No one will try to hack this and no one will be able to hack this, except the User
     * So if someone wants to save some Calculator Ram, delete these two lines: 
     */
-    _DLD = NULL;
-    _DPD = NULL;
 }
 
 Vector2 project(Vector3 point) {
