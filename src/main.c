@@ -10,7 +10,6 @@ int main()
 {
     //D3G_Init();
     Init();
-    DrawFunc();
     bool exit = true;
     bool needToRedraw = true;
     while (exit)
@@ -27,7 +26,8 @@ int main()
       }  
       if(needToRedraw) 
       {
-        DrawFunc(); 
+        Redraw();
+        D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
         needToRedraw = false;
       }
     }

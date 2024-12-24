@@ -28,25 +28,33 @@ void DrawFunc()
 {
    //evaluate(1);
    //D3G_DrawPoint((Vector3){0,0,1});
-   for (float x = -10; x < 0; x++) 
+   for (float x = -10; x < 10; x++) 
    {
         real_t RealX = os_FloatToReal(x);
         os_SetRealVar(OS_VAR_X, &RealX);
-        for (float y = -10; y < 0; y++) 
+        float OldPoint[10+10+1];
+        for (float y = -10; y < 10; y++) 
         {
-            float OldPoint[10];
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
             for (int i = 0; i< 10; i++) 
             {   //Warning: 4 Lines of Doom. Trust me, they are easy to understand, just believe me!
                 if(!is_bit_set(FuntionExsists, i)) continue;
                 float zValue = evaluateEquation(i);
-                if(y != -10) D3R_AddLine((Vector3){(x-1)*10,(y-1)*10,OldPoint[i]*10}, (Vector3){x*10, y*10, zValue*10});
-                OldPoint[i] = zValue;
+                if(y != -10) 
+                D3R_AddLine(
+                    (Vector3)
+                    {
+                    (x-1)*10,(y-1)*10,
+                    OldPoint[i+10]
+                    }, 
+                    (Vector3)
+                    {x*10, y*10, zValue*10}
+                    );
+                OldPoint[i+10] = (zValue*10);
             }
         }
    }
-   D3R_Draw();
 }
 
 float evaluateEquation(int_fast8_t which) {
@@ -79,13 +87,9 @@ float evaluateEquation(int_fast8_t which) {
         return value;
     } else {
         // If Y does not Exsist, flip the value
-        toggle_bit(FuntionExsists, which);
+        FuntionExsists = toggle_bit(FuntionExsists, which);
         return 0;
     }
-}
-void RedrawSaved() 
-{
-    D3G_Redraw();
 }
 void Redraw() 
 {
@@ -95,6 +99,8 @@ void Redraw()
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
     DrawUI();
+    DrawFunc();
+    D3R_Draw();
 }
 
 void DrawUI() 

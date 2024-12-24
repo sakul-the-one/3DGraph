@@ -109,7 +109,7 @@ void D3R_SortLines()
         _DLD[i].pos2 = D3G_RotatePoint(_DLD[i].pos2, WorldRotation);
     }
     //Sort
-    quickSort(&_DLD, _lowestLD, _DLDCount-1);
+    quickSort(_DLD, _lowestLD, _DLDCount-1);
 }
 
 void D3R_Draw() 
