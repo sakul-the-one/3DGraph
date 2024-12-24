@@ -46,6 +46,7 @@ void DrawFunc()
             }
         }
    }
+   D3R_Draw();
 }
 
 float evaluateEquation(int_fast8_t which) {

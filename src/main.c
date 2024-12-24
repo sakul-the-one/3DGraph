@@ -27,11 +27,10 @@ int main()
       }  
       if(needToRedraw) 
       {
-            
+        DrawFunc(); 
         needToRedraw = false;
       }
     }
-    RedrawSaved();
     D3G_Destroy();
     return 0;
 }
