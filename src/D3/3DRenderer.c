@@ -24,8 +24,8 @@
     _DPD[_DPDCount-1] = pos;
 }//*/
 void D3R_PreMallocLine(int times) {
-    DrawDataLine *Backup = _DLD;
-    _DLDCount += times;
+    DrawDataLine *Backup = _DLD;//Make Back-up of Pointer
+    _DLDCount += times; //Max Number of free spaces
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
         _DLDCount -= times;
@@ -54,33 +54,35 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
     }
 
     if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
-
+    //when Used spaces less then max number of spaces (when Premalloc was used); A backup is not needed
     if (_DLDCountUsed < _DLDCount) {
-        _DLD[_DLDCountUsed] = temp;
-        _DLDCountUsed++;
-        return;
+        _DLD[_DLDCountUsed] = temp; //Sets the next space (bc array starts at [0], number just pasted in)
+        _DLDCountUsed++; //Increases used
+        return; //Returns the entire fuction
     }
-
-    DrawDataLine *Backup = _DLD;
+    //When not:
+    DrawDataLine *Backup = _DLD; //Backup
+    //Increases both space and used
     _DLDCount++;
     _DLDCountUsed++;
-
+    _DLD = NULL;
+    //Make new pointer
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
-    if (_DLD == NULL) {
+    if (_DLD == NULL) { //If it fails
         _DLDCount--;
         _DLDCountUsed--;
         _DLD = Backup;
         return;
     }
-
+    //Copies old Data from Backup
     for (int i = 0; i < _DLDCount - 1; i++) {
         _DLD[i] = Backup[i];
     }
-    free(Backup);
-    _DLD[_DLDCount - 1] = temp;
+    free(Backup); //Free the backup
+    _DLD[_DLDCount - 1] = temp; // Puts temp data into needed position (-1, becausebc array starts at [0], but not our number)
 }
 
-void D3R_Clear() {
+void D3R_Clear() { //Clears everything used
     _DLDCount = 0;
     _DLDCountUsed = 0;
     free(_DLD);
