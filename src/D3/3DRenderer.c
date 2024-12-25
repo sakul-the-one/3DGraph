@@ -98,7 +98,7 @@ void swap(DrawDataLine* a, DrawDataLine* b) {
 }
 //Reconstructed for _DLD
 // Partition function
-/* //Qucksort bad for calc :C
+/* //Qucksort bad for calc :C; FUCK YOU QUICKSORT; INSERTIONSSORT IS MY HOMIE NOW!
 int partition(DrawDataLine* arr, int low, int high) {
     float pivot = arr[high].pos1.z;
     int i = low - 1;
@@ -157,7 +157,7 @@ void D3R_Draw()
     //printf("%d + %d ", _DLDCount, _DLDCountUsed);
     for (int i = 0; i < _DLDCount; i++) 
     {
-        D3G_DrawLineUnRotated(&_DLD[i].pos1, &_DLD[i].pos2);
+        D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
     }
     D3R_Clear();
 }

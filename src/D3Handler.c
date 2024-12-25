@@ -19,6 +19,7 @@ bool is_bit_set(uint16_t value, int bit_position) {
 void Init() 
 {
     D3G_Init();
+    R3G_SetBorder(border, ExtraBorder);
     Redraw();
     //D3G_SSD = true; //Linker Error, apperently this doesn't work
     //D3G_SetSSD(true);

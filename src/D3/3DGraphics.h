@@ -20,6 +20,8 @@ typedef struct
 } Vector2;
 
 float fov = 90.0f;
+int R3G_border= 0;
+int R3G_ExtraBorder = 0;
 Vector3 WorldRotation = {0,0,0};
 Vector3 WorldPosition = {0,0,0};
 //float aspectRatio = 320.0f / 240.0f;
@@ -36,7 +38,7 @@ Vector3 D3G_GetWorldPosition();
 * @brief Initiates the libary
 */
 void D3G_Init();
-
+void R3G_SetBorder(int _border, int _ExtraBorder);
 /** 
  * @brief Draws a Point on the screen
  *
@@ -56,7 +58,7 @@ void D3G_DrawPoint(Vector3 pos);
  * @param pos2 The 3D position of the second Point.
 */
 void D3G_DrawLine(Vector3 pos1,  Vector3 pos2);
-void D3G_DrawLineUnRotated(Vector3 *pos1, Vector3 *pos2);
+void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2);
 
 /** 
  * @brief Dereferences the position

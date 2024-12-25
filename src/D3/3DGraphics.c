@@ -7,6 +7,14 @@
 #include <debug.h>
 #define HAS_PRINTF = true;
 
+
+float minMax(float min, float value, float max) 
+{
+    if(value < min) return min;
+    else if(value > max) return max;
+    else return value;
+}
+
 void intToStr(int N, char *str) {
     int i = 0;
     // Save the copy of the number for sign
@@ -246,15 +254,35 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
 {
     Vector3 RotatedPos1 = D3G_RotatePoint(pos1, WorldRotation);
     Vector3 RotatedPos2 = D3G_RotatePoint(pos2, WorldRotation);
+    if(RotatedPos1.z < -fov && RotatedPos2.z < -fov) return;
+    if (RotatedPos1.z < -fov) RotatedPos1.z = -fov;
+    if (RotatedPos2.z < -fov) RotatedPos2.z = -fov;
     Vector2 Point1 = project(RotatedPos1);
     Vector2 Point2 = project(RotatedPos2);
-    gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
+    Point1.x = minMax(R3G_border, Point1.x, 320 - R3G_border);
+    Point2.x = minMax(R3G_border, Point2.x, 320 - R3G_border);
+    Point1.y = minMax(R3G_border, Point1.y, 240 - R3G_border - R3G_ExtraBorder);
+    Point2.y = minMax(R3G_border, Point2.y, 240 - R3G_border - R3G_ExtraBorder);
+    gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
 }
-void D3G_DrawLineUnRotated(Vector3 *pos1, Vector3 *pos2) 
+void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2) 
 {
-    Vector2 Point1 = project(*pos1);
-    Vector2 Point2 = project(*pos2);
-    gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
+    if(pos1.z < -fov && pos2.z < -fov) return;
+    if (pos1.z < -fov) pos1.z = -fov;
+    if (pos2.z < -fov) pos2.z = -fov;
+    Vector2 Point1 = project(pos1);
+    Vector2 Point2 = project(pos2);
+    Point1.x = minMax(R3G_border, Point1.x, 320 - R3G_border);
+    Point2.x = minMax(R3G_border, Point2.x, 320 - R3G_border);
+    Point1.y = minMax(R3G_border, Point1.y, 240 - R3G_border - R3G_ExtraBorder);
+    Point2.y = minMax(R3G_border, Point2.y, 240 - R3G_border - R3G_ExtraBorder);
+    gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
+}
+
+void R3G_SetBorder(int _border,int _ExtraBorder) 
+{
+    R3G_border = _border;
+    R3G_ExtraBorder = _ExtraBorder;
 }
 void D3G_Redraw() 
 {
