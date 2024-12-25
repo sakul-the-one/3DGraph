@@ -24,8 +24,7 @@ void Init()
     //D3G_SetSSD(true);
 }
 int FunctionsTrue = 10;
-void DrawFunc() 
-{
+void DrawFunc() {
     float max = 10;
     float min = -10;
     float Pmin = min * -1;
@@ -33,28 +32,24 @@ void DrawFunc()
     for (int i = 0; i < 10; i++)
         evaluateEquation(i);
     if (FunctionsTrue == 0) return;
-    //printf("%d",FunctionsTrue); Use just, if you want to have 4.178kb bigger programm :)
 
-    D3R_PreMallocLine(Pmin * max * FunctionsTrue);
-    for (float x = min; x < max; x++) 
-    {
+    D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue));
+    for (float x = min; x < max; x++) {
         real_t RealX = os_FloatToReal(x);
         os_SetRealVar(OS_VAR_X, &RealX);
         float OldPoint[10] = {0}; 
-        for (float y = min; y < max; y++) 
-        {
+        for (float y = min; y < max; y++) {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
-
-            for (int i = 0; i < 10; i++) 
-            {   
-                if(!is_bit_set(FuntionExsists, i)) continue;
-                float zValue = evaluateEquation(i);   
-                ///*
-                if (y != min) D3R_AddLine(
+            for (int i = 0; i < 10; i++) {   
+                if (!is_bit_set(FuntionExsists, i)) continue;
+                float zValue = evaluateEquation(i);
+                if (y != min) {
+                    D3R_AddLine(
                         (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i]}, 
                         (Vector3){x * 10, y * 10, zValue * 10}
-                    );//*/
+                    );
+                }
                 OldPoint[i] = zValue * 10;
             }
         }

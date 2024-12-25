@@ -23,29 +23,22 @@
     }
     _DPD[_DPDCount-1] = pos;
 }//*/
-void D3R_PreMallocLine(int times)
-{
-    DrawDataLine * Backup = NULL;
-    bool wasTrue = false; //I got no better name, sorry
-    if (_DLDCount != 0) 
-    {
-        Backup = _DLD;
-        wasTrue = true;
-    }
-    _DLDCount+= times;
-    _DLD = NULL;
+void D3R_PreMallocLine(int times) {
+    DrawDataLine *Backup = _DLD;
+    _DLDCount += times;
+
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
-        _DLDCount-= times;
-        if (Backup != NULL) 
-            _DLD = Backup; // Restore the old array
+        _DLDCount -= times;
+        _DLD = Backup;
         gfx_PrintStringXY("Error Pre-Mallocing",10,10);
         return;
     }
-    if (wasTrue) 
-    {
-        for (int i = 0; i < _DLDCount - 1; i++)
+
+    if (Backup) {
+        for (int i = 0; i < _DLDCount - times; i++) {
             _DLD[i] = Backup[i];
+        }
         free(Backup);
     }
 }
@@ -53,62 +46,46 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
 {
     DrawDataLine temp;
     // Bigger pos always first, for easier sorting later on ;)
-    if (pos1.z > pos2.z) 
-    {
+    if (pos1.z > pos2.z) {
         temp.pos1 = pos1;
         temp.pos2 = pos2;
-    }
-    else 
-    {
+    } else {
         temp.pos1 = pos2;
         temp.pos2 = pos1;
     }
+
     if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
 
-    if(_DLDCountUsed < _DLDCount) 
-    { 
-        
+    if (_DLDCountUsed < _DLDCount) {
         _DLD[_DLDCountUsed] = temp;
         _DLDCountUsed++;
         return;
     }
-    else if(_DLDCountUsed > _DLDCount) gfx_PrintStringXY("Logical error",10,20);
 
-    bool wasTrue = false; //I got no better name, sorry
-    DrawDataLine * Backup = NULL;
-    if (_DLDCount != 0) 
-    {
-        Backup = _DLD;
-        wasTrue = true;
-    }
+    DrawDataLine *Backup = _DLD;
     _DLDCount++;
     _DLDCountUsed++;
-    _DLD = NULL;
+
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
         _DLDCount--;
-        if (Backup != NULL) 
-            _DLD = Backup; // Restore the old array
+        _DLDCountUsed--;
+        _DLD = Backup;
         return;
     }
-    if (wasTrue) 
-    {
-        for (int i = 0; i < _DLDCount - 1; i++)
-            _DLD[i] = Backup[i];
-        free(Backup);
+
+    for (int i = 0; i < _DLDCount - 1; i++) {
+        _DLD[i] = Backup[i];
     }
+    free(Backup);
     _DLD[_DLDCount - 1] = temp;
 }
 
-void D3R_Clear() 
-{
+void D3R_Clear() {
     _DLDCount = 0;
-    //_DPDCount = 0;
-    free(_DLD);
-    //free(_DPD);
-    _DLD = NULL;
     _DLDCountUsed = 0;
-    //_DPD = NULL;
+    free(_DLD);
+    _DLD = NULL;
 }
 
 void swap(DrawDataLine* a, DrawDataLine* b) {
