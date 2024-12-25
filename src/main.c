@@ -14,10 +14,11 @@ int main()
     bool needToRedraw = true;
     while (exit)
     {
-      uint8_t key = os_GetKey();//os_GetCSC(); //I think GetKey is more Battary efficient :)
+      uint8_t key = os_GetCSC(); //I think GetKey is more Battary efficient :), But this would mean I need to research it, so fuck this. os_GetKey();
       switch (key)
       {
         case sk_Clear: exit = false; break;
+        //case 045: exit = false; break;
         case sk_Up: D3G_AddWorldRotation((Vector3){-22.5f,0,0}); needToRedraw = true; break; 
         case sk_Down: D3G_AddWorldRotation((Vector3){22.5f,0,0}); needToRedraw = true;break;
         case sk_Right: D3G_AddWorldRotation((Vector3){0,-22.5f,0}); needToRedraw = true;break;

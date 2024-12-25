@@ -26,18 +26,23 @@
 void D3R_PreMallocLine(int times)
 {
     DrawDataLine * Backup = NULL;
-    if (_DLDCount != 0) Backup = _DLD;
+    bool wasTrue = false; //I got no better name, sorry
+    if (_DLDCount != 0) 
+    {
+        Backup = _DLD;
+        wasTrue = true;
+    }
     _DLDCount+= times;
     _DLD = NULL;
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
-        _DLDCount--;
+        _DLDCount-= times;
         if (Backup != NULL) 
             _DLD = Backup; // Restore the old array
         gfx_PrintStringXY("Error Pre-Mallocing",10,10);
         return;
     }
-    if (_DLDCount != 0) 
+    if (wasTrue) 
     {
         for (int i = 0; i < _DLDCount - 1; i++)
             _DLD[i] = Backup[i];
@@ -60,15 +65,22 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
     }
     if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
 
-    if(_DLDCount != _DLDCountUsed) 
+    if(_DLDCountUsed < _DLDCount) 
     { 
         
         _DLD[_DLDCountUsed] = temp;
         _DLDCountUsed++;
         return;
     }
+    else if(_DLDCountUsed > _DLDCount) gfx_PrintStringXY("Logical error",10,20);
+
+    bool wasTrue = false; //I got no better name, sorry
     DrawDataLine * Backup = NULL;
-    if (_DLDCount != 0) Backup = _DLD;
+    if (_DLDCount != 0) 
+    {
+        Backup = _DLD;
+        wasTrue = true;
+    }
     _DLDCount++;
     _DLDCountUsed++;
     _DLD = NULL;
@@ -79,7 +91,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
             _DLD = Backup; // Restore the old array
         return;
     }
-    if (_DLDCount != 0) 
+    if (wasTrue) 
     {
         for (int i = 0; i < _DLDCount - 1; i++)
             _DLD[i] = Backup[i];
@@ -95,6 +107,7 @@ void D3R_Clear()
     free(_DLD);
     //free(_DPD);
     _DLD = NULL;
+    _DLDCountUsed = 0;
     //_DPD = NULL;
 }
 

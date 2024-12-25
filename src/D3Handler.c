@@ -29,23 +29,18 @@ void DrawFunc()
     float max = 10;
     float min = -10;
     float Pmin = min * -1;
-    size_t arraySize = (size_t)(Pmin + max);
     FunctionsTrue = 10;
     for (int i = 0; i < 10; i++)
         evaluateEquation(i);
     if (FunctionsTrue == 0) return;
-    printf("%d",FunctionsTrue);
-    float *OldPoint = malloc(arraySize * sizeof(float)); 
-    if (OldPoint == NULL) {
-        //printf("Error: Memory allocation failed\n");
-        return;
-    }
+    //printf("%d",FunctionsTrue); Use just, if you want to have 4.178kb bigger programm :)
 
     D3R_PreMallocLine(Pmin * max * FunctionsTrue);
     for (float x = min; x < max; x++) 
     {
         real_t RealX = os_FloatToReal(x);
-        os_SetRealVar(OS_VAR_X, &RealX);    
+        os_SetRealVar(OS_VAR_X, &RealX);
+        float OldPoint[10] = {0}; 
         for (float y = min; y < max; y++) 
         {
             real_t RealY = os_FloatToReal(y);
@@ -57,16 +52,14 @@ void DrawFunc()
                 float zValue = evaluateEquation(i);   
                 ///*
                 if (y != min) D3R_AddLine(
-                        (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i + (int)Pmin]}, 
+                        (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i]}, 
                         (Vector3){x * 10, y * 10, zValue * 10}
                     );//*/
-                OldPoint[i + (int)Pmin] = zValue * 10;
+                OldPoint[i] = zValue * 10;
             }
         }
     }
-    free(OldPoint);
 }
-
 
 float evaluateEquation(int_fast8_t which) {
     // Variables
@@ -134,6 +127,7 @@ void DrawUI()
     Vector3 LEFT = {-100,0,0};
     Vector3 FORWARD = {0,0,100};
     Vector3 BACKWART = {0,0,-100};
+    D3R_PreMallocLine(3);
     D3R_AddLine(TOP, DOWN);
     D3R_AddLine(RIGHT, LEFT);
     D3R_AddLine(FORWARD, BACKWART);
