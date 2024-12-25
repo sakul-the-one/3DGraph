@@ -85,6 +85,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
 void D3R_Clear() { //Clears everything used
     _DLDCount = 0;
     _DLDCountUsed = 0;
+    if(_DLD == NULL) return;
     free(_DLD);
     _DLD = NULL;
 }
@@ -132,12 +133,11 @@ void D3R_SortLines()
 }
 
 void D3R_Draw() 
-{
-    D3R_SortLines();
-    //D3R_SortPoints(); //Not implemented, bc not needed (waste of space)
+{  
+    //D3R_SortLines();
     for (int i = 0; i < _DLDCount; i++) 
     {
-        D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
+        D3G_DrawLineUnRotated(&_DLD[i].pos1, &_DLD[i].pos2);
     }
     D3R_Clear();
 }
