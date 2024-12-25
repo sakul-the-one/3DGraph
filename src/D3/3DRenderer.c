@@ -53,7 +53,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
         temp.pos2 = pos1;
     }
 
-    if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
+    //if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
     //when Used spaces less then max number of spaces (when Premalloc was used); A backup is not needed
     if (_DLDCountUsed < _DLDCount) {
         _DLD[_DLDCountUsed] = temp; //Sets the next space (bc array starts at [0], number just pasted in)
@@ -85,6 +85,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
 void D3R_Clear() { //Clears everything used
     _DLDCount = 0;
     _DLDCountUsed = 0;
+    //_lowestLD = 255.0f;
     if(_DLD == NULL) return;
     free(_DLD);
     _DLD = NULL;
@@ -97,6 +98,7 @@ void swap(DrawDataLine* a, DrawDataLine* b) {
 }
 //Reconstructed for _DLD
 // Partition function
+/* //Qucksort bad for calc :C
 int partition(DrawDataLine* arr, int low, int high) {
     float pivot = arr[high].pos1.z;
     int i = low - 1;
@@ -110,7 +112,6 @@ int partition(DrawDataLine* arr, int low, int high) {
     swap(&arr[i + 1], &arr[high]);
     return i + 1;
 }
-
 // Quick sort function for DrawDataLine
 void quickSort(DrawDataLine* arr, int low, int high) {
     if (low < high) {
@@ -118,7 +119,23 @@ void quickSort(DrawDataLine* arr, int low, int high) {
         quickSort(arr, low, pi - 1);
         quickSort(arr, pi + 1, high);
     }
+}*/
+
+void insertionSort(DrawDataLine arr[], int n) {
+    for (int i = 1; i < n; i++) 
+    {
+        DrawDataLine key = arr[i]; // key is the whole DrawDataLine structure
+        int j = i - 1;
+        // Move elements of arr[0..i-1], that are greater than key.pos1.z,
+        // to one position ahead of their current position
+        while (j >= 0 && arr[j].pos1.z > key.pos1.z) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
 }
+
 void D3R_SortLines() 
 {
     Vector3 WorldRotation = D3G_GetWorldRotation();
@@ -129,12 +146,15 @@ void D3R_SortLines()
         _DLD[i].pos2 = D3G_RotatePoint(_DLD[i].pos2, WorldRotation);
     }
     //Sort
-    quickSort(_DLD, _lowestLD, _DLDCount-1);
+    insertionSort(_DLD, _DLDCount);
+    //quickSort(_DLD, _lowestLD, _DLDCount-1);
 }
-
+#include <fileioc.h>
 void D3R_Draw() 
 {  
-    //D3R_SortLines();
+    D3R_SortLines();
+    //Debug
+    //printf("%d + %d ", _DLDCount, _DLDCountUsed);
     for (int i = 0; i < _DLDCount; i++) 
     {
         D3G_DrawLineUnRotated(&_DLD[i].pos1, &_DLD[i].pos2);

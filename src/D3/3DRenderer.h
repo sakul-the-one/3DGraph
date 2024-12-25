@@ -16,7 +16,7 @@ DrawDataLine * _DLD;//DrawLineData
 //Vector3 * _DPD; //DrawPointData
 int _DLDCount = 0;
 int _DLDCountUsed = 0;
-float _lowestLD = 255.0f;
+//float _lowestLD = 255.0f;
 //int _DPDCount = 0;
 
 //Not implemented, bc not needed (waste of space)void D3R_AddPoint(Vector3 pos);

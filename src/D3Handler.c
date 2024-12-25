@@ -34,7 +34,7 @@ void DrawFunc() {
         evaluateEquation(i);
     if (FunctionsTrue == 0) return;
 
-    //D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue));
+    D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue));
     for (float x = min; x < max; x++) {
         real_t RealX = os_FloatToReal(x);
         os_SetRealVar(OS_VAR_X, &RealX);
@@ -124,7 +124,7 @@ void DrawUI()
     const Vector3 LEFT = {-100,0,0};
     const Vector3 FORWARD = {0,0,100};
     const Vector3 BACKWART = {0,0,-100};
-    //D3R_PreMallocLine(3);
+    D3R_PreMallocLine(3);
     D3R_AddLine(TOP, DOWN);
     D3R_AddLine(RIGHT, LEFT);
     D3R_AddLine(FORWARD, BACKWART);
