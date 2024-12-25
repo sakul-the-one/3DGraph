@@ -8,6 +8,7 @@ typedef struct
 {
     Vector3 pos1;
     Vector3 pos2;
+    int8_t color;
 } DrawDataLine; 
 //We dont need for Point, since it is just a Vector 2
 bool D3G_SSD = false; //SaveScreenData
@@ -20,7 +21,7 @@ int _DLDCountUsed = 0;
 //int _DPDCount = 0;
 
 //Not implemented, bc not needed (waste of space)void D3R_AddPoint(Vector3 pos);
-void D3R_AddLine(Vector3 pos1, Vector3 pos2);
+void D3R_AddLine(Vector3 pos1, Vector3 pos2, int8_t ccolor);
 void D3R_PreMallocLine(int times);
 void D3R_Clear();
 void D3R_Draw();

@@ -29,7 +29,7 @@ int main()
       if(needToRedraw) 
       {
         Redraw();
-        D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
+        //D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
         needToRedraw = false;
       }
     }

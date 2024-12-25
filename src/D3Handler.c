@@ -43,13 +43,13 @@ void DrawFunc() {
         for (float y = min; y < max; y++) {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
-            for (int i = 0; i < 10; i++) {   
+            for (int8_t i = 0; i < 10; i++) {   
                 if (!is_bit_set(FuntionExsists, i)) continue;
                 float zValue = evaluateEquation(i);
                 if (y != min) {
                     D3R_AddLine(
                         (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i]}, 
-                        (Vector3){x * 10, y * 10, zValue * 10}
+                        (Vector3){x * 10, y * 10, zValue * 10}, i
                     );
                 }
                 OldPoint[i] = zValue * 10;
@@ -101,9 +101,24 @@ void Redraw()
     gfx_FillScreen(gfx_white);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
+    gfx_PrintStringXY("Calculating Next frame..",1,1);
     DrawUI();
     DrawFunc();
     D3R_Draw();
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_white);
+    //gfx_PrintStringXY("Calculating Next frame..",1,1);
+    /*gfx_HorizLine(1,2,161);
+    gfx_HorizLine(1,3,161);
+    gfx_HorizLine(1,4,161);
+    gfx_HorizLine(1,5,161);
+    gfx_HorizLine(1,6,161);
+    gfx_HorizLine(1,7,161);*/
+    for (int i = 0; i<=8; i++)
+        gfx_HorizLine(1,i,161);
+    gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
     //D3R_Clear();
 }
 
@@ -126,7 +141,7 @@ void DrawUI()
     const Vector3 FORWARD = {0,0,100};
     const Vector3 BACKWART = {0,0,-100};
     D3R_PreMallocLine(3);
-    D3R_AddLine(TOP, DOWN);
-    D3R_AddLine(RIGHT, LEFT);
-    D3R_AddLine(FORWARD, BACKWART);
+    D3R_AddLine(TOP, DOWN, 0);
+    D3R_AddLine(RIGHT, LEFT, 0);
+    D3R_AddLine(FORWARD, BACKWART, 0);
 }

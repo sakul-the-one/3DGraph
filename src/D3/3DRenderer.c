@@ -41,7 +41,7 @@ void D3R_PreMallocLine(int times) {
         free(Backup);
     }
 }
-void D3R_AddLine(Vector3 pos1, Vector3 pos2) 
+void D3R_AddLine(Vector3 pos1, Vector3 pos2, int8_t ccolor) 
 {
     DrawDataLine temp;
     // Bigger pos always first, for easier sorting later on ;)
@@ -52,6 +52,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2)
         temp.pos1 = pos2;
         temp.pos2 = pos1;
     }
+    temp.color = ccolor;
 
     //if (temp.pos1.z < _lowestLD) _lowestLD = temp.pos1.z;
     //when Used spaces less then max number of spaces (when Premalloc was used); A backup is not needed
@@ -149,7 +150,7 @@ void D3R_SortLines()
     insertionSort(_DLD, _DLDCount);
     //quickSort(_DLD, _lowestLD, _DLDCount-1);
 }
-#include <fileioc.h>
+int8_t CurrentColour;
 void D3R_Draw() 
 {  
     D3R_SortLines();
@@ -157,6 +158,21 @@ void D3R_Draw()
     //printf("%d + %d ", _DLDCount, _DLDCountUsed);
     for (int i = 0; i < _DLDCount; i++) 
     {
+        if (CurrentColour != _DLD[i].color)
+        {
+            switch (_DLD[i].color)
+            {
+        case 0: gfx_SetColor(gfx_black);break;
+        case 1: gfx_SetColor(gfx_blue);break;
+        case 2: gfx_SetColor(gfx_red);break;
+        case 3: gfx_SetColor(gfx_green);break;
+        case 4: gfx_SetColor(gfx_yellow);break;
+        case 5: gfx_SetColor(gfx_orange);break;
+        case 6: gfx_SetColor(gfx_pink);  break;
+        default: gfx_SetColor(_DLD[i].color*20);//gfx_SetColor(gfx_black);
+            break;
+        }
+        }
         D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
     }
     D3R_Clear();
