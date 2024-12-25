@@ -116,12 +116,12 @@ void DrawUI()
     //gfx_Line(border,        240 -border -ExtraBorder,   320-border,    240-border-ExtraBorder); //DL-DR
     gfx_HorizLine(border,        240 -border -ExtraBorder, 320 - (2*border));
 
-    Vector3 TOP = {0,100,0};
-    Vector3 DOWN = {0,-100,0};
-    Vector3 RIGHT = {100,0,0};
-    Vector3 LEFT = {-100,0,0};
-    Vector3 FORWARD = {0,0,100};
-    Vector3 BACKWART = {0,0,-100};
+    const Vector3 TOP = {0,100,0};
+    const Vector3 DOWN = {0,-100,0};
+    const Vector3 RIGHT = {100,0,0};
+    const Vector3 LEFT = {-100,0,0};
+    const Vector3 FORWARD = {0,0,100};
+    const Vector3 BACKWART = {0,0,-100};
     D3R_PreMallocLine(3);
     D3R_AddLine(TOP, DOWN);
     D3R_AddLine(RIGHT, LEFT);

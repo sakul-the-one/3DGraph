@@ -26,7 +26,6 @@
 void D3R_PreMallocLine(int times) {
     DrawDataLine *Backup = _DLD;
     _DLDCount += times;
-
     _DLD = malloc(_DLDCount * sizeof(DrawDataLine));
     if (_DLD == NULL) {
         _DLDCount -= times;
@@ -136,7 +135,7 @@ void D3R_Draw()
     //D3R_SortPoints(); //Not implemented, bc not needed (waste of space)
     for (int i = 0; i < _DLDCount; i++) 
     {
-        D3G_DrawLine(_DLD[i].pos1, _DLD[i].pos2);
+        D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
     }
     D3R_Clear();
 }

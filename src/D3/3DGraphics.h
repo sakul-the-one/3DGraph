@@ -56,6 +56,7 @@ void D3G_DrawPoint(Vector3 pos);
  * @param pos2 The 3D position of the second Point.
 */
 void D3G_DrawLine(Vector3 pos1,  Vector3 pos2);
+void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2);
 
 /** 
  * @brief Dereferences the position

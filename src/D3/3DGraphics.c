@@ -250,7 +250,12 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
     Vector2 Point2 = project(RotatedPos2);
     gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
 }
-
+void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2) 
+{
+    Vector2 Point1 = project(pos1);
+    Vector2 Point2 = project(pos2);
+    gfx_Line(Point1.x, Point1.y,Point2.x, Point2.y);
+}
 void D3G_Redraw() 
 {
 #pragma GCC diagnostic push

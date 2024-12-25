@@ -5,6 +5,7 @@
 #include "D3Handler.h"
 #include "D3/3DGraphics.h"
 #include <sys/timers.h>
+#include <debug.h>
 
 int main() 
 {
