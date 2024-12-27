@@ -160,18 +160,21 @@ void D3R_Draw()
     {
         if (CurrentColour != _DLD[i].color)
         {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
             switch (_DLD[i].color)
             {
-        case 0: gfx_SetColor(gfx_black);break;
-        case 1: gfx_SetColor(gfx_blue);break;
-        case 2: gfx_SetColor(gfx_red);break;
-        case 3: gfx_SetColor(gfx_green);break;
-        case 4: gfx_SetColor(gfx_yellow);break;
-        case 5: gfx_SetColor(gfx_orange);break;
-        case 6: gfx_SetColor(gfx_pink);  break;
-        default: gfx_SetColor(_DLD[i].color*20);//gfx_SetColor(gfx_black);
-            break;
-        }
+                case 0: CurrentColour = gfx_black; break;
+                case 1: CurrentColour= gfx_blue; break;
+                case 2: CurrentColour = gfx_red; break;
+                case 3: CurrentColour = gfx_green; break;
+                case 4: CurrentColour = gfx_yellow; break;
+                case 5: CurrentColour = gfx_orange; break;
+                case 6: CurrentColour = gfx_pink; break;
+                default: CurrentColour = _DLD[i].color*20; break;
+            }
+#pragma GCC diagnostic pop
+            gfx_SetColor(CurrentColour);
         }
         D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
     }

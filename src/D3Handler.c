@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include "D3/3DGraphics.h"
 #include "D3/3DRenderer.h"
+#include "GUI.h"
 
 // Function to toggle a specific bit
 uint16_t toggle_bit(uint16_t byte, int bit_position) {
@@ -20,7 +21,7 @@ void Init()
 {
     D3G_Init();
     R3G_SetBorder(border, ExtraBorder);
-    Redraw();
+    //Redraw();
     //D3G_SSD = true; //Linker Error, apperently this doesn't work
     //D3G_SetSSD(true);
 }
@@ -103,18 +104,12 @@ void Redraw()
 #pragma GCC diagnostic pop
     gfx_PrintStringXY("Calculating Next frame..",1,1);
     DrawUI();
+    RenderButtons("Y=","Settings","WIP","Calc","Exit");
     DrawFunc();
     D3R_Draw();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_white);
-    //gfx_PrintStringXY("Calculating Next frame..",1,1);
-    /*gfx_HorizLine(1,2,161);
-    gfx_HorizLine(1,3,161);
-    gfx_HorizLine(1,4,161);
-    gfx_HorizLine(1,5,161);
-    gfx_HorizLine(1,6,161);
-    gfx_HorizLine(1,7,161);*/
     for (int i = 0; i<=8; i++)
         gfx_HorizLine(1,i,161);
     gfx_SetColor(gfx_black);
