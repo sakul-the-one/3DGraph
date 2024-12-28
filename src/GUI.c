@@ -38,7 +38,8 @@ void ResetScreen()
 #pragma GCC diagnostic pop
 }
 void DrawEqu(int y);
-bool MainFirst() 
+
+bool MainFirst() //Turn specific equasion off. There is btw. a Bug when you press to much the Up_key, it will land at 5 instead of 0. Fixing this would take to much bytes imo and it is not neccessary...
 {
 //Shower
 //U need too btw ;)
@@ -72,20 +73,20 @@ bool MainFirst()
         gfx_PrintStringXY(t, 120, betterY);
     }
 }
-bool MainSecond() 
+bool MainSecond() //Setting - like Word Position or Details...
 {
     return true;
 }
-bool MainThird() 
+bool MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...
 {
     return true;
 }
-bool MainFourth() 
+bool MainFourth() // Calc - To get the Z point f.e. or to find zero
 {
     return true;
 }
 bool MainFive() 
-{
+{ //Exit
     *exitPtr = false;
     return false;
 }
