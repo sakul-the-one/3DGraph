@@ -1,5 +1,6 @@
 #include <ti/getkey.h>
 #include <ti/getcsc.h>
+#include <sys/timers.h>
 #include "D3Handler.h"
 #include "D3/3DGraphics.h"
 #include "GUI.h"
@@ -7,10 +8,17 @@
 
 int main() 
 {
+  /*for (int i = 0; i<= 255; i++) 
+  {
+    char str = i;
+    os_ClrHome();
+    os_PutStrLine(&str);
+    sleep(1);
+  }*/
     Init();
     bool exit = true;
     bool needToRedraw = true;
-    InitGUI(&exit);
+    InitGUI(&exit, GetFunctionExsistsPointer());
     while (exit)
     {
       uint8_t key = os_GetCSC(); //I think GetKey is more Battary efficient :), But this would mean I need to research it, so fuck this. os_GetKey();

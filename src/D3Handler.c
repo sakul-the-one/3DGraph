@@ -15,8 +15,19 @@ uint16_t toggle_bit(uint16_t byte, int bit_position) {
 bool is_bit_set(uint16_t value, int bit_position) {
     // AND the value with a mask where only the target bit is set
     return (value & (1 << bit_position)) != 0;
+}//*/
+uint16_t * GetFunctionExsistsPointer() 
+{
+    return &FuntionExsists;
 }
-
+bool DoesFunctionExsist(uint8_t function) 
+{
+    return (FuntionExsists & (1 << function)) != 0;
+}
+void toggleFunction(uint8_t function) 
+{
+    FuntionExsists ^= (1 << function);
+}
 void Init() 
 {
     D3G_Init();
@@ -45,7 +56,7 @@ void DrawFunc() {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
             for (int8_t i = 0; i < 10; i++) {   
-                if (!is_bit_set(FuntionExsists, i)) continue;
+                if (!DoesFunctionExsist(i)) continue;
                 float zValue = evaluateEquation(i);
                 if (y != min) {
                     D3R_AddLine(
@@ -61,6 +72,11 @@ void DrawFunc() {
 
 float evaluateEquation(int_fast8_t which) {
     // Variables
+    if(!DoesFunctionExsist(which)) 
+    {
+        FunctionsTrue--;
+        return 0;
+    }
     equ_t *equation;
     float value;
     switch (which)
@@ -89,7 +105,8 @@ float evaluateEquation(int_fast8_t which) {
         return value;
     } else {
         // If Y does not Exsist, flip the value
-        FuntionExsists = toggle_bit(FuntionExsists, which);
+        //FuntionExsists = toggle_bit(FuntionExsists, which);
+        toggleFunction(which);
         FunctionsTrue--;
         return 0;
     }
