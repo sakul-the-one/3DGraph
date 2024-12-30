@@ -4,6 +4,7 @@
 #include "D3Handler.h"
 #include "D3/3DGraphics.h"
 #include "GUI.h"
+#include "StaticData.h"
 
 
 int main() 
@@ -16,6 +17,7 @@ int main()
     sleep(1);
   }*/
     Init();
+    InitData();
     bool exit = true;
     bool needToRedraw = true;
     InitGUI(&exit, GetFunctionExsistsPointer());
@@ -41,5 +43,6 @@ int main()
       }
     }
     D3G_Destroy();
+    CloseData();
     return 0;
 }

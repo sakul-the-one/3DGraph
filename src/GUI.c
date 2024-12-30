@@ -2,9 +2,10 @@
 #include <sys/timers.h>
 #include <ti/getcsc.h>
 #include <ti/tokens.h>
-#include <fileioc.h>
 #include <graphx.h>
 #include "D3Handler.h"
+#include "GUInput.h"
+#include "StaticData.h"
 
 void InitGUI(bool * exitVar, uint16_t * doesFunctionExsistPtr) 
 {
@@ -75,6 +76,49 @@ bool MainFirst() //Turn specific equasion off. There is btw. a Bug when you pres
 }
 bool MainSecond() //Setting - like Word Position or Details...
 {
+    float * data = GetDataArray();
+    ResetScreen();
+    RenderButtons("Exit", "", "", "", "");
+    uint8_t CursorPos = 0;
+    char t[2] = {64, '\0'};
+    gfx_PrintStringXY(t, 120, 5);
+    while (true)
+    {
+        float value = -3.25f;
+        uint8_t key = os_GetCSC();   
+        switch (key) 
+        {
+            case sk_Yequ: return true;
+            case sk_Down: CursorPos++;break;
+            case sk_Up: CursorPos--;break;
+            case sk_Enter: value = *startInputFloat(); break;
+            case sk_Mode:
+            case sk_Del:
+            case sk_Clear: *exitPtr = false; return false;
+            /*case sk_Window: break;
+            case sk_Zoom: break;
+            case sk_Trace: break;
+            case sk_Graph: break;*/
+            default: continue;
+        } 
+        CursorPos %= 5;
+        if(value != -3.25f)
+        data[CursorPos] =value;
+        uint8_t betterY = 5 + CursorPos*11;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+        gfx_SetColor(gfx_white);
+        gfx_FillRectangle(0,5,130,120);
+        gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+        gfx_PrintStringXY(t, 120, betterY);
+        //I hope the compiler compiles that Y good (5 + _ * 11)
+        gfx_PrintStringXY("???", 10, 5);
+        gfx_PrintStringXY("World X", 10, 16);
+        gfx_PrintStringXY("World Y", 10, 27);
+        gfx_PrintStringXY("World Z", 10, 38);
+        gfx_PrintStringXY("Details", 10, 49);
+    }
     return true;
 }
 bool MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...

@@ -24,5 +24,5 @@ int _DLDCountUsed = 0;
 void D3R_AddLine(Vector3 pos1, Vector3 pos2, int8_t ccolor);
 void D3R_PreMallocLine(int times);
 void D3R_Clear();
-void D3R_Draw();
+void D3R_Draw(bool sortlines);
 #endif

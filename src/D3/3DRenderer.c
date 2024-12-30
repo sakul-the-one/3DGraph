@@ -137,7 +137,7 @@ void insertionSort(DrawDataLine arr[], int n) {
     }
 }
 
-void D3R_SortLines() 
+void D3R_SortLines(bool sortlines) 
 {
     Vector3 WorldRotation = D3G_GetWorldRotation();
     //Rotate
@@ -147,13 +147,14 @@ void D3R_SortLines()
         _DLD[i].pos2 = D3G_RotatePoint(_DLD[i].pos2, WorldRotation);
     }
     //Sort
-    insertionSort(_DLD, _DLDCount);
+    if(sortlines)
+        insertionSort(_DLD, _DLDCount);
     //quickSort(_DLD, _lowestLD, _DLDCount-1);
 }
 int8_t CurrentColour;
-void D3R_Draw() 
+void D3R_Draw(bool sortlines) 
 {  
-    D3R_SortLines();
+    D3R_SortLines(sortlines);
     //Debug
     //printf("%d + %d ", _DLDCount, _DLDCountUsed);
     for (int i = 0; i < _DLDCount; i++) 

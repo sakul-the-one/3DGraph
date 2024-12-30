@@ -120,7 +120,7 @@ void Redraw()
     DrawUI();
     RenderButtons("Y=","Settings","Redraw","Calc","Exit");
     DrawFunc();
-    D3R_Draw();
+    D3R_Draw(FunctionsTrue >= 1 ? false: true);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_white);
