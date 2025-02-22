@@ -7,17 +7,20 @@
 #include "GUInput.h"
 #include "StaticData.h"
 
+int8_t FR = 0b11; //First Return
 void InitGUI(bool * exitVar, uint16_t * doesFunctionExsistPtr) 
 {
     exitPtr = exitVar;
     DoesFunctionExsistPtr = doesFunctionExsistPtr;
+    FR = 0b11;
 }
-bool MainFirst();
-bool MainSecond(); 
-bool MainThird();
-bool MainFourth();
-bool MainFive();
-bool Input(uint8_t key) 
+uint8_t MainFirst();
+uint8_t MainSecond(); 
+uint8_t MainThird();
+uint8_t MainFourth();
+uint8_t MainFive();
+
+uint8_t Input(uint8_t key) 
 {
     switch (key) 
     {
@@ -26,9 +29,10 @@ bool Input(uint8_t key)
         case sk_Zoom: return MainThird();
         case sk_Trace: return MainFourth();
         case sk_Graph: return MainFive();
-        default: return false;
+        //default: return FR;
     }
-    return true;
+    if(FR != 0b00) { FR = 0b00; return 0b11;}
+    return 0b00;
 }
 void ResetScreen() 
 {
@@ -38,9 +42,10 @@ void ResetScreen()
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
 }
+void ResetArea();
 void DrawEqu(int y);
-
-bool MainFirst() //Turn specific equasion off. There is btw. a Bug when you press to much the Up_key, it will land at 5 instead of 0. Fixing this would take to much bytes imo and it is not neccessary...
+void PrintSettings();
+uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you press to much the Up_key, it will land at 5 instead of 0. Fixing this would take to much bytes imo and it is not neccessary...
 {
 //Shower
 //U need too btw ;)
@@ -55,7 +60,7 @@ bool MainFirst() //Turn specific equasion off. There is btw. a Bug when you pres
         uint8_t key = os_GetCSC();   
         switch (key) 
         {
-            case sk_Yequ: return true;
+            case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
             case sk_Enter: *DoesFunctionExsistPtr = toggle_bit(*DoesFunctionExsistPtr, CursorPos); break;
@@ -74,7 +79,7 @@ bool MainFirst() //Turn specific equasion off. There is btw. a Bug when you pres
         gfx_PrintStringXY(t, 120, betterY);
     }
 }
-bool MainSecond() //Setting - like Word Position or Details...
+uint8_t MainSecond() //Setting - like Word Position or Details...
 {
     float * data = GetDataArray();
     ResetScreen();
@@ -82,13 +87,14 @@ bool MainSecond() //Setting - like Word Position or Details...
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
     gfx_PrintStringXY(t, 120, 5);
+    PrintSettings();
     while (true)
     {
         float value = -3.25f;
         uint8_t key = os_GetCSC();   
         switch (key) 
         {
-            case sk_Yequ: return true;
+            case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
             case sk_Enter: value = *startInputFloat(); break;
@@ -103,38 +109,28 @@ bool MainSecond() //Setting - like Word Position or Details...
         } 
         CursorPos %= 5;
         if(value != -3.25f)
-        data[CursorPos] =value;
+        data[CursorPos] = value;
         uint8_t betterY = 5 + CursorPos*11;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-W#pragma-messages"
-        gfx_SetColor(gfx_white);
-        gfx_FillRectangle(0,5,130,120);
-        gfx_SetColor(gfx_black);
-#pragma GCC diagnostic pop
         gfx_PrintStringXY(t, 120, betterY);
-        //I hope the compiler compiles that Y good (5 + _ * 11)
-        gfx_PrintStringXY("???", 10, 5);
-        gfx_PrintStringXY("World X", 10, 16);
-        gfx_PrintStringXY("World Y", 10, 27);
-        gfx_PrintStringXY("World Z", 10, 38);
-        gfx_PrintStringXY("Details", 10, 49);
+        //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
+        PrintSettings();
     }
-    return true;
+    return 0b11;
 }
-bool MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...
+uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...
 {
-    return true;
+    return 0b10;
 }
-bool MainFourth() // Calc - To get the Z point f.e. or to find zero
+uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
 {
-    return true;
+    return 0b10;
 }
-bool MainFive() 
+uint8_t MainFive() 
 { //Exit
     *exitPtr = false;
-    return false;
+    return 0b00;
 }
-void DrawEqu(int y) 
+void ResetArea() 
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
@@ -142,6 +138,10 @@ void DrawEqu(int y)
     gfx_FillRectangle(0,5,130,120);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
+}
+void DrawEqu(int y) 
+{
+    ResetArea();
     for(int i = 0; i<10; i++) 
     {
         /*equ_t *equation;
@@ -168,6 +168,15 @@ void DrawEqu(int y)
         gfx_SetTextXY(18, betterY);
         gfx_PrintInt(i, 1);
     }
+}
+void PrintSettings() 
+{
+    ResetArea();
+    gfx_PrintStringXY("???", 10, 5);
+    gfx_PrintStringXY("World X", 10, 16);
+    gfx_PrintStringXY("World Y", 10, 27);
+    gfx_PrintStringXY("World Z", 10, 38);
+    gfx_PrintStringXY("Details", 10, 49);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {

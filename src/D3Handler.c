@@ -35,7 +35,7 @@ void Init()
 }
 int FunctionsTrue = 10;
 
-void DrawFunc() {
+void CalcFunc() {
     float max = 10;
     float min = -10;
     float Pmin = min * -1;
@@ -109,18 +109,29 @@ float evaluateEquation(int_fast8_t which) {
     }
 }
 
-void Redraw() 
+void Redraw(bool redraw) //When it is true, it should be "normal"
 {
+    //Reset Screens (Ik, this block is ugly as fuck)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_FillScreen(gfx_white);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
-    gfx_PrintStringXY("Calculating Next frame..",1,1);
-    DrawUI();
+
+    //bool SortLines = FunctionsTrue >= 1 ? false: true; //(6523 bytes)
+    bool SortLines = !(FunctionsTrue >= 1); //(Also 6523 bytes... So it makes no difference... fuck?)
+    
+    if (redraw) 
+    {
+        D3R_Clear();
+        DrawUI(redraw);
+        RenderButtons("Y=","Settings","Redraw","Calc","Exit");
+        gfx_PrintStringXY("Calculating Next frame..",1,1);
+        CalcFunc();
+    }
+    DrawUI(redraw);
     RenderButtons("Y=","Settings","Redraw","Calc","Exit");
-    DrawFunc();
-    D3R_Draw(FunctionsTrue >= 1 ? false: true);
+    D3R_Draw(SortLines);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_white);
@@ -131,7 +142,7 @@ void Redraw()
     //D3R_Clear();
 }
 
-void DrawUI() 
+void DrawUI(bool redraw) //When it is true, it should be "normal"
 {
     //Horizontal Line is btw faster
     //Draw Square:
@@ -149,6 +160,9 @@ void DrawUI()
     const Vector3 LEFT = {-100,0,0};
     const Vector3 FORWARD = {0,0,100};
     const Vector3 BACKWART = {0,0,-100};
+
+    if(!redraw) return; //So if it isnt normal, it should not try to PreMalloc!
+
     D3R_PreMallocLine(3);
     D3R_AddLine(TOP, DOWN, 0);
     D3R_AddLine(RIGHT, LEFT, 0);

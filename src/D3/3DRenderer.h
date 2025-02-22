@@ -12,6 +12,7 @@ typedef struct
 } DrawDataLine; 
 //We dont need for Point, since it is just a Vector 2
 bool D3G_SSD = false; //SaveScreenData
+bool Rotated = false;
 
 DrawDataLine * _DLD;//DrawLineData
 //Vector3 * _DPD; //DrawPointData

@@ -90,6 +90,8 @@ void D3R_Clear() { //Clears everything used
     if(_DLD == NULL) return;
     free(_DLD);
     _DLD = NULL;
+
+    Rotated = false;
 }
 
 void swap(DrawDataLine* a, DrawDataLine* b) {
@@ -139,6 +141,7 @@ void insertionSort(DrawDataLine arr[], int n) {
 
 void D3R_SortLines(bool sortlines) 
 {
+    if(Rotated) return;
     Vector3 WorldRotation = D3G_GetWorldRotation();
     //Rotate
     for (int i = 0; i < _DLDCount; i++) 
@@ -149,11 +152,12 @@ void D3R_SortLines(bool sortlines)
     //Sort
     if(sortlines)
         insertionSort(_DLD, _DLDCount);
+    Rotated = true;
     //quickSort(_DLD, _lowestLD, _DLDCount-1);
 }
 int8_t CurrentColour;
 void D3R_Draw(bool sortlines) 
-{  
+{    
     D3R_SortLines(sortlines);
     //Debug
     //printf("%d + %d ", _DLDCount, _DLDCountUsed);
@@ -179,5 +183,4 @@ void D3R_Draw(bool sortlines)
         }
         D3G_DrawLineUnRotated(_DLD[i].pos1, _DLD[i].pos2);
     }
-    D3R_Clear();
 }
