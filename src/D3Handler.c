@@ -4,13 +4,17 @@
 #include "D3/3DRenderer.h"
 #include "GUI.h"
 
+#pragma region Vars
+int FunctionsTrue = 10;
+#pragma endregion
+
+#pragma region BitOperations
 // Function to toggle a specific bit
 uint16_t toggle_bit(uint16_t byte, int bit_position) {
     // XOR the value with a mask where only the target bit is set
     byte ^= (1 << bit_position);
     return byte;
 }
-
 // Function to check if a specific bit is set
 bool is_bit_set(uint16_t value, int bit_position) {
     // AND the value with a mask where only the target bit is set
@@ -28,12 +32,16 @@ void toggleFunction(uint8_t function)
 {
     FuntionExsists ^= (1 << function);
 }
+#pragma endregion
+
 void Init() 
 {
     D3G_Init();
     R3G_SetBorder(border, ExtraBorder);
+    FunctionsTrue = 10;
+    for (int i = 0; i < 10; i++)
+        evaluateEquation(i);
 }
-int FunctionsTrue = 10;
 
 void CalcFunc() {
     float max = 10;

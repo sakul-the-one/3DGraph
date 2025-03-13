@@ -21,6 +21,7 @@ int main()
     bool exit = true;
     int8_t needToRedraw = 0b11;
     InitGUI(&exit, GetFunctionExsistsPointer());
+    Input(sk_Yequ);
     while (exit)
     {
       uint8_t key = os_GetCSC(); //I think GetKey is more Battary efficient :), But this would mean I need to research it, so fuck this. os_GetKey();
