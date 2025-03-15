@@ -79,6 +79,69 @@ Vector3 D3G_GetWorldPosition()
 {
     return WorldPosition;
 }
+
+void D3G_DrawRotationCube(Vector2 pos) 
+{
+    //D3G_Redraw();
+    Vector3 vertices[12]; //D3G_RotatePoint(pos1, WorldRotation);
+     // Front face vertices
+    vertices[0].x = + 10; vertices[0].y = + 10; vertices[0].z = + 10;  // Top right front
+    vertices[1].x = - 10; vertices[1].y = + 10; vertices[1].z = + 10;  // Top left front
+    vertices[2].x = - 10; vertices[2].y = - 10; vertices[2].z = + 10;  // Bottom left front
+    vertices[3].x = + 10; vertices[3].y = - 10; vertices[3].z = + 10;  // Bottom right front
+
+    // Back face vertices
+    vertices[4].x = + 10; vertices[4].y = + 10; vertices[4].z = - 10;  // Top right back
+    vertices[5].x = - 10; vertices[5].y = + 10; vertices[5].z = - 10;  // Top left back
+    vertices[6].x = - 10; vertices[6].y = - 10; vertices[6].z = - 10;  // Bottom left back
+    vertices[7].x = + 10; vertices[7].y = - 10; vertices[7].z = - 10;  // Bottom right back
+    //Red Center
+    vertices[8].x = 0; vertices[8].y = + 5; vertices[8].z = -10; //TOP
+    vertices[9].x = 0; vertices[9].y = - 5; vertices[9].z = -10; //Buttom
+    vertices[10].x = 5; vertices[10].y = - 0; vertices[10].z = -10; //Right
+    vertices[11].x = -5; vertices[11].y = - 0; vertices[11].z = -10; //Left
+    //Rotate them to World Rotation:
+    for (int i = 0; i < 12; i++)
+        vertices[i] = D3G_RotatePoint(vertices[i], WorldRotation);
+    //Project Them
+    Vector2 projected[12];
+    for (int i = 0; i < 12; i++)
+    {
+        projected[i] = project(vertices[i]);
+        projected[i].x += pos.x;
+        projected[i].y += pos.y;
+    }
+    //Draw them
+    //Front Face
+    gfx_Line(projected[0].x,projected[0].y, projected[1].x, projected[1].y);
+    gfx_Line(projected[1].x,projected[1].y, projected[2].x, projected[2].y);
+    gfx_Line(projected[2].x,projected[2].y, projected[3].x, projected[3].y);
+    gfx_Line(projected[3].x,projected[3].y, projected[0].x, projected[0].y);
+    //Back Face
+    gfx_Line(projected[4].x,projected[4].y, projected[5].x, projected[5].y);
+    gfx_Line(projected[5].x,projected[5].y, projected[6].x, projected[6].y);
+    gfx_Line(projected[6].x,projected[6].y, projected[7].x, projected[7].y);
+    gfx_Line(projected[7].x,projected[7].y, projected[4].x, projected[4].y);
+    //Connecting edges
+    gfx_Line(projected[0].x,projected[0].y, projected[4].x, projected[4].y);
+    gfx_Line(projected[1].x,projected[1].y, projected[5].x, projected[5].y);
+    gfx_Line(projected[2].x,projected[2].y, projected[6].x, projected[6].y);
+    gfx_Line(projected[3].x,projected[3].y, projected[7].x, projected[7].y);
+    //Red Square
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_red);
+#pragma GCC diagnostic pop
+    gfx_Line(projected[8].x,projected[8].y, projected[10].x, projected[10].y);
+    gfx_Line(projected[10].x,projected[10].y, projected[9].x, projected[9].y);
+    gfx_Line(projected[9].x,projected[9].y, projected[11].x, projected[11].y);
+    gfx_Line(projected[11].x,projected[11].y, projected[8].x, projected[8].y);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+}
+
 void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation) 
 {
     //D3G_Redraw();

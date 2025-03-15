@@ -125,7 +125,6 @@ void Redraw(bool redraw) //When it is true, it should be "normal"
     gfx_FillScreen(gfx_white);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
-
     //bool SortLines = FunctionsTrue >= 1 ? false: true; //(6523 bytes)
     bool SortLines = !(FunctionsTrue >= 1); //(Also 6523 bytes... So it makes no difference... fuck?)
     
@@ -175,4 +174,6 @@ void DrawUI(bool redraw) //When it is true, it should be "normal"
     D3R_AddLine(TOP, DOWN, 0);
     D3R_AddLine(RIGHT, LEFT, 0);
     D3R_AddLine(FORWARD, BACKWART, 0);
+
+    D3G_DrawRotationCube((Vector2){140,-105});
 }

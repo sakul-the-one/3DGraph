@@ -34,6 +34,8 @@ Vector3 D3G_GetWorldRotation();
 void D3G_SetWorldPosition(Vector3 NewPosition);
 Vector3 D3G_GetWorldPosition();
 
+void D3G_DrawRotationCube(Vector2 pos);
+
 /** 
 * @brief Initiates the libary
 */
