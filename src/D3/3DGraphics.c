@@ -7,6 +7,10 @@
 #include <debug.h>
 #define HAS_PRINTF = true;
 
+#define Xmin 30
+#define Xmax 290
+#define Ymin 30
+#define Ymax 190
 
 float minMax(float min, float value, float max) 
 {
@@ -269,7 +273,7 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
     if (RotatedPos2.z < -fov) RotatedPos2.z = -fov;
     Vector2 Point1 = project(RotatedPos1);
     Vector2 Point2 = project(RotatedPos2);
-    D3G_Borders(&Point1, &Point2);
+    D3G_ClipLine(&Point1, &Point2);
     gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
 }
 void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2) 
@@ -279,50 +283,62 @@ void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2)
     if (pos2.z < -fov) pos2.z = -fov;
     Vector2 Point1 = project(pos1);
     Vector2 Point2 = project(pos2);
-    D3G_Borders(&Point1, &Point2);
+    D3G_ClipLine(&Point1, &Point2);
     gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
 }
 
-void D3G_Borders(Vector2 *pos1, Vector2 * pos2) 
-{
-    #pragma region Explaination
-    /*
-    * Maybe I will explain it later, but similar to Vector2 project(Vector3 point)
-    * Fuck Comments! Look at \Examples\AdavancedTriMath.png to understand it
-    * 190 = (240 - R3G_ExtraBorder - R3G_border) Lets be real, it will stay like this
-    * Change it, if reusing!
-    */
-    #pragma endregion
-    if ((*pos2).y < (*pos1).y) // POS 2 is the buttom Positions and needs to be smaller
-    {
-        Vector2 * PlaceHolder = malloc(sizeof(Vector2));
-        *PlaceHolder = *pos1;
-        *pos1 = *pos2;
-        *pos2 = *pos1;
-        free(PlaceHolder);
-    }
-        //Checking if we even need to BorderCalc; True if it needs to be calculated
-    bool Bpos1 = (*pos1).y < 30;
-    bool Bpos2 = (*pos2).y > 190;
-    if(!Bpos1 && !Bpos2) return;
-    //For the first Pos
-    Vector2 NewPos1 = *pos1;
-    if(Bpos1) 
-    {
-
-    }
-    //For the Second Pos
-    if(Bpos2) 
-    {
-        int Dx = (*pos2).x - (*pos1).x;
-        int Dy = (*pos2).y - (*pos1).y;
-        int Vy = (*pos2).y - 190;
-        int Vx = (Dx * Vy) / Dy;
-        *pos2 = (Vector2){(*pos2).x - Vx, (*pos2).y - Vy};
-    }
-    *pos1 = NewPos1;
+int computeRegionCode(Vector2 point) {
+    int code = 0;
+    if (point.x < Xmin) code |= 1; // Left
+    if (point.x > Xmax) code |= 2; // Right
+    if (point.y < Ymin) code |= 4; // Top
+    if (point.y > Ymax) code |= 8; // Bottom
+    return code;
 }
 
+void D3G_ClipLine(Vector2 *pos1, Vector2 *pos2) {
+    //ChatGPT actually knows what it is doing here...
+    int code1 = computeRegionCode(*pos1);
+    int code2 = computeRegionCode(*pos2);
+
+    while (1) {
+        if (!(code1 | code2)) {
+            // Both endpoints are inside the rectangle
+            break;
+        } else if (code1 & code2) {
+            // Both endpoints are outside the rectangle in the same region
+            pos1->x = pos2->x = -1; // Reject the line (optional)
+            pos1->y = pos2->y = -1; // Reject the line (optional)
+            break;
+        } else {
+            // Clip the line
+            int codeOut = code1 ? code1 : code2;
+            Vector2 newPos;
+
+            if (codeOut & 8) { // Bottom
+                newPos.x = pos1->x + (pos2->x - pos1->x) * (Ymax - pos1->y) / (pos2->y - pos1->y);
+                newPos.y = Ymax;
+            } else if (codeOut & 4) { // Top
+                newPos.x = pos1->x + (pos2->x - pos1->x) * (Ymin - pos1->y) / (pos2->y - pos1->y);
+                newPos.y = Ymin;
+            } else if (codeOut & 2) { // Right
+                newPos.y = pos1->y + (pos2->y - pos1->y) * (Xmax - pos1->x) / (pos2->x - pos1->x);
+                newPos.x = Xmax;
+            } else if (codeOut & 1) { // Left
+                newPos.y = pos1->y + (pos2->y - pos1->y) * (Xmin - pos1->x) / (pos2->x - pos1->x);
+                newPos.x = Xmin;
+            }
+
+            if (codeOut == code1) {
+                *pos1 = newPos;
+                code1 = computeRegionCode(*pos1);
+            } else {
+                *pos2 = newPos;
+                code2 = computeRegionCode(*pos2);
+            }
+        }
+    }
+}
 void R3G_SetBorder(int _border,int _ExtraBorder) 
 {
     R3G_border = _border;

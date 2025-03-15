@@ -6,7 +6,7 @@
 #include "GUI.h"
 #include "StaticData.h"
 
-
+//int DebugMain();
 int main() 
 {
   /*for (int i = 0; i<= 255; i++) 
@@ -21,6 +21,7 @@ int main()
     bool exit = true;
     int8_t needToRedraw = 0b11;
     InitGUI(&exit, GetFunctionExsistsPointer());
+    //DebugMain();
     Input(sk_Yequ);
     while (exit)
     {
@@ -49,3 +50,41 @@ int main()
     CloseData();
     return 0;
 }
+
+#pragma region Debugs
+void DebugLines(Vector2 pos1, Vector2 pos2);
+
+int DebugMain() 
+{ 
+  DrawUI(true);
+  DebugLines((Vector2){60,10}, (Vector2){80,35});
+  DebugLines((Vector2){200,200}, (Vector2){170,180});
+  DebugLines((Vector2){90,10}, (Vector2){70,50});
+  DebugLines((Vector2){170,200}, (Vector2){200,180});
+  DebugLines((Vector2){170,190}, (Vector2){200,180});
+  DebugLines((Vector2){170,10}, (Vector2){200,190});
+  DebugLines((Vector2){60,10}, (Vector2){200,200});
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+  gfx_FillScreen(gfx_white);
+  gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+  return 0;
+}
+void DebugLines(Vector2 pos1, Vector2 pos2) 
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+gfx_Line(pos1.x, pos1.y, pos2.x, pos2.y);
+  os_GetKey();
+  D3G_ClipLine(&pos1, &pos2);
+  #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+  gfx_SetColor(gfx_red);
+#pragma GCC diagnostic pop
+  gfx_Line(pos1.x, pos1.y, pos2.x, pos2.y);
+  os_GetKey();
+}
+#pragma endregion
