@@ -60,6 +60,7 @@ void D3G_DrawPoint(Vector3 pos);
 void D3G_DrawLine(Vector3 pos1,  Vector3 pos2);
 void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2);
 
+void D3G_Borders(Vector2 *pos1, Vector2 * pos2);
 /** 
  * @brief Dereferences the position
  *

@@ -120,6 +120,7 @@ Vector3 RotateY(Vector3 point, float angle);
 Vector3 RotateZ(Vector3 point, float angle);
 
 Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
+    #pragma region Explaination
     /*
     * rotation Matrixes:
     *      [1        0        0     ]
@@ -151,7 +152,7 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     * Ram (that we also don't have). So in order to work carefully with the Resources we have,
     * I will put everthing basicly in one line and check if we need even to calculate all of it.
     */
-
+    #pragma endregion
     //Decleres return Variable
     Vector3 NP = point;
     //Check for every Rotation and if it Rotates, then apply Rotation, just as explained before
@@ -164,11 +165,14 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
 //Explaination: we mathematically exclude the multiplication, so that we just have to do it one time. 
 Vector3 RotateX(Vector3 point, float angle) 
 {
+    #pragma region Explaination
     /*
     *      [1        0        0     ]
     * RX = [0 cos(angle) -sin(angle)]
     *      [0 sin(angle)  cos(angle)]
     */
+   #pragma endregion
+
     float sinX = sin(angle*DegreeToRadian); float cosX = cos(angle*DegreeToRadian);
     return (Vector3)
     {
@@ -179,11 +183,14 @@ Vector3 RotateX(Vector3 point, float angle)
 }
 Vector3 RotateY(Vector3 point, float angle) 
 {
+    #pragma region Explaination
     /*
     *      [cos(angle)  0 sin(angle)]
     * RY = [0           1     0     ]
     *      [-sin(angle) 0 cos(angle)]
     */
+   #pragma endregion
+
     float sinY = sin(angle*DegreeToRadian); float cosY = cos(angle*DegreeToRadian);
     return (Vector3)
     { 
@@ -194,11 +201,14 @@ Vector3 RotateY(Vector3 point, float angle)
 }
 Vector3 RotateZ(Vector3 point, float angle) 
 {
+    #pragma region Explaination
     /*
     *      [cos(angle) -sin(angle) 0]
     * RZ = [sin(angle) cos(angle)  0]
     *      [0           0          1]
     */
+   #pragma endregion
+
     float sinZ = sin(angle*DegreeToRadian); float cosZ = cos(angle*DegreeToRadian); 
     return (Vector3)
     {
@@ -259,10 +269,7 @@ void D3G_DrawLine(Vector3 pos1, Vector3 pos2)
     if (RotatedPos2.z < -fov) RotatedPos2.z = -fov;
     Vector2 Point1 = project(RotatedPos1);
     Vector2 Point2 = project(RotatedPos2);
-    Point1.x = minMax(R3G_border, Point1.x, 320 - R3G_border);
-    Point2.x = minMax(R3G_border, Point2.x, 320 - R3G_border);
-    Point1.y = minMax(R3G_border, Point1.y, 240 - R3G_border - R3G_ExtraBorder);
-    Point2.y = minMax(R3G_border, Point2.y, 240 - R3G_border - R3G_ExtraBorder);
+    D3G_Borders(&Point1, &Point2);
     gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
 }
 void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2) 
@@ -272,11 +279,48 @@ void D3G_DrawLineUnRotated(Vector3 pos1, Vector3 pos2)
     if (pos2.z < -fov) pos2.z = -fov;
     Vector2 Point1 = project(pos1);
     Vector2 Point2 = project(pos2);
-    Point1.x = minMax(R3G_border, Point1.x, 320 - R3G_border);
-    Point2.x = minMax(R3G_border, Point2.x, 320 - R3G_border);
-    Point1.y = minMax(R3G_border, Point1.y, 240 - R3G_border - R3G_ExtraBorder);
-    Point2.y = minMax(R3G_border, Point2.y, 240 - R3G_border - R3G_ExtraBorder);
+    D3G_Borders(&Point1, &Point2);
     gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
+}
+
+void D3G_Borders(Vector2 *pos1, Vector2 * pos2) 
+{
+    #pragma region Explaination
+    /*
+    * Maybe I will explain it later, but similar to Vector2 project(Vector3 point)
+    * Fuck Comments! Look at \Examples\AdavancedTriMath.png to understand it
+    * 190 = (240 - R3G_ExtraBorder - R3G_border) Lets be real, it will stay like this
+    * Change it, if reusing!
+    */
+    #pragma endregion
+    if ((*pos2).y < (*pos1).y) // POS 2 is the buttom Positions and needs to be smaller
+    {
+        Vector2 * PlaceHolder = malloc(sizeof(Vector2));
+        *PlaceHolder = *pos1;
+        *pos1 = *pos2;
+        *pos2 = *pos1;
+        free(PlaceHolder);
+    }
+        //Checking if we even need to BorderCalc; True if it needs to be calculated
+    bool Bpos1 = (*pos1).y < 30;
+    bool Bpos2 = (*pos2).y > 190;
+    if(!Bpos1 && !Bpos2) return;
+    //For the first Pos
+    Vector2 NewPos1 = *pos1;
+    if(Bpos1) 
+    {
+
+    }
+    //For the Second Pos
+    if(Bpos2) 
+    {
+        int Dx = (*pos2).x - (*pos1).x;
+        int Dy = (*pos2).y - (*pos1).y;
+        int Vy = (*pos2).y - 190;
+        int Vx = (Dx * Vy) / Dy;
+        *pos2 = (Vector2){(*pos2).x - Vx, (*pos2).y - Vy};
+    }
+    *pos1 = NewPos1;
 }
 
 void R3G_SetBorder(int _border,int _ExtraBorder) 
@@ -301,11 +345,15 @@ void D3G_Destroy()
     * 2. No one will try to hack this and no one will be able to hack this, except the User
     * So if someone wants to save some Calculator Ram, delete these two lines: 
     */
+   //Uhhhh, where is the other line? Can I file a report?
 }
 
-Vector2 project(Vector3 point) {
+Vector2 project(Vector3 point) 
+{
 
     Vector2 screenPoint = {((point.x*fov)/(point.z+fov))+160, ((point.y*fov)/(point.z+fov))+120};
+
+    #pragma region Explaination
     /*
     * The equation in a Nutshell (Works for X and Y the same):
     *
@@ -325,5 +373,7 @@ Vector2 project(Vector3 point) {
     *              \|
     * 
     */
+   #pragma endregion
+
     return screenPoint;
 }
