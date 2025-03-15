@@ -4,7 +4,7 @@
 #include <ti/tokens.h>
 #include <graphx.h>
 #include "D3Handler.h"
-#include "GUInput.h"
+#include "GUI/GUInput.h"
 #include "StaticData.h"
 
 int8_t FR = 0b11; //First Return
