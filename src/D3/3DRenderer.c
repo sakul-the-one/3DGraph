@@ -73,6 +73,7 @@ void D3R_AddLine(Vector3 pos1, Vector3 pos2, int8_t ccolor)
         _DLDCount--;
         _DLDCountUsed--;
         _DLD = Backup;
+        gfx_PrintStringXY("Error Mallocing",10,20);
         return;
     }
     //Copies old Data from Backup

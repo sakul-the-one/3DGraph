@@ -20,10 +20,7 @@ typedef struct
 } Vector2;
 
 float fov = 90.0f;
-int R3G_border= 0;
-int R3G_ExtraBorder = 0;
 Vector3 WorldRotation = {0,0,0};
-Vector3 WorldPosition = {0,0,0};
 //float aspectRatio = 320.0f / 240.0f;
 //float near = 0.1f;
 //float far = 100.0f;
@@ -31,8 +28,6 @@ Vector3 WorldPosition = {0,0,0};
 void D3G_SetWorldRotation(Vector3 NewRotation);
 void D3G_AddWorldRotation(Vector3 NewRotation);
 Vector3 D3G_GetWorldRotation();
-void D3G_SetWorldPosition(Vector3 NewPosition);
-Vector3 D3G_GetWorldPosition();
 
 void D3G_DrawRotationCube(Vector2 pos);
 

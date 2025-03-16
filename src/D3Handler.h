@@ -1,10 +1,8 @@
 #ifndef D3HANDLER_H
 #define D3HANDLER_H
 #include <graphx.h>
-
-
-int border = 30;
-int ExtraBorder = 20; //For buttons
+#define border 30
+#define ExtraBorder 20
 
 uint16_t FuntionExsists = 0b0000001111111111; 
 uint16_t * GetFunctionExsistsPointer();

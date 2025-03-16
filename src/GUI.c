@@ -44,7 +44,8 @@ void ResetScreen()
 }
 void ResetArea();
 void DrawEqu(int y);
-void PrintSettings();
+void PrintSettings(float * data);
+
 uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you press to much the Up_key, it will land at 5 instead of 0. Fixing this would take to much bytes imo and it is not neccessary...
 {
 //Shower
@@ -86,18 +87,19 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
     RenderButtons("Exit", "", "", "", "");
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
+    PrintSettings(data);
     gfx_PrintStringXY(t, 120, 5);
-    PrintSettings();
+    uint8_t betterY = 5 + CursorPos*11;
     while (true)
     {
         float value = -3.25f;
-        uint8_t key = os_GetCSC();   
+        uint8_t key = os_GetCSC();  
         switch (key) 
         {
             case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
-            case sk_Enter: value = *startInputFloat(); break;
+            case sk_Enter: PrintSettings(data);value = *startInputFloat((Vector2){100, betterY}); break;
             case sk_Mode:
             case sk_Del:
             case sk_Clear: *exitPtr = false; return false;
@@ -109,11 +111,12 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
         } 
         CursorPos %= 5;
         if(value != -3.25f)
-        data[CursorPos] = value;
-        uint8_t betterY = 5 + CursorPos*11;
-        gfx_PrintStringXY(t, 120, betterY);
+            data[CursorPos] = value;
+        betterY = 5 + CursorPos*11; 
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
-        PrintSettings();
+        //Confused Hungo Bungos with the Comment above this one
+        PrintSettings(data);
+        gfx_PrintStringXY(t, 120, betterY);
     }
     return 0b11;
 }
@@ -169,14 +172,14 @@ void DrawEqu(int y)
         gfx_PrintInt(i, 1);
     }
 }
-void PrintSettings() 
+void PrintSettings(float * data) 
 {
     ResetArea();
-    gfx_PrintStringXY("???", 10, 5);
-    gfx_PrintStringXY("World X", 10, 16);
-    gfx_PrintStringXY("World Y", 10, 27);
-    gfx_PrintStringXY("World Z", 10, 38);
-    gfx_PrintStringXY("Details", 10, 49);
+    gfx_PrintStringXY("I forgot  ", 10, 5); gfx_PrintInt(data[0], 1);
+    gfx_PrintStringXY("World X  ", 10, 16);gfx_PrintInt(data[1], 1);
+    gfx_PrintStringXY("World Y  ", 10, 27);gfx_PrintInt(data[2], 1);
+    gfx_PrintStringXY("World Z  ", 10, 38);gfx_PrintInt(data[3], 1);
+    gfx_PrintStringXY("Details  ", 10, 49);gfx_PrintInt(data[4], 1);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {

@@ -63,21 +63,10 @@ Vector3 D3G_GetWorldRotation()
 {
     return WorldRotation;
 }
-void D3G_SetWorldPosition(Vector3 NewPosition) 
-{
-    WorldPosition  = NewPosition;
-}
+
 void D3G_AddWorldRotation(Vector3 NewRotation) 
 {
     WorldRotation  = (Vector3){WorldRotation.x + NewRotation.x, WorldRotation.y + NewRotation.y, WorldRotation.z + NewRotation.z};
-}
-void D3G_AddWorldPosition(Vector3 NewPosition) 
-{
-    WorldPosition  = (Vector3){WorldPosition.x + NewPosition.x, WorldPosition.y + NewPosition.y, WorldPosition.z + NewPosition.z};
-}
-Vector3 D3G_GetWorldPosition() 
-{
-    return WorldPosition;
 }
 
 void D3G_DrawRotationCube(Vector2 pos) 
@@ -402,11 +391,7 @@ void D3G_ClipLine(Vector2 *pos1, Vector2 *pos2) {
         }
     }
 }
-void R3G_SetBorder(int _border,int _ExtraBorder) 
-{
-    R3G_border = _border;
-    R3G_ExtraBorder = _ExtraBorder;
-}
+
 void D3G_Redraw() 
 {
 #pragma GCC diagnostic push

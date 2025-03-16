@@ -3,12 +3,7 @@
 
 void MoveToTheRight(char * str, uint8_t pos, uint8_t max);
 
-void SetPos(Vector2 pos) 
-{
-    position = pos;
-}
-
-float * startInputFloat() 
+float * startInputFloat(Vector2 position) 
 {
     if(startedInput) return NULL;
     startedInput = true;

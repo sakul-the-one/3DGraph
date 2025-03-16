@@ -3,6 +3,7 @@
 #include "D3/3DGraphics.h"
 #include "D3/3DRenderer.h"
 #include "GUI.h"
+#include "StaticData.h"
 
 #pragma region Vars
 int FunctionsTrue = 10;
@@ -37,13 +38,18 @@ void toggleFunction(uint8_t function)
 void Init() 
 {
     D3G_Init();
-    R3G_SetBorder(border, ExtraBorder);
     FunctionsTrue = 10;
     for (int i = 0; i < 10; i++)
         evaluateEquation(i);
 }
 
 void CalcFunc() {
+    float * Data = GetDataArray();
+    if (Data[4] == 0) 
+    {
+        Data[4] = 1;
+        SetDataArray(Data);
+    }
     float max = 10;
     float min = -10;
     float Pmin = min * -1;
@@ -52,21 +58,24 @@ void CalcFunc() {
         evaluateEquation(i);
     if (FunctionsTrue == 0) return;
 
-    D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue));
-    for (float x = min; x < max; x++) {
+    D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue * Data[4]));
+    for (float x = min+Data[1]; x < max+Data[1]; x += (1/Data[4])) 
+    {
         real_t RealX = os_FloatToReal(x);
         os_SetRealVar(OS_VAR_X, &RealX);
         float OldPoint[10] = {0}; 
-        for (float y = min; y < max; y++) {
+        for (float y = min+Data[2]; y < max+Data[2]; y += (1/Data[4]))
+        {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
-            for (int8_t i = 0; i < 10; i++) {   
+            for (int8_t i = 0; i < 10; i++) 
+            {   
                 if (!DoesFunctionExsist(i)) continue;
                 float zValue = evaluateEquation(i);
                 if (y != min) {
                     D3R_AddLine(
-                        (Vector3){(x - 1) * 10, (y - 1) * 10, OldPoint[i]}, 
-                        (Vector3){x * 10, y * 10, zValue * 10}, i
+                        (Vector3){(x - 1-Data[1]) * 10, (y - 1-Data[2]) * 10, (OldPoint[i]+Data[3])}, 
+                        (Vector3){(x-Data[1]) * 10, (y-Data[2]) * 10, (zValue+Data[3]) * 10}, i
                     );
                 }
                 OldPoint[i] = zValue * 10;
@@ -151,6 +160,7 @@ void Redraw(bool redraw) //When it is true, it should be "normal"
 
 void DrawUI(bool redraw) //When it is true, it should be "normal"
 {
+    float * Data = GetDataArray();
     //Horizontal Line is btw faster
     //Draw Square:
     //          x               y                           x              y
@@ -161,12 +171,12 @@ void DrawUI(bool redraw) //When it is true, it should be "normal"
     //gfx_Line(border,        240 -border -ExtraBorder,   320-border,    240-border-ExtraBorder); //DL-DR
     gfx_HorizLine(border,        240 -border -ExtraBorder, 320 - (2*border));
 
-    const Vector3 TOP = {0,100,0};
-    const Vector3 DOWN = {0,-100,0};
-    const Vector3 RIGHT = {100,0,0};
-    const Vector3 LEFT = {-100,0,0};
-    const Vector3 FORWARD = {0,0,100};
-    const Vector3 BACKWART = {0,0,-100};
+    const Vector3 TOP = {(Data[1] * 10),100 + (Data[2] * 10),(Data[3] * 10)};
+    const Vector3 DOWN = {(Data[1] * 10),-100+(Data[2] * 10),(Data[3] * 10)};
+    const Vector3 RIGHT = {100+(Data[1] * 10),(Data[2] * 10),(Data[3] * 10)};
+    const Vector3 LEFT = {-100+(Data[1] * 10),(Data[2] * 10),(Data[3] * 10)};
+    const Vector3 FORWARD = {(Data[1] * 10),(Data[2] * 10),100+(Data[3] * 10)};
+    const Vector3 BACKWART = {(Data[1] * 10),(Data[2] * 10),-100+(Data[3] * 10)};
 
     if(!redraw) return; //So if it isnt normal, it should not try to PreMalloc!
 
