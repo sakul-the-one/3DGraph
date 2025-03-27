@@ -392,7 +392,7 @@ int intToStr2(int x, char str[], int d)
 } 
  
 // Converts a floating-point/double number to a string. 
-void ftoa(float n, char* res, int afterpoint) 
+void ftoa(float n, char* res, int afterpoint) //Source https://www.geeksforgeeks.org/convert-floating-point-number-string/ btw.
 { 
     // Extract integer part 
     int ipart = (int)n; 
