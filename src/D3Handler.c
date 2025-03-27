@@ -5,6 +5,8 @@
 #include "GUI.h"
 #include "StaticData.h"
 
+#define  max 10.0f
+#define min -10.0f
 #pragma region Vars
 int FunctionsTrue = 10;
 #pragma endregion
@@ -50,21 +52,21 @@ void CalcFunc() {
         Data[4] = 1;
         SetDataArray(Data);
     }
-    float max = 10;
-    float min = -10;
     float Pmin = min * -1;
     FunctionsTrue = 10;
     for (int i = 0; i < 10; i++)
         evaluateEquation(i);
     if (FunctionsTrue == 0) return;
-
+    float xmin = min+Data[1], ymin =min+Data[2];
+    float xmax = max+Data[1], ymax = max+Data[2];
+    float step = 1/Data[4];
     D3R_PreMallocLine((int)(Pmin * max * FunctionsTrue * Data[4]));
-    for (float x = min+Data[1]; x < max+Data[1]; x += (1/Data[4])) 
+    for (float x = xmin; x < xmax; x += step) 
     {
         real_t RealX = os_FloatToReal(x);
         os_SetRealVar(OS_VAR_X, &RealX);
         float OldPoint[10] = {0}; 
-        for (float y = min+Data[2]; y < max+Data[2]; y += (1/Data[4]))
+        for (float y = ymin; y < ymax; y += step)
         {
             real_t RealY = os_FloatToReal(y);
             os_SetRealVar(OS_VAR_Y, &RealY);
@@ -72,10 +74,10 @@ void CalcFunc() {
             {   
                 if (!DoesFunctionExsist(i)) continue;
                 float zValue = evaluateEquation(i);
-                if (y != (min + Data[2])) {
+                if (y != ymin) {
                     D3R_AddLine(
-                        (Vector3){(x - 1-Data[1]) * 10, (y - 1-Data[2]) * 10, (OldPoint[i]+Data[3])}, 
-                        (Vector3){(x-Data[1]) * 10, (y-Data[2]) * 10, (zValue+Data[3]) * 10}, i
+                        (Vector3){(x - 1-Data[1]) * 10, (y - 1 - Data[2]) * 10, (OldPoint[i] + Data[3])}, 
+                        (Vector3){(x-Data[1]) * 10, (y-Data[2]) * 10, (zValue + Data[3]) * 10}, i
                     );
                 }
                 OldPoint[i] = zValue * 10;

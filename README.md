@@ -7,11 +7,13 @@ It uses a custom 3D libary, to display 3D graphs unto the TI84 CE-T Calculator
 
 ## Example of rendering a 3-Dimensional Graph
 ![Working Simulation of z=x](Examples/Working%20Simulation.png)
+###### Old Videos
 
 Example uses the Equasion of z = x, but you could use everything. X&Y are the changing variables, meaning everything else will be threathed as constans.
 
 ### Example with  sin(x) + cos(y):
 ![z=sin(x)+cos(y)](Examples/sin+cos.png)
+#- Old Videos
 
 It works with every Equasion, you could possible write in the normal inbuild Y Editor.
 

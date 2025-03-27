@@ -3,11 +3,11 @@
 # ----------------------------
 
 NAME = D3GRAPH
-DESCRIPTION = "It will be able to render 3D graphs"
+DESCRIPTION = "Renders 3D Graphs. V 1.0"
 COMPRESSED = YES
 COMPRESSED_MODE = zx0 #Default: zx7; zx0 is better tho
 ARCHIVED = YES
-#ICON = icon.png
+ICON = Icon.png
 CFLAGS = -Wall -Wextra -Oz #C
 CXXFLAGS = -Wall -Wextra -Oz #C++
 OUTPUT_MAP = YES #Default yes. To speed up compile, jsut turn it off

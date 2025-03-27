@@ -307,11 +307,11 @@ void PrintCalc()
 void PrintSettings(float * data) 
 {
     ResetArea();
-    gfx_PrintStringXY("I forgot  ", 10, 5); GFX_PrintFloat(data[0], 1);
-    gfx_PrintStringXY("World X  ", 10, 16);GFX_PrintFloat(data[1], 1);
-    gfx_PrintStringXY("World Y  ", 10, 27);GFX_PrintFloat(data[2], 1);
-    gfx_PrintStringXY("World Z  ", 10, 38);GFX_PrintFloat(data[3], 1);
-    gfx_PrintStringXY("Details  ", 10, 49);GFX_PrintFloat(data[4], 1);
+    gfx_PrintStringXY("I forgot  ", 10, 5); GFX_PrintFloat(data[0], 3);
+    gfx_PrintStringXY("World X  ", 10, 16);GFX_PrintFloat(data[1], 3);
+    gfx_PrintStringXY("World Y  ", 10, 27);GFX_PrintFloat(data[2], 3);
+    gfx_PrintStringXY("World Z  ", 10, 38);GFX_PrintFloat(data[3], 3);
+    gfx_PrintStringXY("Details  ", 10, 49);GFX_PrintFloat(data[4], 3);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {
