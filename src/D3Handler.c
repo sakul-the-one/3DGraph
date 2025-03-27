@@ -72,7 +72,7 @@ void CalcFunc() {
             {   
                 if (!DoesFunctionExsist(i)) continue;
                 float zValue = evaluateEquation(i);
-                if (y != min) {
+                if (y != (min + Data[2])) {
                     D3R_AddLine(
                         (Vector3){(x - 1-Data[1]) * 10, (y - 1-Data[2]) * 10, (OldPoint[i]+Data[3])}, 
                         (Vector3){(x-Data[1]) * 10, (y-Data[2]) * 10, (zValue+Data[3]) * 10}, i
@@ -141,12 +141,12 @@ void Redraw(bool redraw) //When it is true, it should be "normal"
     {
         D3R_Clear();
         DrawUI(redraw);
-        RenderButtons("Y=","Settings","Redraw","Calc","Exit");
+        RenderButtons("Y=","Settings"," ","Calc","Exit");
         gfx_PrintStringXY("Calculating Next frame..",1,1);
         CalcFunc();
     }
     DrawUI(redraw);
-    RenderButtons("Y=","Settings","Redraw","Calc","Exit");
+    RenderButtons("Y=","Settings"," ","Calc","Exit");
     D3R_Draw(SortLines);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
