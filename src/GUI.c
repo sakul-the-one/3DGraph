@@ -238,7 +238,7 @@ CZ_start:
         {
             gfx_PrintStringXY("Y", 10, betterY);
             gfx_SetTextXY(18, betterY);
-            gfx_PrintInt(ii, 1);
+            gfx_PrintInt(i, 1);
             if(Pos == ii) Selected = i;
             ii++;
         }
@@ -284,6 +284,8 @@ CZ_selected:
     gfx_PrintStringXY("z:",10,27);
     gfx_SetTextXY(25, 27);
     GFX_PrintFloat(zValue, 3);
+    real_t RealAns = os_FloatToReal(zValue);
+    os_SetRealVar(OS_VAR_ANS, &RealAns);
     while (true)
     {
         uint8_t key = os_GetCSC();  
@@ -394,6 +396,8 @@ int intToStr2(int x, char str[], int d)
 // Converts a floating-point/double number to a string. 
 void ftoa(float n, char* res, int afterpoint) //Source https://www.geeksforgeeks.org/convert-floating-point-number-string/ btw.
 { 
+    bool IsNegative = n < 0;
+    if(IsNegative) n *= -1;
     // Extract integer part 
     int ipart = (int)n; 
  
@@ -413,7 +417,8 @@ void ftoa(float n, char* res, int afterpoint) //Source https://www.geeksforgeeks
         fpart = fpart * pow(10, afterpoint); 
  
         intToStr2((int)fpart, res + i + 1, afterpoint); 
-    } 
+    }
+    if (IsNegative) gfx_PrintString("-");
 } 
 
 void GFX_PrintFloat(float Value, int afterpoint) 
