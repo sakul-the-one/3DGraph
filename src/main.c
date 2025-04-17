@@ -39,11 +39,8 @@ int main()
       }  
       if(needToRedraw > 0b01)
       {
-        //Its really confusing if it should be true or false... But it works this way, so trust
-        //0b11 means "normal", so it should be set as true
-        Redraw(needToRedraw == 0b11 ? true : false); //00 = 0; 01 = 1; 10 = 2; 11 = 3; 100 = 4; 101 = 5; 110 = 6; 111 = 7
-        //D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
-        needToRedraw = 0b00;
+        Redraw(); //00 = 0; 01 = 1; 10 = 2; 11 = 3; 100 = 4; 101 = 5; 110 = 6; 111 = 7
+        D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
       }
     }
     D3G_Destroy();

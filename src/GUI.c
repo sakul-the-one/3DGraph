@@ -62,37 +62,7 @@ void GFX_PrintFloat(float Value, int afterpoint);
 #pragma region AllMains
 uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you press to much the Up_key, it will land at 5 instead of 0. Fixing this would take to much bytes imo and it is not neccessary...
 {
-//Shower
-//U need too btw ;)
-    ResetScreen();
-    RenderButtons("Exit", "", "", "", "");
-    DrawEqu(5);
-    uint8_t CursorPos = 0;
-    char t[2] = {64, '\0'};
-    gfx_PrintStringXY(t, 120, 5);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();   
-        switch (key) 
-        {
-            case sk_Yequ: return 0b11;
-            case sk_Down: CursorPos++;break;
-            case sk_Up: CursorPos--;break;
-            case sk_Enter: *DoesFunctionExsistPtr = toggle_bit(*DoesFunctionExsistPtr, CursorPos); break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Clear: *exitPtr = false; return false;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        }
-        DrawEqu(5);
-        CursorPos %= 10;
-        uint8_t betterY = 5 + CursorPos*11;
-        gfx_PrintStringXY(t, 120, betterY);
-    }
+    return 0b11;
 }
 uint8_t MainSecond() //Setting - like Word Position or Details...
 {
@@ -113,7 +83,7 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
             case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
-            case sk_Enter: PrintSettings(data);value = *startInputFloat((Vector2){100, betterY}); break;
+            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY}); break;
             case sk_Mode:
             case sk_Del:
             case sk_Clear: *exitPtr = false; return false;
@@ -140,41 +110,6 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
 {
-    ResetScreen();
-    PrintCalc();
-    RenderButtons("Exit", "", "", "", "");
-    uint8_t CursorPos = 0;
-    char t[2] = {64, '\0'};
-    gfx_PrintStringXY(t, 120, 5);
-    uint8_t betterY = 5 + CursorPos*11;
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        {
-            case sk_Yequ: return 0b11;
-            case sk_Down: CursorPos++;break;
-            case sk_Up: CursorPos--;break;
-            case sk_Enter: goto Next; break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Clear: *exitPtr = false; return false;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        } 
-        CursorPos %= 1;
-        betterY = 5 + CursorPos*11; 
-        gfx_PrintStringXY(t, 120, betterY);
-    }
-Next:
-    switch (CursorPos)
-    {
-        case 0: CalcZ(); break;
-        default: break;
-    }
     return 0b10;
 }
 uint8_t MainFive() 
@@ -225,82 +160,7 @@ void DrawEqu(int y)
         gfx_PrintInt(i, 1);
     }
 }
-void CalcZ()
-{
-    int Selected = 0;
-    int Pos = 0;
-CZ_start:
-    ResetArea();
-    for(int i = 0, ii = 0; i<10; i++) 
-    {
-        uint8_t betterY = 5 + ii*11;    
-        if(DoesFunctionExsist(i)) 
-        {
-            gfx_PrintStringXY("Y", 10, betterY);
-            gfx_SetTextXY(18, betterY);
-            gfx_PrintInt(i, 1);
-            if(Pos == ii) Selected = i;
-            ii++;
-        }
-    }
-    int betterY = 5 + Pos * 11; 
-    gfx_PrintStringXY("@", 120, betterY);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        { 
-            case sk_Down: Pos++;break;
-            case sk_Up: Pos--;break;
-            case sk_Enter: goto CZ_selected;break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Yequ:
-            case sk_Clear: return;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        } 
-        Pos %= 10;
-        goto CZ_start;
-    }
-CZ_selected:
-    ResetArea();
-    gfx_PrintStringXY("x:",10,5);
-    float * x = startInputFloat((Vector2){25, 5});
-    gfx_PrintStringXY("y:",10,16);
-    float * y = startInputFloat((Vector2){25, 16});
 
-    real_t RealX = os_FloatToReal(*x);
-    os_SetRealVar(OS_VAR_X, &RealX);
-
-    real_t RealY = os_FloatToReal(*y);
-    os_SetRealVar(OS_VAR_Y, &RealY);
-
-    float zValue = evaluateEquation(Selected);
-    //printf("%f", zValue); Debug
-    gfx_PrintStringXY("z:",10,27);
-    gfx_SetTextXY(25, 27);
-    GFX_PrintFloat(zValue, 3);
-    real_t RealAns = os_FloatToReal(zValue);
-    os_SetRealVar(OS_VAR_ANS, &RealAns);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        { 
-            case sk_Enter: 
-            case sk_Mode:
-            case sk_Del:
-            case sk_Yequ:
-            case sk_Clear: return;
-            default: continue;
-        } 
-
-    }
-}
 void PrintCalc() 
 {
     ResetArea();
