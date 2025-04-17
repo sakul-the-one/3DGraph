@@ -2,8 +2,8 @@
 # Makefile Options
 # ----------------------------
 
-NAME = D3GRAPH
-DESCRIPTION = "Renders 3D Graphs. V 1.0"
+NAME = D3VECTOR
+DESCRIPTION = "Renders 3D Vectors. V 0.1"
 COMPRESSED = YES
 COMPRESSED_MODE = zx0 #Default: zx7; zx0 is better tho
 ARCHIVED = YES
