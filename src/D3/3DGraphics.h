@@ -106,7 +106,7 @@ void D3G_Redraw();
  * @param rotation The angles in radians by which to rotate the point around the X, Y, and Z axes.
  * @return The rotated point.
  */
-Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation);
+void D3G_RotatePoint(Vector3 * point, Vector3 rotation);
 
 /**
  * @brief Rotates a point in 3D space using specified rotation angles using a Privot

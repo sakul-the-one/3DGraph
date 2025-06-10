@@ -91,7 +91,7 @@ void D3G_DrawRotationCube(Vector2 pos)
     vertices[11].x = -5; vertices[11].y = - 0; vertices[11].z = -10; //Left
     //Rotate them to World Rotation:
     for (int i = 0; i < 12; i++)
-        vertices[i] = D3G_RotatePoint(vertices[i], WorldRotation);
+        D3G_RotatePoint(&vertices[i], WorldRotation);
     //Project Them
     Vector2 projected[12];
     for (int i = 0; i < 12; i++)
@@ -171,11 +171,11 @@ void D3G_DrawCube(Vector3 pos, int8_t size, Vector3 rotation)
     D3G_DrawLine(vertices[2], vertices[6]);
     D3G_DrawLine(vertices[3], vertices[7]);
 }
-Vector3 RotateX(Vector3 point, float angle);
-Vector3 RotateY(Vector3 point, float angle);
-Vector3 RotateZ(Vector3 point, float angle);
+void RotateX(Vector3 *point, float angle);
+void RotateY(Vector3 *point, float angle);
+void RotateZ(Vector3 *point, float angle);
 
-Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
+void D3G_RotatePoint(Vector3 *point, Vector3 rotation) {
     #pragma region Explaination
     /*
     * rotation Matrixes:
@@ -209,17 +209,14 @@ Vector3 D3G_RotatePoint(Vector3 point, Vector3 rotation) {
     * I will put everthing basicly in one line and check if we need even to calculate all of it.
     */
     #pragma endregion
-    //Decleres return Variable
-    Vector3 NP = point;
     //Check for every Rotation and if it Rotates, then apply Rotation, just as explained before
-    if(rotation.x != 0) NP = RotateX(NP, rotation.x);
-    if(rotation.y != 0) NP = RotateY(NP, rotation.y);
-    if(rotation.z != 0) NP = RotateZ(NP, rotation.z);
-    return NP;
+    if(rotation.x != 0) RotateX(point, rotation.x);
+    if(rotation.y != 0) RotateY(point, rotation.y);
+    if(rotation.z != 0) RotateZ(point, rotation.z);
 }
 //trust me, it will be more efficent that way. although not that readable...   
 //Explaination: we mathematically exclude the multiplication, so that we just have to do it one time. 
-Vector3 RotateX(Vector3 point, float angle) 
+void RotateX(Vector3 *point, float angle) 
 {
     #pragma region Explaination
     /*
@@ -230,14 +227,11 @@ Vector3 RotateX(Vector3 point, float angle)
    #pragma endregion
 
     float sinX = sin(angle*DegreeToRadian); float cosX = cos(angle*DegreeToRadian);
-    return (Vector3)
-    {
-        point.x,
-        point.y * cosX - point.z * sinX,
-        point.y * sinX + point.z * cosX
-    };
+    //X stays the same
+    point->y = point->y * cosX - point->z * sinX;
+    point->z = point->y * sinX + point->z * cosX;
 }
-Vector3 RotateY(Vector3 point, float angle) 
+void RotateY(Vector3 *point, float angle) 
 {
     #pragma region Explaination
     /*
@@ -248,14 +242,11 @@ Vector3 RotateY(Vector3 point, float angle)
    #pragma endregion
 
     float sinY = sin(angle*DegreeToRadian); float cosY = cos(angle*DegreeToRadian);
-    return (Vector3)
-    { 
-        point.x * cosY + point.z * sinY,
-        point.y,
-        -point.x * sinY + point.z * cosY
-    };
+    point->x = point->x * cosY + point->z * sinY;
+    //Y Var stays the same
+    point->z = -point->x * sinY + point->z * cosY;
 }
-Vector3 RotateZ(Vector3 point, float angle) 
+void RotateZ(Vector3 *point, float angle) 
 {
     #pragma region Explaination
     /*
@@ -266,12 +257,9 @@ Vector3 RotateZ(Vector3 point, float angle)
    #pragma endregion
 
     float sinZ = sin(angle*DegreeToRadian); float cosZ = cos(angle*DegreeToRadian); 
-    return (Vector3)
-    {
-        point.x * cosZ - point.y * sinZ,
-        point.x * sinZ + point.y * cosZ,
-        point.z
-    };
+    point->x = point->x * cosZ - point->y * sinZ;
+    point->y = point->x * sinZ + point->y * cosZ;
+    //Z stays the same
 }
 Vector3 D3G_RotatePointNormalized(Vector3 point, Vector3 rotation, Vector3 privot) 
 {
@@ -280,9 +268,9 @@ Vector3 D3G_RotatePointNormalized(Vector3 point, Vector3 rotation, Vector3 privo
     //More Efficent would be for example to already decleare the normalized pos, rotate it and then put the position. 
     //With this approach, this function is not needable, but in some cases, having this function doesnt hurt.
     Vector3 NP = (Vector3){point.x - privot.x,point.y - privot.y,point.z - privot.z};
-    if(rotation.x != 0) NP = RotateX(NP, rotation.x);
-    if(rotation.y != 0) NP = RotateY(NP, rotation.y);
-    if(rotation.z != 0) NP = RotateZ(NP, rotation.z);
+    if(rotation.x != 0) RotateX(&NP, rotation.x);
+    if(rotation.y != 0) RotateY(&NP, rotation.y);
+    if(rotation.z != 0) RotateZ(&NP, rotation.z);
     return (Vector3){NP.x + privot.x, NP.y - privot.y, NP.z - privot.z};
 }
 #if Debug
@@ -292,8 +280,8 @@ void D3G_DrawDebugPoint(Vector3 pos)
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_red);
 #pragma GCC diagnostic pop
-    Vector3 RotatedPos = D3G_RotatePoint(pos, WorldRotation);
-    Vector2 Point = project(RotatedPos);
+    D3G_RotatePoint(&pos, WorldRotation);
+    Vector2 Point = project(pos);
     //gfx_SetPixel(Point.x, Point.y);
     gfx_Circle(Point.x, Point.y,3);
     char  Debug1[16];
@@ -312,19 +300,19 @@ void D3G_DrawDebugPoint(Vector3 pos)
 #endif
 void D3G_DrawPoint(Vector3 pos) 
 {
-    Vector3 RotatedPos = D3G_RotatePoint(pos, WorldRotation);
-    Vector2 Point = project(RotatedPos);
+    D3G_RotatePoint(&pos, WorldRotation);
+    Vector2 Point = project(pos);
     gfx_SetPixel(Point.x, Point.y);
 }
 void D3G_DrawLine(Vector3 pos1, Vector3 pos2) 
 {
-    Vector3 RotatedPos1 = D3G_RotatePoint(pos1, WorldRotation);
-    Vector3 RotatedPos2 = D3G_RotatePoint(pos2, WorldRotation);
-    if(RotatedPos1.z < -fov && RotatedPos2.z < -fov) return;
-    if (RotatedPos1.z < -fov) RotatedPos1.z = -fov;
-    if (RotatedPos2.z < -fov) RotatedPos2.z = -fov;
-    Vector2 Point1 = project(RotatedPos1);
-    Vector2 Point2 = project(RotatedPos2);
+    D3G_RotatePoint(&pos1, WorldRotation);
+    D3G_RotatePoint(&pos2, WorldRotation);
+    if(pos1.z < -fov && pos2.z < -fov) return;
+    if (pos1.z < -fov) pos1.z = -fov;
+    if (pos2.z < -fov) pos2.z = -fov;
+    Vector2 Point1 = project(pos1);
+    Vector2 Point2 = project(pos2);
     D3G_ClipLine(&Point1, &Point2);
     gfx_Line(Point1.x, Point1.y, Point2.x, Point2.y);
 }

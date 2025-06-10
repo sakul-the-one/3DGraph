@@ -56,7 +56,7 @@ void DrawEqu(int y);
 void PrintSettings(float * data);
 void PrintCalc();
 void CalcZ();
-void GFX_PrintFloat(float Value, int afterpoint);
+void GFX_PrintFloat(float Value);
 #pragma endregion
 
 #pragma region AllMains
@@ -83,7 +83,7 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
             case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
-            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY},""); break;
+            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY},SettingsStrings[CursorPos]); break;
             case sk_Mode:
             case sk_Del:
             case sk_Clear: *exitPtr = false; return false;
@@ -169,11 +169,11 @@ void PrintCalc()
 void PrintSettings(float * data) 
 {
     ResetArea();
-    gfx_PrintStringXY("I forgot  ", 10, 5); GFX_PrintFloat(data[0], 3);
-    gfx_PrintStringXY("World X  ", 10, 16);GFX_PrintFloat(data[1], 3);
-    gfx_PrintStringXY("World Y  ", 10, 27);GFX_PrintFloat(data[2], 3);
-    gfx_PrintStringXY("World Z  ", 10, 38);GFX_PrintFloat(data[3], 3);
-    gfx_PrintStringXY("Details  ", 10, 49);GFX_PrintFloat(data[4], 3);
+    gfx_PrintStringXY(SettingsStrings[0], 10, 5); GFX_PrintFloat(data[0]);
+    gfx_PrintStringXY(SettingsStrings[1], 10, 16);GFX_PrintFloat(data[1]);
+    gfx_PrintStringXY(SettingsStrings[2], 10, 27);GFX_PrintFloat(data[2]);
+    gfx_PrintStringXY(SettingsStrings[3], 10, 38);GFX_PrintFloat(data[3]);
+    gfx_PrintStringXY(SettingsStrings[4], 10, 49);GFX_PrintFloat(data[4]);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {
@@ -252,39 +252,13 @@ int intToStr2(int x, char str[], int d)
     str[i] = '\0'; 
     return i; 
 } 
- 
-// Converts a floating-point/double number to a string. 
-void ftoa(float n, char* res, int afterpoint) //Source https://www.geeksforgeeks.org/convert-floating-point-number-string/ btw.
-{ 
-    bool IsNegative = n < 0;
-    if(IsNegative) n *= -1;
-    // Extract integer part 
-    int ipart = (int)n; 
- 
-    // Extract floating part 
-    float fpart = n - (float)ipart; 
- 
-    // convert integer part to string 
-    int i = intToStr2(ipart, res, 0); 
- 
-    // check for display option after point 
-    if (afterpoint != 0) { 
-        res[i] = '.'; // add dot 
- 
-        // Get the value of fraction part upto given no. 
-        // of points after dot. The third parameter 
-        // is needed to handle cases like 233.007 
-        fpart = fpart * pow(10, afterpoint); 
- 
-        intToStr2((int)fpart, res + i + 1, afterpoint); 
-    }
-    if (IsNegative) gfx_PrintString("-");
-} 
 
-void GFX_PrintFloat(float Value, int afterpoint) 
-{
+void GFX_PrintFloat(float Value) 
+{   
     char str[16];
-    ftoa(Value, str ,afterpoint);
+    real_t buf;
+    buf = os_FloatToReal(Value);
+    os_RealToStr(str, &buf,3,4,2);
     gfx_PrintString(str);
 }
 #pragma endregion

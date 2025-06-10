@@ -147,8 +147,8 @@ void D3R_SortLines(bool sortlines)
     //Rotate
     for (int i = 0; i < _DLDCount; i++) 
     {
-        _DLD[i].pos1 = D3G_RotatePoint(_DLD[i].pos1, WorldRotation);
-        _DLD[i].pos2 = D3G_RotatePoint(_DLD[i].pos2, WorldRotation);
+        D3G_RotatePoint(&_DLD[i].pos1, WorldRotation);
+        D3G_RotatePoint(&_DLD[i].pos2, WorldRotation);
     }
     //Sort
     if(sortlines)
