@@ -3,6 +3,7 @@
 #include "D3/3DGraphics.h"
 
 bool startedInput = false;
-float  startInputFloat(Vector2 position);
-float StringToFloat(char string[]);
+float  startInputFloat(Vector2 position, char * Prompt);
+//float StringToFloat(char string[]);
+
 #endif

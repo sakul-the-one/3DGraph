@@ -40,7 +40,6 @@ void toggleFunction(uint8_t function)
 void Init() 
 {
     D3G_Init();
-
 }
 
 

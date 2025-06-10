@@ -5,6 +5,8 @@
 #include "D3/3DGraphics.h"
 #include "GUI.h"
 #include "StaticData.h"
+#include "GUI/GUInput.h"
+#include <stdio.h>
 
 //int DebugMain();
 int main() 
@@ -22,6 +24,7 @@ int main()
     int8_t needToRedraw = 0b11;
     InitGUI(&exit, GetFunctionExsistsPointer());
     //DebugMain();
+    float result = startInputFloat((Vector2){10,10 },"Ratatata!");
     Input(sk_Yequ);
     while (exit)
     {

@@ -83,7 +83,7 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
             case sk_Yequ: return 0b11;
             case sk_Down: CursorPos++;break;
             case sk_Up: CursorPos--;break;
-            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY}); break;
+            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY},""); break;
             case sk_Mode:
             case sk_Del:
             case sk_Clear: *exitPtr = false; return false;
