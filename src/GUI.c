@@ -11,10 +11,9 @@
 
 #pragma region Init
 int8_t FR = 0b11; //First Return
-void InitGUI(bool * exitVar, uint16_t * doesFunctionExsistPtr) 
+void InitGUI(bool * exitVar) 
 {
     exitPtr = exitVar;
-    DoesFunctionExsistPtr = doesFunctionExsistPtr;
     FR = 0b11;
 }
 uint8_t MainFirst();
@@ -130,36 +129,6 @@ void ResetArea()
     gfx_FillRectangle(0,5,130,120);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
-}
-void DrawEqu(int y) 
-{
-    ResetArea();
-    for(int i = 0; i<10; i++) 
-    {
-        /*equ_t *equation;
-        switch (i)
-        {
-            case 0: equation = os_GetEquationData(OS_VAR_Y0, 0); break;
-            case 1: equation = os_GetEquationData(OS_VAR_Y1, 0); break;//os_GetEquationData(ti_GetTokenString(OS_TOK_EQU_Y1, sizeof(OS_TOK_EQU_Y1), NULL), 0); break;
-            case 2: equation = os_GetEquationData(OS_VAR_Y2, 0); break;
-            case 3: equation = os_GetEquationData(OS_VAR_Y3, 0); break;
-            case 4: equation = os_GetEquationData(OS_VAR_Y4, 0); break;
-            case 5: equation = os_GetEquationData(OS_VAR_Y5, 0); break;
-            case 6: equation = os_GetEquationData(OS_VAR_Y6, 0); break;
-            case 7: equation = os_GetEquationData(OS_VAR_Y7, 0); break;
-            case 8: equation = os_GetEquationData(OS_VAR_Y8, 0); break;
-            case 9: equation = os_GetEquationData(OS_VAR_Y9, 0); break;
-            default:return;
-        }
-        unsigned int str_lengh = 16;
-        char * ptr = ti_GetTokenString(&equation->data, &equation->len, NULL);   
-        gfx_PrintStringXY(ptr, 10, y + i*10);//*/
-        uint8_t betterY = y + i*11;
-        gfx_PrintStringXY("Y   = ", 10, betterY);
-        if(DoesFunctionExsist(i)) gfx_PrintString("on"); else gfx_PrintString("off");
-        gfx_SetTextXY(18, betterY);
-        gfx_PrintInt(i, 1);
-    }
 }
 
 void PrintCalc() 

@@ -23,18 +23,6 @@ bool is_bit_set(uint16_t value, int bit_position) {
     // AND the value with a mask where only the target bit is set
     return (value & (1 << bit_position)) != 0;
 }//*/
-uint16_t * GetFunctionExsistsPointer() 
-{
-    return &FuntionExsists;
-}
-bool DoesFunctionExsist(uint8_t function) 
-{
-    return (FuntionExsists & (1 << function)) != 0;
-}
-void toggleFunction(uint8_t function) 
-{
-    FuntionExsists ^= (1 << function);
-}
 #pragma endregion
 
 void Init() 
@@ -52,7 +40,7 @@ void Redraw() //When it is true, it should be "normal"
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
     D3R_Clear();
-    RenderButtons("Y=","Settings"," ","Calc","Exit");
+    RenderButtons(" ","Settings","Add","Calc","Exit");
     gfx_PrintStringXY("Calculating Next frame..",1,1);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"

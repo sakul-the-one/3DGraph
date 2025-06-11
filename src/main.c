@@ -22,9 +22,8 @@ int main()
     InitData();
     bool exit = true;
     int8_t needToRedraw = 0b11;
-    InitGUI(&exit, GetFunctionExsistsPointer());
+    InitGUI(&exit);
     //DebugMain();
-    float result = startInputFloat((Vector2){10,10 },"Ratatata!");
     Input(sk_Yequ);
     while (exit)
     {
