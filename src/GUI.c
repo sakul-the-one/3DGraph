@@ -100,6 +100,7 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
         //Confused Hungo Bungos with the Comment above this one
         PrintSettings(data);
+        RenderButtons("Exit", "", "", "", "");
         gfx_PrintStringXY(t, 120, betterY);
     }
     return 0b11;
@@ -255,10 +256,12 @@ int intToStr2(int x, char str[], int d)
 
 void GFX_PrintFloat(float Value) 
 {   
-    char str[16];
-    real_t buf;
-    buf = os_FloatToReal(Value);
-    os_RealToStr(str, &buf,3,4,2);
+    char *str = malloc(7);
+    real_t *buf = malloc(sizeof(real_t));
+    *buf = os_FloatToReal(Value);
+    os_RealToStr(str, buf,6,4,2);
     gfx_PrintString(str);
+    free(str);
+    free(buf);
 }
 #pragma endregion
