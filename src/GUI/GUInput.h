@@ -3,7 +3,10 @@
 #include "D3/3DGraphics.h"
 
 bool startedInput = false;
-float  startInputFloat(Vector2 position, char * Prompt);
+bool * exitPtrI;
+void InitGUIInput(bool * exitVar);
+float  startInputFloat(char * Prompt);
+int MakeMenu(char ** Options, char ** Value ,int OptionsCount);
 //float StringToFloat(char string[]);
 
 #endif

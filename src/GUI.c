@@ -9,12 +9,11 @@
 #include "StaticData.h"
 #include <math.h>
 
-#pragma region Init
-int8_t FR = 0b11; //First Return
+#pragma region Init//First Return
 void InitGUI(bool * exitVar) 
 {
     exitPtr = exitVar;
-    FR = 0b11;
+    InitGUIInput(exitVar);
 }
 uint8_t MainFirst();
 uint8_t MainSecond(); 
@@ -35,7 +34,6 @@ uint8_t Input(uint8_t key)
         case sk_Graph: return MainFive();
         //default: return FR;
     }
-    if(FR != 0b00) { FR = 0b00; return 0b11;}
     return 0b00;
 }
 
@@ -51,11 +49,8 @@ void ResetScreen()
 
 #pragma region HelperFuctions
 void ResetArea();
-void DrawEqu(int y);
-void PrintSettings(float * data);
-void PrintCalc();
+//void DrawEqu(int y);
 void CalcZ();
-void GFX_PrintFloat(float Value);
 #pragma endregion
 
 #pragma region AllMains
@@ -66,42 +61,23 @@ uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you p
 uint8_t MainSecond() //Setting - like Word Position or Details...
 {
     float * data = GetDataArray();
+MSstart:
     ResetScreen();
     RenderButtons("Exit", "", "", "", "");
-    uint8_t CursorPos = 0;
-    char t[2] = {64, '\0'};
-    PrintSettings(data);
-    gfx_PrintStringXY(t, 120, 5);
-    uint8_t betterY = 5 + CursorPos*11;
-    while (true)
+    float value = -3.25f;
+    char **DataStr = malloc(5*sizeof(*DataStr));
+    for (int i = 0; i < 5; i++) 
     {
-        float value = -3.25f;
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        {
-            case sk_Yequ: return 0b11;
-            case sk_Down: CursorPos++;break;
-            case sk_Up: CursorPos--;break;
-            case sk_Enter: PrintSettings(data);value = startInputFloat((Vector2){100, betterY},SettingsStrings[CursorPos]); break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Clear: *exitPtr = false; return false;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        } 
-        CursorPos %= 5;
-        if(value != -3.25f)
-            data[CursorPos] = value;
-        betterY = 5 + CursorPos*11; 
-        //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
-        //Confused Hungo Bungos with the Comment above this one
-        PrintSettings(data);
-        RenderButtons("Exit", "", "", "", "");
-        gfx_PrintStringXY(t, 120, betterY);
+        DataStr[i] = malloc(7);
+        FloatToString(data[i],DataStr[i]);
     }
+    int Selective = MakeMenu(SettingsStrings,DataStr,5);
+    if(Selective == -1)
+        return 0b11;
+    value = startInputFloat(SettingsStrings[Selective]);
+    data[Selective] = value;
+    if(Selective != -1)
+    goto MSstart;
     return 0b11;
 }
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...
@@ -135,15 +111,6 @@ void PrintCalc()
 {
     ResetArea();
     gfx_PrintStringXY("Calc Z", 10, 5);
-}
-void PrintSettings(float * data) 
-{
-    ResetArea();
-    gfx_PrintStringXY(SettingsStrings[0], 10, 5); GFX_PrintFloat(data[0]);
-    gfx_PrintStringXY(SettingsStrings[1], 10, 16);GFX_PrintFloat(data[1]);
-    gfx_PrintStringXY(SettingsStrings[2], 10, 27);GFX_PrintFloat(data[2]);
-    gfx_PrintStringXY(SettingsStrings[3], 10, 38);GFX_PrintFloat(data[3]);
-    gfx_PrintStringXY(SettingsStrings[4], 10, 49);GFX_PrintFloat(data[4]);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {
@@ -226,11 +193,15 @@ int intToStr2(int x, char str[], int d)
 void GFX_PrintFloat(float Value) 
 {   
     char *str = malloc(7);
+    FloatToString(Value, str);
+    gfx_PrintString(str);
+    free(str);
+}
+void FloatToString(float Value, char * str) 
+{
     real_t *buf = malloc(sizeof(real_t));
     *buf = os_FloatToReal(Value);
     os_RealToStr(str, buf,6,4,2);
-    gfx_PrintString(str);
-    free(str);
     free(buf);
 }
 #pragma endregion
