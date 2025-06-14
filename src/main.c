@@ -24,6 +24,7 @@ int main()
     int8_t needToRedraw = 0b00;
     InitGUI(&exit);
     //DebugMain();
+    Redraw();
     while (exit)
     {
       uint8_t key = os_GetCSC(); //I think GetKey is more Battary efficient :), But this would mean I need to research it, so fuck this. os_GetKey();
@@ -41,7 +42,7 @@ int main()
       if(needToRedraw > 0b01)
       {
         Redraw(); //00 = 0; 01 = 1; 10 = 2; 11 = 3; 100 = 4; 101 = 5; 110 = 6; 111 = 7
-        D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
+        //D3G_DrawCube((Vector3){10,25,20},20, (Vector3){0,0,0});
       }
     }
     D3G_Destroy();

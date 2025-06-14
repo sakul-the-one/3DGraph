@@ -23,14 +23,17 @@ float  startInputFloat(char * Prompt)
     gfx_Begin();
     return result;
 }
-int MakeMenu(char ** Options, char ** Value ,int OptionsCount) 
+int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int ValueCount) 
 {
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
+    gfx_PrintStringXY(Title, 120, 1);
     gfx_PrintStringXY(t, 120, 5);
     for (int i = 0; i < OptionsCount; i++) 
     {
-        gfx_PrintStringXY(Options[i],10, 5 + i*11); gfx_PrintString(Value[i]);
+        gfx_PrintStringXY(Options[i],10, 5 + i*11);
+        if(i < ValueCount)
+            gfx_PrintString(Value[i]);
     }
     uint8_t betterY = 5;
     while (true)

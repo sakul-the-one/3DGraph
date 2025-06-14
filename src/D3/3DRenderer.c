@@ -1,7 +1,8 @@
 #include "D3/3DGraphics.h"
 #include "D3/3DRenderer.h"
 
-/*void D3R_AddPoint(Vector3 pos) //Not implemented, bc not needed (waste of space)
+/*
+void D3R_AddPoint(Vector3 pos) //Not implemented, bc not needed (waste of space)//UPDATE: Still a waste of space, fuck it!
 {
     Vector3 * Backup = NULL;
     if(_DPDCount != 0) Backup = _DPD;

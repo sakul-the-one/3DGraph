@@ -71,17 +71,42 @@ MSstart:
         DataStr[i] = malloc(7);
         FloatToString(data[i],DataStr[i]);
     }
-    int Selective = MakeMenu(SettingsStrings,DataStr,5);
+    int Selective = MakeMenu("",SettingsStrings,DataStr,5,5);
     if(Selective == -1)
         return 0b11;
     value = startInputFloat(SettingsStrings[Selective]);
     data[Selective] = value;
     if(Selective != -1)
     goto MSstart;
+    //Free:
+    for (int i = 0; i < 5; i++) 
+    {
+        DataStr[i] = malloc(7);
+        free(DataStr[i]);
+    }
+    free(DataStr);
     return 0b11;
 }
-uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...
+uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
+    ResetScreen();
+    RenderButtons("Exit", "", "", "", "");
+    char ** TextArray = malloc(27*sizeof(TextArray));
+    //char A = 'A';
+    for(int i = 0; i<27; i++) 
+    {
+        char * Text = malloc(2);
+        Text[0] = 'A'+i;
+        Text[1] = '\0';
+        TextArray[i] = Text;
+    }
+    int Result = MakeMenu("Add Vectors",TextArray, TextArray, 27,0);
+    //End:
+    for(int i = 0; i<27; i++) 
+    {
+        free(TextArray[i]);
+    }
+    free(TextArray);
     return 0b10;
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
@@ -138,7 +163,7 @@ void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * te
         }
         uint24_t x = 64*i;
         int Thickness = gfx_GetStringWidth(ptr);
-        int8_t mmmhh = (64 - Thickness)/2;
+        int8_t mmmhh = (64 - Thickness)/2; //Today is the 14.06.2025... I just accidentally came back to this function... WTF IS `mmmhh`???
     gfx_SetColor(gfx_white);
         gfx_HorizLine(x-2, 200, 5);
     gfx_SetColor(gfx_black);
