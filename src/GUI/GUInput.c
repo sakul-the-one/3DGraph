@@ -5,6 +5,7 @@
 #include <ti/tokens.h>
 #include <ti/screen.h>
 #include <ti/getcsc.h>
+#include "GUI.h"
 
 equ_t * equ;
 
@@ -27,23 +28,47 @@ int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int 
 {
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
+    uint8_t betterY = 9;
+    int MaxOptionRender = 0;
+    int MinOptionRender = 0;
+    int offset = 0;
+generatingMainPart:
+    ResetScreen();
+    betterY = 9 + CursorPos*11 - offset; 
     gfx_PrintStringXY(Title, 120, 1);
-    gfx_PrintStringXY(t, 120, 5);
-    for (int i = 0; i < OptionsCount; i++) 
+    gfx_PrintStringXY(t, 120, betterY);
+    RenderButtons("Exit", "", "", "", "");
+    for (int i = MinOptionRender; i < OptionsCount; i++) 
     {
-        gfx_PrintStringXY(Options[i],10, 5 + i*11);
+        int y = 8 + i*11-offset;
+        if(y >= ButtomGUIBorder) 
+        {
+            MaxOptionRender = i;
+            break;
+        }        
+        gfx_PrintStringXY(Options[i],10, y);
         if(i < ValueCount)
             gfx_PrintString(Value[i]);
     }
-    uint8_t betterY = 5;
+
     while (true)
     {
         uint8_t key = os_GetCSC();  
         switch (key) 
         {
             case sk_Yequ: return -1;
-            case sk_Down: CursorPos++;break;
-            case sk_Up: CursorPos--;break;
+            case sk_Down: 
+                CursorPos++; 
+                if(CursorPos >= MaxOptionRender) {offset+=11;MinOptionRender++;MaxOptionRender++;}
+                if(CursorPos > OptionsCount-1) {MaxOptionRender-=MinOptionRender;MinOptionRender = 0; CursorPos = 0;}
+                goto generatingMainPart;
+                break;
+            case sk_Up:
+                CursorPos--;
+                if(CursorPos<=MinOptionRender){offset-=11;MinOptionRender--;MaxOptionRender--;}
+                if(MinOptionRender <=-1) {MinOptionRender = OptionsCount-MaxOptionRender +1;MaxOptionRender = OptionsCount; CursorPos = OptionsCount;}
+                goto generatingMainPart;
+                break;
             case sk_Enter: return CursorPos;
             case sk_Mode:
             case sk_Del:
@@ -58,7 +83,7 @@ int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int 
         gfx_SetColor(0xFF);//White, but Im too lazy to ignore this warning, so Im doing it manually
         gfx_FillRectangle(120, betterY,8,8);
         CursorPos %= OptionsCount;
-        betterY = 5 + CursorPos*11; 
+        betterY = 9 + CursorPos*11 - offset; 
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
         //Confused Hungo Bungos with the Comment above this one
         gfx_PrintStringXY(t, 120, betterY);

@@ -61,11 +61,9 @@ uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you p
 uint8_t MainSecond() //Setting - like Word Position or Details...
 {
     float * data = GetDataArray();
-MSstart:
-    ResetScreen();
-    RenderButtons("Exit", "", "", "", "");
     float value = -3.25f;
     char **DataStr = malloc(5*sizeof(*DataStr));
+MSstart: //GoTos are confusing... If I dont have a function above Variable declearios, there are errors...
     for (int i = 0; i < 5; i++) 
     {
         DataStr[i] = malloc(7);
@@ -89,20 +87,19 @@ MSstart:
 }
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
-    ResetScreen();
-    RenderButtons("Exit", "", "", "", "");
-    char ** TextArray = malloc(27*sizeof(TextArray));
+    char ** TextArray = malloc(26*sizeof(TextArray));
     //char A = 'A';
-    for(int i = 0; i<27; i++) 
+    for(int i = 0; i<26; i++) 
     {
         char * Text = malloc(2);
         Text[0] = 'A'+i;
         Text[1] = '\0';
         TextArray[i] = Text;
     }
-    int Result = MakeMenu("Add Vectors",TextArray, TextArray, 27,0);
+    int Result = MakeMenu("Add Vectors",TextArray, TextArray, 26,0);
+    gfx_PrintInt(Result,2);
     //End:
-    for(int i = 0; i<27; i++) 
+    for(int i = 0; i<26; i++) 
     {
         free(TextArray[i]);
     }
