@@ -9,18 +9,41 @@
 
 equ_t * equ;
 
-float  startInputFloat(char * Prompt) 
+float getFloat(char * text) 
 {
-    gfx_End();
+    float result = 0;
     size_t buffersize = 15*sizeof(OS_TOK_RIGHT);
     equ = ti_MallocEqu(buffersize);
-    //os_GetKey();  
-    os_GetTokenInput(Prompt,&equ->data,buffersize);
-    float result = 0;
+    os_GetTokenInput(text,&equ->data,buffersize);
     os_Eval(equ->data,equ->len);
     real_t temp;
     os_GetRealVar(OS_VAR_ANS, &temp);
     result = os_RealToFloat(&temp);
+    free(equ);
+    return result;
+}
+float startInputFloat(char * Prompt) 
+{
+    gfx_End();
+    float result = getFloat(Prompt);
+    gfx_Begin();
+    return result;
+}
+Vector3 startInputVector3() 
+{
+    gfx_End();
+    static Vector3 result;
+    //os_GetKey();
+    //Get X
+    result.x = getFloat("X: ");
+    os_NewLine();
+    //Get Y
+    result.y = getFloat("Y: ");
+    os_NewLine();
+    //Get Z
+    result.z = getFloat("Z: ");
+    os_NewLine();
+    //Start gfx again and return result
     gfx_Begin();
     return result;
 }
@@ -58,15 +81,17 @@ generatingMainPart:
         {
             case sk_Yequ: return -1;
             case sk_Down: 
-                CursorPos++; 
+                CursorPos++;
+                if(MaxOptionRender == 0) break;
                 if(CursorPos >= MaxOptionRender) {offset+=11;MinOptionRender++;MaxOptionRender++;}
-                if(CursorPos > OptionsCount-1) {MaxOptionRender-=MinOptionRender;MinOptionRender = 0; CursorPos = 0;}
+                if(CursorPos > OptionsCount-1) {MaxOptionRender-=MinOptionRender;MinOptionRender = 0; CursorPos = 0;offset=0;}
                 goto generatingMainPart;
                 break;
             case sk_Up:
                 CursorPos--;
-                if(CursorPos<=MinOptionRender){offset-=11;MinOptionRender--;MaxOptionRender--;}
-                if(MinOptionRender <=-1) {MinOptionRender = OptionsCount-MaxOptionRender +1;MaxOptionRender = OptionsCount; CursorPos = OptionsCount;}
+                if(MaxOptionRender == 0) break;
+                if(CursorPos<=MinOptionRender && CursorPos != 0 && MinOptionRender > 0){offset-=11;MinOptionRender--;MaxOptionRender--;}
+                //if(MinOptionRender <=-1) {MinOptionRender = OptionsCount-MaxOptionRender +1;offset=(MinOptionRender)*11;MaxOptionRender = OptionsCount; CursorPos = OptionsCount;} ITS NOT WORKING SO IM NOT EVEN TRYING
                 goto generatingMainPart;
                 break;
             case sk_Enter: return CursorPos;

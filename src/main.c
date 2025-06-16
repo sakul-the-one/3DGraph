@@ -47,6 +47,7 @@ int main()
     }
     D3G_Destroy();
     CloseData();
+    Destroy();
     return 0;
 }
 

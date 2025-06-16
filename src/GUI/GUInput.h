@@ -5,7 +5,8 @@
 bool startedInput = false;
 bool * exitPtrI;
 void InitGUIInput(bool * exitVar);
-float  startInputFloat(char * Prompt);
+float startInputFloat(char * Prompt);
+Vector3 startInputVector3();
 int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int ValueCount);
 //float StringToFloat(char string[]);
 

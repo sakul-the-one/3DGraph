@@ -71,12 +71,13 @@ MSstart: //GoTos are confusing... If I dont have a function above Variable decle
     }
     int Selective = MakeMenu("",SettingsStrings,DataStr,5,5);
     if(Selective == -1)
-        return 0b11;
+        goto End;
     value = startInputFloat(SettingsStrings[Selective]);
     data[Selective] = value;
     if(Selective != -1)
     goto MSstart;
     //Free:
+End:
     for (int i = 0; i < 5; i++) 
     {
         DataStr[i] = malloc(7);
@@ -88,6 +89,7 @@ MSstart: //GoTos are confusing... If I dont have a function above Variable decle
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
     char ** TextArray = malloc(26*sizeof(TextArray));
+    int Result;
     //char A = 'A';
     for(int i = 0; i<26; i++) 
     {
@@ -96,15 +98,21 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
         Text[1] = '\0';
         TextArray[i] = Text;
     }
-    int Result = MakeMenu("Add Vectors",TextArray, TextArray, 26,0);
-    gfx_PrintInt(Result,2);
-    //End:
+Medium:
+    Result = MakeMenu("Add Vectors",TextArray, TextArray, 26,0);
+    //gfx_PrintInt(Result,2);
+    if (Result == -1)
+        goto End;
+    Vector3 MyVictorBuffer = startInputVector3();
+    AddPoint(Result, MyVictorBuffer);
+    goto Medium;
+End:
     for(int i = 0; i<26; i++) 
     {
         free(TextArray[i]);
     }
     free(TextArray);
-    return 0b10;
+    return 0b11;
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
 {

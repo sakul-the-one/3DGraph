@@ -26,7 +26,8 @@ void Redraw();
 void DrawUI(bool redraw);
 void Init();
 void RedrawSaved();
-bool is_bit_set(uint16_t value, int bit_position);
-uint16_t toggle_bit(uint16_t byte, int bit_position);
+bool is_bit_set(uint32_t value, int bit_position);
+void Destroy();
+void toggle_bit(uint32_t * byte, int bit_position);
 
 #endif

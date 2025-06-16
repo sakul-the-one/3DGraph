@@ -13,13 +13,13 @@
 
 #pragma region BitOperations
 // Function to toggle a specific bit
-uint16_t toggle_bit(uint16_t byte, int bit_position) {
+void toggle_bit(uint32_t *byte, int bit_position) {
     // XOR the value with a mask where only the target bit is set
-    byte ^= (1 << bit_position);
-    return byte;
+    *byte ^= (1 << bit_position);
+    //eturn byte;
 }
 // Function to check if a specific bit is set
-bool is_bit_set(uint16_t value, int bit_position) {
+bool is_bit_set(uint32_t value, int bit_position) {
     // AND the value with a mask where only the target bit is set
     return (value & (1 << bit_position)) != 0;
 }//*/
@@ -28,16 +28,17 @@ void AddCubeLines(Vector3 pos)
 {
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
      // Front face vertices
-    vertices[0].x = + pos.x; vertices[0].y = + pos.y; vertices[0].z = + pos.z;  // Top right front
-    vertices[1].x = - pos.x; vertices[1].y = + pos.y; vertices[1].z = + pos.z;  // Top left front
-    vertices[2].x = - pos.x; vertices[2].y = - pos.y; vertices[2].z = + pos.z;  // Bottom left front
-    vertices[3].x = + pos.x; vertices[3].y = - pos.y; vertices[3].z = + pos.z;  // Bottom right front
+     #define halfsize 10
+    vertices[0].x = pos.x + halfsize; vertices[0].y = pos.y + halfsize; vertices[0].z = pos.z + halfsize;  // Top right front
+    vertices[1].x = pos.x - halfsize; vertices[1].y = pos.y + halfsize; vertices[1].z = pos.z + halfsize;  // Top left front
+    vertices[2].x = pos.x - halfsize; vertices[2].y = pos.y - halfsize; vertices[2].z = pos.z + halfsize;  // Bottom left front
+    vertices[3].x = pos.x + halfsize; vertices[3].y = pos.y - halfsize; vertices[3].z = pos.z + halfsize;  // Bottom right front
 
     // Back face vertices
-    vertices[4].x = + pos.x; vertices[4].y = + pos.y; vertices[4].z = - pos.z;  // Top right back
-    vertices[5].x = - pos.x; vertices[5].y = + pos.y; vertices[5].z = - pos.z;  // Top left back
-    vertices[6].x = - pos.x; vertices[6].y = - pos.y; vertices[6].z = - pos.z;  // Bottom left back
-    vertices[7].x = + pos.x; vertices[7].y = - pos.y; vertices[7].z = - pos.z;  // Bottom right back
+    vertices[4].x = pos.x + halfsize; vertices[4].y = pos.y + halfsize; vertices[4].z = pos.z - halfsize;  // Top right back
+    vertices[5].x = pos.x - halfsize; vertices[5].y = pos.y + halfsize; vertices[5].z = pos.z - halfsize;  // Top left back
+    vertices[6].x = pos.x - halfsize; vertices[6].y = pos.y - halfsize; vertices[6].z = pos.z - halfsize;  // Bottom left back
+    vertices[7].x = pos.x + halfsize; vertices[7].y = pos.y - halfsize; vertices[7].z = pos.z - halfsize;  // Bottom right back
 
     D3R_AddLine((Vector3){vertices[0].x,vertices[0].y,vertices[0].z}, (Vector3){vertices[1].x, vertices[1].y,vertices[1].z}, 0x00);
     D3R_AddLine((Vector3){vertices[1].x,vertices[1].y,vertices[1].z}, (Vector3){vertices[2].x, vertices[2].y,vertices[2].z}, 0x00);
@@ -58,10 +59,20 @@ void Init()
 {
     D3G_Init();
 }
+void Destroy() 
+{
+    LinkedLines * next = first;
+    while (next != 0)
+    {
+        LinkedLines * buffer = next;
+        next = next->next;
+        free(buffer);
+    }
+}
 void AddPoint(uint8_t which, Vector3 value) 
 {
     Points[which] = value;
-    if(!is_bit_set(PointsSet, which)) toggle_bit(PointsSet,which);
+    if(!is_bit_set(PointsSet, which)) toggle_bit(&PointsSet,which);
 }
 void AddConnection(uint8_t pos1,uint8_t pos2) 
 {
@@ -90,7 +101,10 @@ void Redraw() //When it is true, it should be "normal"
     for (int i = 0; i< 27; i++) 
     {
         if(is_bit_set(PointsSet,i)) 
+        {
             AddCubeLines(Points[i]);
+            printf("Adding Cube");
+        }
     }
     while (next != 0)
     {
