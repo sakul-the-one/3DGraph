@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include "D3/3DGraphics.h"
 #include "D3/3DRenderer.h"
+#include "StaticData.h"
 #include "GUI.h"
 #include "StaticData.h"
 
@@ -27,8 +28,17 @@ bool is_bit_set(uint32_t value, int bit_position) {
 void AddCubeLines(Vector3 pos) 
 {
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
-     // Front face vertices
-     #define halfsize 10
+    #define halfsize 5
+    int multiplicator = GetDataArray()[0];
+    if(multiplicator == 0) 
+    {
+        multiplicator = 5;
+        SetDataValue(5,0);
+    }
+    pos.x *= multiplicator;
+    pos.y *= multiplicator;
+    pos.z *= multiplicator;
+    // Front face vertices
     vertices[0].x = pos.x + halfsize; vertices[0].y = pos.y + halfsize; vertices[0].z = pos.z + halfsize;  // Top right front
     vertices[1].x = pos.x - halfsize; vertices[1].y = pos.y + halfsize; vertices[1].z = pos.z + halfsize;  // Top left front
     vertices[2].x = pos.x - halfsize; vertices[2].y = pos.y - halfsize; vertices[2].z = pos.z + halfsize;  // Bottom left front
@@ -101,10 +111,8 @@ void Redraw() //When it is true, it should be "normal"
     for (int i = 0; i< 27; i++) 
     {
         if(is_bit_set(PointsSet,i)) 
-        {
             AddCubeLines(Points[i]);
-            printf("Adding Cube");
-        }
+
     }
     while (next != 0)
     {

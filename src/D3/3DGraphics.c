@@ -227,9 +227,11 @@ void RotateX(Vector3 *point, float angle)
    #pragma endregion
 
     float sinX = sin(angle*DegreeToRadian); float cosX = cos(angle*DegreeToRadian);
+    float oldY = point->y;
+    float oldZ = point->z;
     //X stays the same
-    point->y = point->y * cosX - point->z * sinX;
-    point->z = point->y * sinX + point->z * cosX;
+    point->y = oldY * cosX - oldZ * sinX;
+    point->z = oldY * sinX + oldZ * cosX;
 }
 void RotateY(Vector3 *point, float angle) 
 {
@@ -242,9 +244,11 @@ void RotateY(Vector3 *point, float angle)
    #pragma endregion
 
     float sinY = sin(angle*DegreeToRadian); float cosY = cos(angle*DegreeToRadian);
-    point->x = point->x * cosY + point->z * sinY;
+    float oldX = point->x;
+    float oldZ = point->z;
+    point->x = oldX * cosY + oldZ * sinY;
     //Y Var stays the same
-    point->z = -point->x * sinY + point->z * cosY;
+    point->z = -oldX * sinY + oldZ * cosY;
 }
 void RotateZ(Vector3 *point, float angle) 
 {
@@ -257,8 +261,10 @@ void RotateZ(Vector3 *point, float angle)
    #pragma endregion
 
     float sinZ = sin(angle*DegreeToRadian); float cosZ = cos(angle*DegreeToRadian); 
-    point->x = point->x * cosZ - point->y * sinZ;
-    point->y = point->x * sinZ + point->y * cosZ;
+    float oldX = point->x;
+    float oldY = point->y;
+    point->x = oldX * cosZ - oldY * sinZ;
+    point->y = oldX * sinZ + oldY * cosZ;
     //Z stays the same
 }
 Vector3 D3G_RotatePointNormalized(Vector3 point, Vector3 rotation, Vector3 privot) 
