@@ -84,6 +84,11 @@ void AddPoint(uint8_t which, Vector3 value)
     Points[which] = value;
     if(!is_bit_set(PointsSet, which)) toggle_bit(&PointsSet,which);
 }
+bool GetPoint(uint8_t which, Vector3 * tmp) 
+{
+    *tmp = Points[which];
+    return is_bit_set(PointsSet, which);
+}
 void AddConnection(uint8_t pos1,uint8_t pos2) 
 {
     LinkedLines * buf = malloc(sizeof(LinkedLines));

@@ -50,6 +50,7 @@ void ResetScreen()
 #pragma region HelperFuctions
 void ResetArea();
 //void DrawEqu(int y);
+void CreateVector3String(char **t, int which);
 void CalcZ();
 #pragma endregion
 
@@ -73,23 +74,24 @@ MSstart: //GoTos are confusing... If I dont have a function above Variable decle
     if(Selective == -1)
         goto End;
     value = startInputFloat(SettingsStrings[Selective]);
-    data[Selective] = value;
-    if(Selective != -1)
-    goto MSstart;
+    data[Selective] = value; 
     //Free:
 End:
-    for (int i = 0; i < 5; i++) 
-    {
-        DataStr[i] = malloc(7);
+    for (int i = 0; i < 5; i++)  
         free(DataStr[i]);
-    }
+    if(Selective != -1)
+        goto MSstart;
     free(DataStr);
     return 0b11;
 }
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
-    char ** TextArray = malloc(26*sizeof(TextArray));
+    char ** TextArray = NULL;
+    char ** Optionsarray = NULL;
     int Result;
+Medium:
+    Optionsarray = malloc(26*sizeof(TextArray));
+    TextArray = malloc(26*sizeof(TextArray));
     //char A = 'A';
     for(int i = 0; i<26; i++) 
     {
@@ -97,21 +99,24 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
         Text[0] = 'A'+i;
         Text[1] = '\0';
         TextArray[i] = Text;
+        CreateVector3String(Optionsarray,i);
     }
-Medium:
-    Result = MakeMenu("Add Vectors",TextArray, TextArray, 26,0);
+    Result = MakeMenu("Add Vectors",TextArray, Optionsarray, 26,26);
     //gfx_PrintInt(Result,2);
     if (Result == -1)
         goto End;
     Vector3 MyVictorBuffer = startInputVector3();
     AddPoint(Result, MyVictorBuffer);
-    goto Medium;
 End:
     for(int i = 0; i<26; i++) 
     {
         free(TextArray[i]);
+        free(Optionsarray[i]);
     }
     free(TextArray);
+    free(Optionsarray);
+    if (Result != -1)
+        goto Medium;
     return 0b11;
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
@@ -141,6 +146,41 @@ void PrintCalc()
 {
     ResetArea();
     gfx_PrintStringXY("Calc Z", 10, 5);
+}
+void CreateVector3String(char **t, int which) 
+{
+    Vector3 * tmp = malloc(sizeof(Vector3));
+    if(!GetPoint(which,tmp)) 
+    {
+        t[which] = malloc(1);
+        (t[which])[0] = '\0';
+        return;
+    }
+    char * result = malloc(26);//3*7 (for float) + 2 (fo Brackets) + 2 (for spaces) + 1 (for \0)= 26
+    result[0] = '{';
+    char * str = malloc(7);
+    FloatToString(tmp->x,str);
+    for (int i = 0; i < 7; i++)
+        result[1+i] = str[i];
+    free(str);
+    result[8] = ' ';
+    str = malloc(7);
+    FloatToString(tmp->y,str);
+    for (int i = 0; i < 7; i++)
+        result[9+i] = str[i];
+    free(str);
+    result[16] = ' ';
+    str = malloc(7);
+    FloatToString(tmp->z,str);
+    for (int i = 0; i < 7; i++)
+        result[17+i] = str[i];
+    free(str);
+    result[24] = '}';
+    for(int i = 0; i < 25; i++)
+        if(result[i]==0) result[i] = ' ';
+    result[25] = '\0';
+    t[which] = result;
+    free(tmp);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {

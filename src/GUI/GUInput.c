@@ -49,6 +49,7 @@ Vector3 startInputVector3()
 }
 int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int ValueCount) 
 {
+    #define X 170
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
     uint8_t betterY = 9;
@@ -59,7 +60,7 @@ generatingMainPart:
     ResetScreen();
     betterY = 9 + CursorPos*11 - offset; 
     gfx_PrintStringXY(Title, 120, 1);
-    gfx_PrintStringXY(t, 120, betterY);
+    gfx_PrintStringXY(t, X, betterY);
     RenderButtons("Exit", "", "", "", "");
     for (int i = MinOptionRender; i < OptionsCount; i++) 
     {
@@ -104,14 +105,14 @@ generatingMainPart:
             case sk_Graph: break;*/
             default: continue;
         } 
-        //gfx_PrintStringXY(&empty, 120, betterY);
+        //gfx_PrintStringXY(&empty, X, betterY);
         gfx_SetColor(0xFF);//White, but Im too lazy to ignore this warning, so Im doing it manually
-        gfx_FillRectangle(120, betterY,8,8);
+        gfx_FillRectangle(X, betterY,8,8);
         CursorPos %= OptionsCount;
         betterY = 9 + CursorPos*11 - offset; 
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
         //Confused Hungo Bungos with the Comment above this one
-        gfx_PrintStringXY(t, 120, betterY);
+        gfx_PrintStringXY(t, X, betterY);
     }
     return -0;
 }
