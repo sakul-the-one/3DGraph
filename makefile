@@ -3,7 +3,7 @@
 # ----------------------------
 
 NAME = D3VECTOR
-DESCRIPTION = "Renders 3D Vectors. V 0.1"
+DESCRIPTION = "Renders 3D Vectors. V 0.5"
 COMPRESSED = YES
 COMPRESSED_MODE = zx0 #Default: zx7; zx0 is better tho
 ARCHIVED = YES

@@ -7,19 +7,21 @@
 #include <ti/getcsc.h>
 #include "GUI.h"
 
-equ_t * equ;
-
 float getFloat(char * text) 
 {
     float result = 0;
-    size_t buffersize = 15*sizeof(OS_TOK_RIGHT);
-    equ = ti_MallocEqu(buffersize);
-    os_GetTokenInput(text,&equ->data,buffersize);
-    os_Eval(equ->data,equ->len);
+    size_t buffersize = 16;
+    void * buf = malloc(buffersize);
+    if(buf == NULL) os_PutStrFull("Error malloc");
+    os_GetTokenInput(text,buf,buffersize);
+    int Error = os_Eval(buf,buffersize);
+    if(Error != 0) {os_PutStrFull("Error Evaling!"); char debug [10]; intToStr(Error,debug);os_PutStrFull(debug);}
     real_t temp;
-    os_GetRealVar(OS_VAR_ANS, &temp);
+    Error = os_GetRealVar(OS_VAR_ANS, &temp);
+    if(Error != 0) os_PutStrFull("Error getting Var!");
+    os_GetKey();
     result = os_RealToFloat(&temp);
-    free(equ);
+    free(buf);
     return result;
 }
 float startInputFloat(char * Prompt) 
@@ -32,7 +34,7 @@ float startInputFloat(char * Prompt)
 Vector3 startInputVector3() 
 {
     gfx_End();
-    static Vector3 result;
+    Vector3 result;
     //os_GetKey();
     //Get X
     result.x = getFloat("X: ");

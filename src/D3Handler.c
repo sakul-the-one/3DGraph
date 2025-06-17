@@ -124,7 +124,7 @@ void Redraw() //When it is true, it should be "normal"
         D3R_AddLine(Points[next->pos1],Points[next->pos2], 0x00);
         next = next->next;
     }
-    DrawUI(false);//Old system, so idk. This will work!
+    DrawUI(true);//Old system, so idk. This will work!
     D3R_Draw(true);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
@@ -136,7 +136,7 @@ void Redraw() //When it is true, it should be "normal"
     //D3R_Clear();
 }
 
-void DrawUI(bool redraw) //When it is true, it should be "normal"
+void DrawUI(bool redraw) //When it is true, it should be "normal"//If it is false, it will return!
 {
     float * Data = GetDataArray();
     //Horizontal Line is btw faster
@@ -149,14 +149,14 @@ void DrawUI(bool redraw) //When it is true, it should be "normal"
     //gfx_Line(border,        240 -border -ExtraBorder,   320-border,    240-border-ExtraBorder); //DL-DR
     gfx_HorizLine(border,        240 -border -ExtraBorder, 320 - (2*border));
 
+    if(!redraw) return; //So if it isnt normal, it should not try to PreMalloc! //If it is false, it will return!
+
     const Vector3 TOP = {(Data[1] * 10),100 + (Data[2] * 10),(Data[3] * 10)};
     const Vector3 DOWN = {(Data[1] * 10),-100+(Data[2] * 10),(Data[3] * 10)};
     const Vector3 RIGHT = {100+(Data[1] * 10),(Data[2] * 10),(Data[3] * 10)};
     const Vector3 LEFT = {-100+(Data[1] * 10),(Data[2] * 10),(Data[3] * 10)};
     const Vector3 FORWARD = {(Data[1] * 10),(Data[2] * 10),100+(Data[3] * 10)};
     const Vector3 BACKWART = {(Data[1] * 10),(Data[2] * 10),-100+(Data[3] * 10)};
-
-    //if(!redraw) return; //So if it isnt normal, it should not try to PreMalloc!
 
     D3R_PreMallocLine(3);
     D3R_AddLine(TOP, DOWN, 0);
