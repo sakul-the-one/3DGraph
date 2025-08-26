@@ -324,8 +324,12 @@ void CalcIntersectionLine()
     int func2 = SelectYVar("Select second function:");
     Vector3 * func1V = malloc(sizeof(Vector3));
     Vector3 * func2V = malloc(sizeof(Vector3));
-    memset(func1V, 0, sizeof(Vector3));
-    memset(func2V, 0, sizeof(Vector3));
+    Vector3 * medium = malloc(sizeof(Vector3));
+    Vector2 * X1 = malloc(sizeof(Vector2));
+    Vector2 * X2 = malloc(sizeof(Vector2));
+    Vector2 * X3 = malloc(sizeof(Vector2));
+    Vector3 * AbsSolu = malloc(sizeof(Vector3));
+    Vector3 * DirSolu = malloc(sizeof(Vector3));
     if(func2 == -1) return;
     //SET REAL ONES
     real_t zero = os_FloatToReal(0.0f);
@@ -346,19 +350,48 @@ void CalcIntersectionLine()
     os_SetRealVar(OS_VAR_Y, &zero);
     func1V->x = evaluateEquation(func1);
     func2V->x = evaluateEquation(func2);
+        //func1V->z = 0x19531953;
     //Now that we have separeted them, we need to math it now.
     //Its Mathing time
-    printf("V: %f", func1V->x);
+        //printf("V: %f", func1V->x);
     char * res1 = malloc(26);
     char * res2 = malloc(26);
     CreateVector3String(res1, func1V);
     CreateVector3String(res2, func2V);
     
-    //Printing Result
+    //Printing Input (Why is 1 = 5 AND why no negative???)
     gfx_PrintStringXY(res1, 20,20); gfx_PrintInt(func1, 2);
     gfx_PrintStringXY(res2, 20,28); gfx_PrintInt(func2, 2);
+    os_GetKey();
+    //Making the In-Between Step:
+    medium->x = func1V->x - func2V->x;
+    medium->y = func1V->y - func2V->y;
+    medium->z = func1V->z - func2V->z;
+    //Creating The Solution:
+    X1->x = (medium->z * -1) / medium->x;
+    X1->y = (medium->y * -1) / medium->x;
+    X2->x = 0;
+    X2->y = 1;
+    X3->x = (X1->x/medium->x) + medium->z;
+    X3->y = (X1->y/medium->x) + medium->y;
+    //Converting + Displaying:
+    AbsSolu->x = X1->x;
+    AbsSolu->y = X2->x;
+    AbsSolu->z = X3->x;
+    DirSolu->x = X1->y;
+    DirSolu->y = X2->y;
+    DirSolu->z = X3->y;
+    char * AbsStr = malloc(26);
+    char * DirStr = malloc(26);
+    CreateVector3String(AbsStr,AbsSolu);
+    CreateVector3String(DirStr,DirSolu);
+    ResetScreen();
+    gfx_PrintStringXY("Absolute: ", 10, 1); gfx_PrintString(AbsStr);
+    gfx_PrintStringXY("Direction: ", 10,11); gfx_PrintString(DirStr);
+    //Freeing
     free(res1); free(res2);
     free(func1V); free(func2V);
+    free(X1); free(X2); free(X3);
     os_GetKey();
 }
 void PrintCalc() 
