@@ -3,7 +3,7 @@
 # ----------------------------
 
 NAME = D3GRAPH
-DESCRIPTION = "Renders 3D Graphs. V 1.0"
+DESCRIPTION = "Renders 3D Graphs. V 1.1"
 COMPRESSED = YES
 COMPRESSED_MODE = zx0 #Default: zx7; zx0 is better tho
 ARCHIVED = YES

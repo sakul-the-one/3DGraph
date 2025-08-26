@@ -40,60 +40,7 @@ uint8_t Input(uint8_t key)
     return 0b00;
 }
 
-void ResetScreen() 
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-W#pragma-messages"
-    gfx_FillScreen(gfx_white);
-    gfx_SetColor(gfx_black);
-#pragma GCC diagnostic pop
-}
-int SelectYVar(char * title) 
-{
-    int Selected = 0;
-    int Pos = 0;
-CZ_start:
-    ResetArea();
-    gfx_PrintStringXY(title, 2, 2);
-    for(int i = 0, ii = 0; i<10; i++) 
-    {
-        uint8_t betterY = 5 + ii*11;    
-        if(DoesFunctionExsist(i)) 
-        {
-            gfx_PrintStringXY("Y", 10, betterY);
-            gfx_SetTextXY(18, betterY);
-            gfx_PrintInt(i, 1);
-            if(Pos == ii) Selected = i;
-            ii++;
-        }
-    }
-    int betterY = 5 + Pos * 11; 
-    gfx_PrintStringXY("@", 120, betterY);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        { 
-            case sk_Down: Pos++;break;
-            case sk_Up: Pos--;break;
-            case sk_Enter: goto CZ_selected;break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Yequ:
-            case sk_Clear: return;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        } 
-        Pos %= 10;
-        goto CZ_start;
-    }
-CZ_selected:
-    ResetArea();
-    return Selected;
-}
+void ResetScreen();
 #pragma endregion
 
 #pragma region HelperFuctions
@@ -244,6 +191,60 @@ void ResetArea()
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
 }
+void ResetScreen() 
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_FillScreen(gfx_white);
+    gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+}
+int SelectYVar(char * title) 
+{
+    int Selected = -1;
+    int Pos = 0;
+CZ_start:
+    ResetArea();
+    gfx_PrintStringXY(title, 2, 2);
+    for(int i = 0, ii = 0; i<10; i++) 
+    {
+        uint8_t betterY = 5 + ii*11;    
+        if(DoesFunctionExsist(i)) 
+        {
+            gfx_PrintStringXY("Y", 10, betterY);
+            gfx_SetTextXY(18, betterY);
+            gfx_PrintInt(i, 1);
+            if(Pos == ii) Selected = i;
+            ii++;
+        }
+    }
+    int betterY = 5 + Pos * 11; 
+    gfx_PrintStringXY("@", 120, betterY);
+    while (true)
+    {
+        uint8_t key = os_GetCSC();  
+        switch (key) 
+        { 
+            case sk_Down: Pos++;break;
+            case sk_Up: Pos--;break;
+            case sk_Enter: goto CZ_selected;break;
+            case sk_Mode:
+            case sk_Del:
+            case sk_Yequ:
+            case sk_Clear: return -1;
+            /*case sk_Window: break;
+            case sk_Zoom: break;
+            case sk_Trace: break;
+            case sk_Graph: break;*/
+            default: continue;
+        } 
+        Pos %= 10;
+        goto CZ_start;
+    }
+CZ_selected:
+    ResetArea();
+    return Selected;
+}
 void DrawEqu(int y) 
 {
     ResetArea();
@@ -274,12 +275,52 @@ void DrawEqu(int y)
         gfx_PrintInt(i, 1);
     }
 }
+void CalcZ()
+{
+    int Selected = 0;
+    Selected = SelectYVar("Select Y");
+    if(Selected == -1) return;
+    gfx_PrintStringXY("x:",10,5);
+    float * x = startInputFloat((Vector2){25, 5});
+    gfx_PrintStringXY("y:",10,16);
+    float * y = startInputFloat((Vector2){25, 16});
+
+    real_t RealX = os_FloatToReal(*x);
+    os_SetRealVar(OS_VAR_X, &RealX);
+
+    real_t RealY = os_FloatToReal(*y);
+    os_SetRealVar(OS_VAR_Y, &RealY);
+
+    float zValue = evaluateEquation(Selected);
+    //printf("%f", zValue); Debug
+    gfx_PrintStringXY("z:",10,27);
+    gfx_SetTextXY(25, 27);
+    GFX_PrintFloat(zValue);
+    real_t RealAns = os_FloatToReal(zValue);
+    os_SetRealVar(OS_VAR_ANS, &RealAns);
+    while (true)
+    {
+        uint8_t key = os_GetCSC();  
+        switch (key) 
+        { 
+            case sk_Enter: 
+            case sk_Mode:
+            case sk_Del:
+            case sk_Yequ:
+            case sk_Clear: return;
+            default: continue;
+        } 
+
+    }
+}
 void CalcIntersectionLine() 
 {
     int func1 = SelectYVar("Select first function:");
+    if(func1 == -1) return;
     int func2 = SelectYVar("Select second function:");
     Vector3 func1V;
     Vector3 func2V;
+    if(func2 == -1) return;
     //SET REAL ONES
     real_t zero = os_FloatToReal(0);
     real_t one = os_FloatToReal(1);
@@ -302,57 +343,20 @@ void CalcIntersectionLine()
     //Now that we have separeted them, we need to math it now.
     //Its Mathing time
 }
-void CalcZ()
-{
-    int Selected = 0;
-    Selected = SelectYVar("Select Y");
-    gfx_PrintStringXY("x:",10,5);
-    float * x = startInputFloat((Vector2){25, 5});
-    gfx_PrintStringXY("y:",10,16);
-    float * y = startInputFloat((Vector2){25, 16});
-
-    real_t RealX = os_FloatToReal(*x);
-    os_SetRealVar(OS_VAR_X, &RealX);
-
-    real_t RealY = os_FloatToReal(*y);
-    os_SetRealVar(OS_VAR_Y, &RealY);
-
-    float zValue = evaluateEquation(Selected);
-    //printf("%f", zValue); Debug
-    gfx_PrintStringXY("z:",10,27);
-    gfx_SetTextXY(25, 27);
-    GFX_PrintFloat(zValue, 3);
-    real_t RealAns = os_FloatToReal(zValue);
-    os_SetRealVar(OS_VAR_ANS, &RealAns);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        { 
-            case sk_Enter: 
-            case sk_Mode:
-            case sk_Del:
-            case sk_Yequ:
-            case sk_Clear: return;
-            default: continue;
-        } 
-
-    }
-}
 void PrintCalc() 
 {
     ResetArea();
     gfx_PrintStringXY("Calc Z", 10, 5);
-    gfx_PrintStringXY("Ccalc Intersection", 10, 16);
+    gfx_PrintStringXY("Calc Intersection", 10, 16);
 }
 void PrintSettings(float * data) 
 {
     ResetArea();
-    gfx_PrintStringXY("I forgot  ", 10, 5); GFX_PrintFloat(data[0], 3);
-    gfx_PrintStringXY("World X  ", 10, 16);GFX_PrintFloat(data[1], 3);
-    gfx_PrintStringXY("World Y  ", 10, 27);GFX_PrintFloat(data[2], 3);
-    gfx_PrintStringXY("World Z  ", 10, 38);GFX_PrintFloat(data[3], 3);
-    gfx_PrintStringXY("Details  ", 10, 49);GFX_PrintFloat(data[4], 3);
+    gfx_PrintStringXY("I forgot  ", 10, 5); GFX_PrintFloat(data[0]);
+    gfx_PrintStringXY("World X  ", 10, 16);GFX_PrintFloat(data[1]);
+    gfx_PrintStringXY("World Y  ", 10, 27);GFX_PrintFloat(data[2]);
+    gfx_PrintStringXY("World Z  ", 10, 38);GFX_PrintFloat(data[3]);
+    gfx_PrintStringXY("Details  ", 10, 49);GFX_PrintFloat(data[4]);
 }
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {
