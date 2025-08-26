@@ -48,6 +48,52 @@ void ResetScreen()
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
 }
+int SelectYVar(char * title) 
+{
+    int Selected = 0;
+    int Pos = 0;
+CZ_start:
+    ResetArea();
+    gfx_PrintStringXY(title, 2, 2);
+    for(int i = 0, ii = 0; i<10; i++) 
+    {
+        uint8_t betterY = 5 + ii*11;    
+        if(DoesFunctionExsist(i)) 
+        {
+            gfx_PrintStringXY("Y", 10, betterY);
+            gfx_SetTextXY(18, betterY);
+            gfx_PrintInt(i, 1);
+            if(Pos == ii) Selected = i;
+            ii++;
+        }
+    }
+    int betterY = 5 + Pos * 11; 
+    gfx_PrintStringXY("@", 120, betterY);
+    while (true)
+    {
+        uint8_t key = os_GetCSC();  
+        switch (key) 
+        { 
+            case sk_Down: Pos++;break;
+            case sk_Up: Pos--;break;
+            case sk_Enter: goto CZ_selected;break;
+            case sk_Mode:
+            case sk_Del:
+            case sk_Yequ:
+            case sk_Clear: return;
+            /*case sk_Window: break;
+            case sk_Zoom: break;
+            case sk_Trace: break;
+            case sk_Graph: break;*/
+            default: continue;
+        } 
+        Pos %= 10;
+        goto CZ_start;
+    }
+CZ_selected:
+    ResetArea();
+    return Selected;
+}
 #pragma endregion
 
 #pragma region HelperFuctions
@@ -72,7 +118,7 @@ uint8_t MainFirst() //Turn specific equasion off. There is btw. a Bug when you p
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
     gfx_PrintStringXY(t, 120, 5);
-    while (true)
+    while (true) //I wish I could optimize that thingy here like in below, but this is actually that Optimized, that my optimisation might make it worse!
     {
         uint8_t key = os_GetCSC();   
         switch (key) 
@@ -230,51 +276,13 @@ void DrawEqu(int y)
 }
 void CalcIntersectionLine() 
 {
-
+    int func1 = SelectYVar("Select first function:");
+    int func2 = SelectYVar("Select second function:");
 }
 void CalcZ()
 {
     int Selected = 0;
-    int Pos = 0;
-CZ_start:
-    ResetArea();
-    for(int i = 0, ii = 0; i<10; i++) 
-    {
-        uint8_t betterY = 5 + ii*11;    
-        if(DoesFunctionExsist(i)) 
-        {
-            gfx_PrintStringXY("Y", 10, betterY);
-            gfx_SetTextXY(18, betterY);
-            gfx_PrintInt(i, 1);
-            if(Pos == ii) Selected = i;
-            ii++;
-        }
-    }
-    int betterY = 5 + Pos * 11; 
-    gfx_PrintStringXY("@", 120, betterY);
-    while (true)
-    {
-        uint8_t key = os_GetCSC();  
-        switch (key) 
-        { 
-            case sk_Down: Pos++;break;
-            case sk_Up: Pos--;break;
-            case sk_Enter: goto CZ_selected;break;
-            case sk_Mode:
-            case sk_Del:
-            case sk_Yequ:
-            case sk_Clear: return;
-            /*case sk_Window: break;
-            case sk_Zoom: break;
-            case sk_Trace: break;
-            case sk_Graph: break;*/
-            default: continue;
-        } 
-        Pos %= 10;
-        goto CZ_start;
-    }
-CZ_selected:
-    ResetArea();
+    Selected = SelectYVar("Select Y");
     gfx_PrintStringXY("x:",10,5);
     float * x = startInputFloat((Vector2){25, 5});
     gfx_PrintStringXY("y:",10,16);
