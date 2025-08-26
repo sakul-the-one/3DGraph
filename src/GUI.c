@@ -56,7 +56,9 @@ void DrawEqu(int y);
 void PrintSettings(float * data);
 void PrintCalc();
 void CalcZ();
-void GFX_PrintFloat(float Value, int afterpoint);
+void CalcIntersectionLine();
+void GFX_PrintFloat(float Value);
+void FloatToString(float Value, char * str);
 #pragma endregion
 
 #pragma region AllMains
@@ -138,7 +140,7 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
 {
     return 0b10;
 }
-uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
+uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero; 
 {
     ResetScreen();
     PrintCalc();
@@ -165,7 +167,7 @@ uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
             case sk_Graph: break;*/
             default: continue;
         } 
-        CursorPos %= 1;
+        CursorPos %= 2;
         betterY = 5 + CursorPos*11; 
         gfx_PrintStringXY(t, 120, betterY);
     }
@@ -173,6 +175,7 @@ Next:
     switch (CursorPos)
     {
         case 0: CalcZ(); break;
+        case 1: CalcIntersectionLine(); break;
         default: break;
     }
     return 0b10;
@@ -224,6 +227,10 @@ void DrawEqu(int y)
         gfx_SetTextXY(18, betterY);
         gfx_PrintInt(i, 1);
     }
+}
+void CalcIntersectionLine() 
+{
+
 }
 void CalcZ()
 {
@@ -305,6 +312,7 @@ void PrintCalc()
 {
     ResetArea();
     gfx_PrintStringXY("Calc Z", 10, 5);
+    gfx_PrintStringXY("Ccalc Intersection", 10, 16);
 }
 void PrintSettings(float * data) 
 {
@@ -359,72 +367,18 @@ void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * te
 #pragma endregion
 
 #pragma region F2S
-void reverse(char* str, int len) 
-{ 
-    int i = 0, j = len - 1, temp; 
-    while (i < j) { 
-        temp = str[i]; 
-        str[i] = str[j]; 
-        str[j] = temp; 
-        i++; 
-        j--; 
-    } 
-} 
- 
-// Converts a given integer x to string str[]. 
-// d is the number of digits required in the output. 
-// If d is more than the number of digits in x, 
-// then 0s are added at the beginning. 
-int intToStr2(int x, char str[], int d) 
-{ 
-    int i = 0; 
-    while (x) { 
-        str[i++] = (x % 10) + '0'; 
-        x = x / 10; 
-    } 
- 
-    // If number of digits required is more, then 
-    // add 0s at the beginning 
-    while (i < d) 
-        str[i++] = '0'; 
- 
-    reverse(str, i); 
-    str[i] = '\0'; 
-    return i; 
-} 
- 
-// Converts a floating-point/double number to a string. 
-void ftoa(float n, char* res, int afterpoint) //Source https://www.geeksforgeeks.org/convert-floating-point-number-string/ btw.
-{ 
-    bool IsNegative = n < 0;
-    if(IsNegative) n *= -1;
-    // Extract integer part 
-    int ipart = (int)n; 
- 
-    // Extract floating part 
-    float fpart = n - (float)ipart; 
- 
-    // convert integer part to string 
-    int i = intToStr2(ipart, res, 0); 
- 
-    // check for display option after point 
-    if (afterpoint != 0) { 
-        res[i] = '.'; // add dot 
- 
-        // Get the value of fraction part upto given no. 
-        // of points after dot. The third parameter 
-        // is needed to handle cases like 233.007 
-        fpart = fpart * pow(10, afterpoint); 
- 
-        intToStr2((int)fpart, res + i + 1, afterpoint); 
-    }
-    if (IsNegative) gfx_PrintString("-");
-} 
-
-void GFX_PrintFloat(float Value, int afterpoint) 
-{
-    char str[16];
-    ftoa(Value, str ,afterpoint);
+void GFX_PrintFloat(float Value) 
+{   
+    char *str = malloc(7);
+    FloatToString(Value, str);
     gfx_PrintString(str);
+    free(str);
+}
+void FloatToString(float Value, char * str) 
+{
+    real_t *buf = malloc(sizeof(real_t));
+    *buf = os_FloatToReal(Value);
+    os_RealToStr(str, buf,6,4,2);
+    free(buf);
 }
 #pragma endregion
