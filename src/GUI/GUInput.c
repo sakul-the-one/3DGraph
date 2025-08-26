@@ -6,20 +6,22 @@
 #include <ti/screen.h>
 #include <ti/getcsc.h>
 #include "GUI.h"
+#include <string.h>
 
 float getFloat(char * text) 
 {
     float result = 0;
     size_t buffersize = 16;
-    void * buf = malloc(buffersize);
-    if(buf == NULL) os_PutStrFull("Error malloc");
+    void * buf = malloc(buffersize*2);
+    memset(buf, 0, buffersize*2);
+        //if(buf == NULL) os_PutStrFull("Error malloc");
     os_GetTokenInput(text,buf,buffersize);
-    int Error = os_Eval(buf,buffersize);
-    if(Error != 0) {os_PutStrFull("Error Evaling!"); char debug [10]; intToStr(Error,debug);os_PutStrFull(debug);}
+    os_Eval(buf,buffersize);
+        //if(Error != 0) {os_PutStrFull("Error Evaling!"); char debug [10]; intToStr(Error,debug);os_PutStrFull(debug);}
     real_t temp;
-    Error = os_GetRealVar(OS_VAR_ANS, &temp);
-    if(Error != 0) os_PutStrFull("Error getting Var!");
-    os_GetKey();
+    os_GetRealVar(OS_VAR_ANS, &temp);
+        //if(Error != 0) os_PutStrFull("Error getting Var!");
+        //os_GetKey();
     result = os_RealToFloat(&temp);
     free(buf);
     return result;
@@ -52,21 +54,22 @@ Vector3 startInputVector3()
 int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int ValueCount) 
 {
     #define X 170
+    #define YOffset 9
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
-    uint8_t betterY = 9;
+    uint8_t betterY = YOffset;
     int MaxOptionRender = 0;
     int MinOptionRender = 0;
     int offset = 0;
 generatingMainPart:
     ResetScreen();
-    betterY = 9 + CursorPos*11 - offset; 
+    betterY = YOffset + CursorPos*11 - offset; 
     gfx_PrintStringXY(Title, 120, 1);
     gfx_PrintStringXY(t, X, betterY);
     RenderButtons("Exit", "", "", "", "");
     for (int i = MinOptionRender; i < OptionsCount; i++) 
     {
-        int y = 8 + i*11-offset;
+        int y = YOffset + i*11-offset;
         if(y >= ButtomGUIBorder) 
         {
             MaxOptionRender = i;
@@ -111,7 +114,7 @@ generatingMainPart:
         gfx_SetColor(0xFF);//White, but Im too lazy to ignore this warning, so Im doing it manually
         gfx_FillRectangle(X, betterY,8,8);
         CursorPos %= OptionsCount;
-        betterY = 9 + CursorPos*11 - offset; 
+        betterY = YOffset + CursorPos*11 - offset; 
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
         //Confused Hungo Bungos with the Comment above this one
         gfx_PrintStringXY(t, X, betterY);

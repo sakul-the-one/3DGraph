@@ -8,6 +8,7 @@
 #include "GUI/GUInput.h"
 #include "StaticData.h"
 #include <math.h>
+#include <string.h>
 
 #pragma region Init//First Return
 void InitGUI(bool * exitVar) 
@@ -157,20 +158,24 @@ void CreateVector3String(char **t, int which)
         return;
     }
     char * result = malloc(26);//3*7 (for float) + 2 (fo Brackets) + 2 (for spaces) + 1 (for \0)= 26
+    memset(result, ' ', 26);
     result[0] = '{';
     char * str = malloc(7);
+    memset(str, '\0', 7);
     FloatToString(tmp->x,str);
     for (int i = 0; i < 7; i++)
         result[1+i] = str[i];
     free(str);
     result[8] = ' ';
     str = malloc(7);
+    memset(str, '\0', 7);
     FloatToString(tmp->y,str);
     for (int i = 0; i < 7; i++)
         result[9+i] = str[i];
     free(str);
     result[16] = ' ';
     str = malloc(7);
+    memset(str, '\0', 7);
     FloatToString(tmp->z,str);
     for (int i = 0; i < 7; i++)
         result[17+i] = str[i];
