@@ -322,6 +322,8 @@ void CalcIntersectionLine()
     int func1 = SelectYVar("Select first function:");
     if(func1 == -1) return;
     int func2 = SelectYVar("Select second function:");
+    if(func2 == -1) return;
+    //Create Vectors
     Vector3 * func1V = malloc(sizeof(Vector3));
     Vector3 * func2V = malloc(sizeof(Vector3));
     Vector3 * medium = malloc(sizeof(Vector3));
@@ -330,7 +332,14 @@ void CalcIntersectionLine()
     Vector2 * X3 = malloc(sizeof(Vector2));
     Vector3 * AbsSolu = malloc(sizeof(Vector3));
     Vector3 * DirSolu = malloc(sizeof(Vector3));
-    if(func2 == -1) return;
+    memset(func1V, 0 , sizeof(Vector3));
+    memset(func2V, 0 , sizeof(Vector3));
+    memset(medium, 0 , sizeof(Vector3));
+    memset(AbsSolu, 0 , sizeof(Vector3));
+    memset(DirSolu, 0 , sizeof(Vector3));
+    memset(X1, 0 , sizeof(Vector2));
+    memset(X2, 0 , sizeof(Vector2));
+    memset(X3, 0 , sizeof(Vector2));
     //SET REAL ONES
     real_t zero = os_FloatToReal(0.0f);
     real_t one = os_FloatToReal(1.0f);
