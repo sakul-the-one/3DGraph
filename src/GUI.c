@@ -8,6 +8,8 @@
 #include "GUI/GUInput.h"
 #include "StaticData.h"
 #include <math.h>
+#include <string.h>
+#include <ti/getkey.h>
 
 #pragma region Init
 int8_t FR = 0b11; //First Return
@@ -52,6 +54,7 @@ void CalcZ();
 void CalcIntersectionLine();
 void GFX_PrintFloat(float Value);
 void FloatToString(float Value, char * str);
+void CreateVector3String(char * result, Vector3 * vec);
 #pragma endregion
 
 #pragma region AllMains
@@ -140,7 +143,7 @@ uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero;
     RenderButtons("Exit", "", "", "", "");
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
-    gfx_PrintStringXY(t, 120, 5);
+    gfx_PrintStringXY(t, 160, 5);
     uint8_t betterY = 5 + CursorPos*11;
     while (true)
     {
@@ -162,7 +165,8 @@ uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero;
         } 
         CursorPos %= 2;
         betterY = 5 + CursorPos*11; 
-        gfx_PrintStringXY(t, 120, betterY);
+        PrintCalc();
+        gfx_PrintStringXY(t, 160, betterY);
     }
 Next:
     switch (CursorPos)
@@ -182,12 +186,12 @@ uint8_t MainFive()
 
 
 #pragma region  ImportantFunctionsInit
-void ResetArea() 
+void ResetArea() //Dont Use ResetScreen if you are dealing with GUI: It will delete the Buttons below!
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_white);
-    gfx_FillRectangle(0,5,130,120);
+    gfx_FillRectangle(0,5,170,120);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
 }
@@ -205,10 +209,10 @@ int SelectYVar(char * title)
     int Pos = 0;
 CZ_start:
     ResetArea();
-    gfx_PrintStringXY(title, 2, 2);
+    gfx_PrintStringXY(title, 1, 1);
     for(int i = 0, ii = 0; i<10; i++) 
     {
-        uint8_t betterY = 5 + ii*11;    
+        uint8_t betterY = 10 + ii*11;    
         if(DoesFunctionExsist(i)) 
         {
             gfx_PrintStringXY("Y", 10, betterY);
@@ -218,7 +222,7 @@ CZ_start:
             ii++;
         }
     }
-    int betterY = 5 + Pos * 11; 
+    int betterY = 10 + Pos * 11; 
     gfx_PrintStringXY("@", 120, betterY);
     while (true)
     {
@@ -318,30 +322,44 @@ void CalcIntersectionLine()
     int func1 = SelectYVar("Select first function:");
     if(func1 == -1) return;
     int func2 = SelectYVar("Select second function:");
-    Vector3 func1V;
-    Vector3 func2V;
+    Vector3 * func1V = malloc(sizeof(Vector3));
+    Vector3 * func2V = malloc(sizeof(Vector3));
+    memset(func1V, 0, sizeof(Vector3));
+    memset(func2V, 0, sizeof(Vector3));
     if(func2 == -1) return;
     //SET REAL ONES
-    real_t zero = os_FloatToReal(0);
-    real_t one = os_FloatToReal(1);
+    real_t zero = os_FloatToReal(0.0f);
+    real_t one = os_FloatToReal(1.0f);
     //Set them to Zero
     os_SetRealVar(OS_VAR_X, &zero);
     os_SetRealVar(OS_VAR_Y, &zero);
     //Get&Set Function Values
     //Absolutes
-    func1V.z = evaluateEquation(func1);
-    func2V.z = evaluateEquation(func2);
+    func1V->z = evaluateEquation(func1);
+    func2V->z = evaluateEquation(func2);
     //Y War
     os_SetRealVar(OS_VAR_Y, &one);
-    func1V.y = evaluateEquation(func1);
-    func2V.y = evaluateEquation(func2);
+    func1V->y = evaluateEquation(func1);
+    func2V->y = evaluateEquation(func2);
     //X Var
     os_SetRealVar(OS_VAR_X, &one);
     os_SetRealVar(OS_VAR_Y, &zero);
-    func1V.x = evaluateEquation(func1);
-    func2V.x = evaluateEquation(func2);
+    func1V->x = evaluateEquation(func1);
+    func2V->x = evaluateEquation(func2);
     //Now that we have separeted them, we need to math it now.
     //Its Mathing time
+    printf("V: %f", func1V->x);
+    char * res1 = malloc(26);
+    char * res2 = malloc(26);
+    CreateVector3String(res1, func1V);
+    CreateVector3String(res2, func2V);
+    
+    //Printing Result
+    gfx_PrintStringXY(res1, 20,20); gfx_PrintInt(func1, 2);
+    gfx_PrintStringXY(res2, 20,28); gfx_PrintInt(func2, 2);
+    free(res1); free(res2);
+    free(func1V); free(func2V);
+    os_GetKey();
 }
 void PrintCalc() 
 {
@@ -415,5 +433,35 @@ void FloatToString(float Value, char * str)
     *buf = os_FloatToReal(Value);
     os_RealToStr(str, buf,6,4,2);
     free(buf);
+}
+void CreateVector3String(char * result, Vector3 * vec) 
+{
+    //char * result = malloc(26);//3*7 (for float) + 2 (fo Brackets) + 2 (for spaces) + 1 (for \0)= 26
+    memset(result, ' ', 26);
+    result[0] = '{';
+    char * str = malloc(7);
+    memset(str, '\0', 7);
+    FloatToString(vec->x,str);
+    for (int i = 0; i < 7; i++)
+        result[1+i] = str[i];
+    free(str);
+    result[8] = ' ';
+    str = malloc(7);
+    memset(str, '\0', 7);
+    FloatToString(vec->y,str);
+    for (int i = 0; i < 7; i++)
+        result[9+i] = str[i];
+    free(str);
+    result[16] = ' ';
+    str = malloc(7);
+    memset(str, '\0', 7);
+    FloatToString(vec->z,str);
+    for (int i = 0; i < 7; i++)
+        result[17+i] = str[i];
+    free(str);
+    result[24] = '}';
+    for(int i = 0; i < 25; i++)
+        if(result[i]==0) result[i] = ' ';
+    result[25] = '\0';
 }
 #pragma endregion
