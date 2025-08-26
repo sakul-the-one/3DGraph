@@ -278,6 +278,29 @@ void CalcIntersectionLine()
 {
     int func1 = SelectYVar("Select first function:");
     int func2 = SelectYVar("Select second function:");
+    Vector3 func1V;
+    Vector3 func2V;
+    //SET REAL ONES
+    real_t zero = os_FloatToReal(0);
+    real_t one = os_FloatToReal(1);
+    //Set them to Zero
+    os_SetRealVar(OS_VAR_X, &zero);
+    os_SetRealVar(OS_VAR_Y, &zero);
+    //Get&Set Function Values
+    //Absolutes
+    func1V.z = evaluateEquation(func1);
+    func2V.z = evaluateEquation(func2);
+    //Y War
+    os_SetRealVar(OS_VAR_Y, &one);
+    func1V.y = evaluateEquation(func1);
+    func2V.y = evaluateEquation(func2);
+    //X Var
+    os_SetRealVar(OS_VAR_X, &one);
+    os_SetRealVar(OS_VAR_Y, &zero);
+    func1V.x = evaluateEquation(func1);
+    func2V.x = evaluateEquation(func2);
+    //Now that we have separeted them, we need to math it now.
+    //Its Mathing time
 }
 void CalcZ()
 {
