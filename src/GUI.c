@@ -352,13 +352,13 @@ void CalcIntersectionLine()
     func2V->z = evaluateEquation(func2);
     //Y War
     os_SetRealVar(OS_VAR_Y, &one);
-    func1V->y = evaluateEquation(func1);
-    func2V->y = evaluateEquation(func2);
+    func1V->y = evaluateEquation(func1)-func1V->z;
+    func2V->y = evaluateEquation(func2)-func2V->z;
     //X Var
     os_SetRealVar(OS_VAR_X, &one);
     os_SetRealVar(OS_VAR_Y, &zero);
-    func1V->x = evaluateEquation(func1);
-    func2V->x = evaluateEquation(func2);
+    func1V->x = evaluateEquation(func1)-func1V->z;
+    func2V->x = evaluateEquation(func2)-func2V->z;
         //func1V->z = 0x19531953;
     //Now that we have separeted them, we need to math it now.
     //Its Mathing time
