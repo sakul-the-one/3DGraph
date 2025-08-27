@@ -332,6 +332,7 @@ void CalcIntersectionLine()
     Vector2 * X3 = malloc(sizeof(Vector2));
     Vector3 * AbsSolu = malloc(sizeof(Vector3));
     Vector3 * DirSolu = malloc(sizeof(Vector3));
+    /* Not Needed (waste of space):
     memset(func1V, 0 , sizeof(Vector3));
     memset(func2V, 0 , sizeof(Vector3));
     memset(medium, 0 , sizeof(Vector3));
@@ -339,7 +340,7 @@ void CalcIntersectionLine()
     memset(DirSolu, 0 , sizeof(Vector3));
     memset(X1, 0 , sizeof(Vector2));
     memset(X2, 0 , sizeof(Vector2));
-    memset(X3, 0 , sizeof(Vector2));
+    memset(X3, 0 , sizeof(Vector2));*/
     //SET REAL ONES
     real_t zero = os_FloatToReal(0.0f);
     real_t one = os_FloatToReal(1.0f);
@@ -369,6 +370,8 @@ void CalcIntersectionLine()
     CreateVector3String(res2, func2V);
     
     //Printing Input (Why is 1 = 5 AND why no negative???)
+    // Im Stupid and forgot the Absolute Number...
+    //Still Printing just in Case of User or my Error
     gfx_PrintStringXY(res1, 20,20); gfx_PrintInt(func1, 2);
     gfx_PrintStringXY(res2, 20,28); gfx_PrintInt(func2, 2);
     os_GetKey();
@@ -381,8 +384,8 @@ void CalcIntersectionLine()
     X1->y = (medium->y * -1) / medium->x;
     X2->x = 0;
     X2->y = 1;
-    X3->x = (X1->x/medium->x) + medium->z;
-    X3->y = (X1->y/medium->x) + medium->y;
+    X3->x = (X1->x/func1V->x) + func1V->z;
+    X3->y = (X1->y/func1V->x) + func1V->y;
     //Converting + Displaying:
     AbsSolu->x = X1->x;
     AbsSolu->y = X2->x;
