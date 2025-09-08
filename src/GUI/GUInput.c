@@ -103,7 +103,7 @@ generatingMainPart:
             case sk_Enter: return CursorPos;
             case sk_Mode:
             case sk_Del:
-            case sk_Clear: *exitPtrI = false; return false;
+            //case sk_Clear: *exitPtrI = false; return -1; //Tf. Why do we want to exit the entire Programm?????
             /*case sk_Window: break;
             case sk_Zoom: break;
             case sk_Trace: break;
@@ -123,5 +123,5 @@ generatingMainPart:
 }
 void InitGUIInput(bool * exitVar) 
 {
-    exitPtrI = exitVar;
+    //exitPtrI = exitVar; //Tf. Why do we want to exit the entire Programm????? Anyway, not removing because maybe I need it and compiler will fix it anyway, trust!
 }
