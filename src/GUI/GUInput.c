@@ -26,6 +26,7 @@ float * startInputFloat(Vector2 position)
             case sk_7: if(pos >= 16) break; str[pos] = '7'; pos++;break;
             case sk_8: if(pos >= 16) break; str[pos] = '8'; pos++;break;
             case sk_9: if(pos >= 16) break; str[pos] = '9'; pos++;break;
+            case sk_Sub: if(pos >= 16) break; str[pos] = '-'; pos++;break;
             case sk_DecPnt: if(pos >= 16) break; str[pos] = '.'; pos++;break;
             case sk_Left: pos--; break;
             case sk_Right: pos++; break;
