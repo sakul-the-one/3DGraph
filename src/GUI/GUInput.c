@@ -51,7 +51,31 @@ Vector3 startInputVector3()
     gfx_Begin();
     return result;
 }
-int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int ValueCount) 
+int16_d * MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos)
+{
+    int16_d retVal = 0;
+    retVal.togther = 0;
+start:
+    uint8_t ret = 0;
+    switch (pos) 
+    {
+        case 1: ret = MakeMenu(op1); break;
+        case 2: ret = MakeMenu(op2); break;
+        case 3: ret = MakeMenu(op3); break;
+        case 4: ret = MakeMenu(op4); break;
+        case 5: ret = MakeMenu(op5); break;
+    }
+    if (-1 > ret) 
+    {
+        pos = (pos + ret.val1 + 3) % 5;
+        goto start;
+    }
+    retVal.val1 = pos;
+    retVal.val2 = ret;
+    return retVal.togther;
+}
+
+uint8_t MakeMenu(GUIMenu * menu) 
 {
     #define X 170
     #define YOffset 9
@@ -64,10 +88,10 @@ int MakeMenu(char * Title,char ** Options, char ** Value ,int OptionsCount, int 
 generatingMainPart:
     ResetScreen();
     betterY = YOffset + CursorPos*11 - offset; 
-    gfx_PrintStringXY(Title, 120, 1);
+    gfx_PrintStringXY(menu->title, 120, 1);
     gfx_PrintStringXY(t, X, betterY);
     RenderButtons("Exit", "", "", "", "");
-    for (int i = MinOptionRender; i < OptionsCount; i++) 
+    for (int i = MinOptionRender; i < menu->OptionsCount; i++) 
     {
         int y = YOffset + i*11-offset;
         if(y >= ButtomGUIBorder) 
@@ -75,9 +99,9 @@ generatingMainPart:
             MaxOptionRender = i;
             break;
         }        
-        gfx_PrintStringXY(Options[i],10, y);
-        if(i < ValueCount)
-            gfx_PrintString(Value[i]);
+        gfx_PrintStringXY(menu->Options[i],10, y);
+        if(i < menu->ValueCount)
+            gfx_PrintString(menu->Value[i]);
     }
 
     while (true)
@@ -90,7 +114,7 @@ generatingMainPart:
                 CursorPos++;
                 if(MaxOptionRender == 0) break;
                 if(CursorPos >= MaxOptionRender) {offset+=11;MinOptionRender++;MaxOptionRender++;}
-                if(CursorPos > OptionsCount-1) {MaxOptionRender-=MinOptionRender;MinOptionRender = 0; CursorPos = 0;offset=0;}
+                if(CursorPos > menu->OptionsCount-1) {MaxOptionRender-=MinOptionRender;MinOptionRender = 0; CursorPos = 0;offset=0;}
                 goto generatingMainPart;
                 break;
             case sk_Up:
@@ -101,6 +125,8 @@ generatingMainPart:
                 goto generatingMainPart;
                 break;
             case sk_Enter: return CursorPos;
+            case sk_Right: return -2;
+            case sk_Left: return -4;
             case sk_Mode:
             case sk_Del:
             //case sk_Clear: *exitPtrI = false; return -1; //Tf. Why do we want to exit the entire Programm?????
@@ -113,7 +139,7 @@ generatingMainPart:
         //gfx_PrintStringXY(&empty, X, betterY);
         gfx_SetColor(0xFF);//White, but Im too lazy to ignore this warning, so Im doing it manually
         gfx_FillRectangle(X, betterY,8,8);
-        CursorPos %= OptionsCount;
+        CursorPos %= menu->OptionsCount;
         betterY = YOffset + CursorPos*11 - offset; 
         //I hope the compiler compiles that Y good (5 + _ * 11); It does, thank you. But I did it manually anyway
         //Confused Hungo Bungos with the Comment above this one
