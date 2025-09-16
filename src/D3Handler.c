@@ -25,7 +25,7 @@ bool is_bit_set(uint32_t value, int bit_position) {
     return (value & (1 << bit_position)) != 0;
 }//*/
 #pragma endregion
-float Data* = 0;
+float * Data = 0;
 void AddCubeLines(Vector3 pos) 
 {
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
