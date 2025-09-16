@@ -25,19 +25,25 @@ bool is_bit_set(uint32_t value, int bit_position) {
     return (value & (1 << bit_position)) != 0;
 }//*/
 #pragma endregion
+float Data* = 0;
 void AddCubeLines(Vector3 pos) 
 {
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
     #define halfsize 5
-    int multiplicator = GetDataArray()[0];
+    //int multiplicator = GetDataArray()[0];
     if(multiplicator == 0) 
     {
         multiplicator = 5;
         SetDataValue(5,0);
     }
-    pos.x *= multiplicator;
-    pos.y *= multiplicator;
-    pos.z *= multiplicator;
+    //Move the Point:
+    pos.x += Data[1];
+    pos.y += Data[2];
+    pos.z += Data[3];
+    //Distance: Standart: 10
+    pos.x *= Data[0];
+    pos.y *= Data[0];
+    pos.z *= Data[0];
     // Front face vertices
     vertices[0].x = pos.x + halfsize; vertices[0].y = pos.y + halfsize; vertices[0].z = pos.z + halfsize;  // Top right front
     vertices[1].x = pos.x - halfsize; vertices[1].y = pos.y + halfsize; vertices[1].z = pos.z + halfsize;  // Top left front
@@ -68,6 +74,7 @@ void AddCubeLines(Vector3 pos)
 void Init() 
 {
     D3G_Init();
+    Data = GetDataArray();
 }
 void Destroy() 
 {
@@ -138,7 +145,6 @@ void Redraw() //When it is true, it should be "normal"
 
 void DrawUI(bool redraw) //When it is true, it should be "normal"//If it is false, it will return!
 {
-    float * Data = GetDataArray();
     //Horizontal Line is btw faster
     //Draw Square:
     //          x               y                           x              y
