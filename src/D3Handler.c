@@ -31,9 +31,9 @@ void AddCubeLines(Vector3 pos)
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
     #define halfsize 5
     //int multiplicator = GetDataArray()[0];
-    if(multiplicator == 0) 
+    if(Data[0] == 0) 
     {
-        multiplicator = 5;
+        Data[0] = 5;
         SetDataValue(5,0);
     }
     //Move the Point:

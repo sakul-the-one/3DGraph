@@ -53,6 +53,8 @@ void ResetArea();
 //void DrawEqu(int y);
 void CreateVector3String(char **t, int which);
 void CalcZ();
+GUIMenu * CreateVectorMenu();
+GUIMenu * CreateLineMenu();
 #pragma endregion
 
 #pragma region AllMains
@@ -65,13 +67,20 @@ uint8_t MainSecond() //Setting - like Word Position or Details...
     float * data = GetDataArray();
     float value = -3.25f;
     char **DataStr = malloc(5*sizeof(*DataStr));
+    GUIMenu * SetMenu = malloc(sizeof(GUIMenu));
 MSstart: //GoTos are confusing... If I dont have a function above Variable declearios, there are errors...
     for (int i = 0; i < 5; i++) 
     {
         DataStr[i] = malloc(7);
         FloatToString(data[i],DataStr[i]);
     }
-    int Selective = MakeMenu("",SettingsStrings,DataStr,5,5);
+    char title = '\0';
+    SetMenu->Title = &title;
+    SetMenu->Options = SettingsStrings;
+    SetMenu->OptionsCount = 5;
+    SetMenu->Value = DataStr;
+    SetMenu->ValueCount = 5;
+    int Selective = MakeMenu(SetMenu, true);
     if(Selective == -1)
         goto End;
     value = startInputFloat(SettingsStrings[Selective]);
@@ -83,40 +92,33 @@ End:
     if(Selective != -1)
         goto MSstart;
     free(DataStr);
+    free(SetMenu);
     return 0b11;
 }
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
-    char ** TextArray = NULL;
-    char ** Optionsarray = NULL;
-    int Result;
+    int16_d Result;
+    uint8_t pos = 0;
+    GUIMenu * VectorMenu;
 Medium:
-    Optionsarray = malloc(26*sizeof(TextArray));
-    TextArray = malloc(26*sizeof(TextArray));
-    //char A = 'A';
-    for(int i = 0; i<26; i++) 
-    {
-        char * Text = malloc(2);
-        Text[0] = 'A'+i;
-        Text[1] = '\0';
-        TextArray[i] = Text;
-        CreateVector3String(Optionsarray,i);
-    }
-    Result = MakeMenu("Add Vectors",TextArray, Optionsarray, 26,26);
+    VectorMenu = CreateVectorMenu();
+    //Result = MakeMenu("Add Vectors",TextArray, Optionsarray, 26,26);
+    Result = MakeMenuList(VectorMenu,VectorMenu,NULL,NULL,NULL, pos);
     //gfx_PrintInt(Result,2);
-    if (Result == -1)
+    if (Result.val1 == -1)
         goto End;
     Vector3 MyVictorBuffer = startInputVector3();
-    AddPoint(Result, MyVictorBuffer);
+    AddPoint(Result.val1, MyVictorBuffer);
 End:
     for(int i = 0; i<26; i++) 
     {
-        free(TextArray[i]);
-        free(Optionsarray[i]);
+        free(VectorMenu->Value[i]);
+        free(VectorMenu->Options[i]);
     }
-    free(TextArray);
-    free(Optionsarray);
-    if (Result != -1)
+    //free(VectorMenu->Value);
+    //free(VectorMenu->Options);
+    free(VectorMenu);
+    if (Result.val1 != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
 }
@@ -187,6 +189,62 @@ void CreateVector3String(char **t, int which)
     t[which] = result;
     free(tmp);
 }
+
+GUIMenu * CreateVectorMenu() 
+{
+    char ** TextArray = NULL;
+    char ** Optionsarray = NULL;
+    Optionsarray = malloc(26*sizeof(TextArray));
+    TextArray = malloc(26*sizeof(TextArray));
+    //char A = 'A';
+    for(int i = 0; i<26; i++) 
+    {
+        char * Text = malloc(2);
+        Text[0] = 'A'+i;
+        Text[1] = '\0';
+        TextArray[i] = Text;
+        CreateVector3String(Optionsarray,i);
+    }
+    GUIMenu * Menu = malloc(sizeof(Menu));
+    char title[] = "Vector";
+    Menu->Title = title;
+    Menu->Options = TextArray;
+    Menu->OptionsCount = 26;
+    Menu->Value = Optionsarray;
+    Menu->ValueCount = 26;
+    //Free
+    free(TextArray);
+    free(Optionsarray);
+    return Menu;
+}
+GUIMenu * CreateLineMenu() 
+{
+    char ** TextArray = NULL;
+    char ** Optionsarray = NULL;
+    Optionsarray = malloc(26*sizeof(TextArray));
+    TextArray = malloc(26*sizeof(TextArray));
+    //char A = 'A';
+    for(int i = 0; i<26; i++) 
+    {
+        char * Text = malloc(2);
+        Text[0] = 'A'+i;
+        Text[1] = '\0';
+        TextArray[i] = Text;
+        CreateVector3String(Optionsarray,i);
+    }
+    GUIMenu * Menu = malloc(sizeof(Menu));
+    char title[] = "Line Equ";
+    Menu->Title = title;
+    Menu->Options = TextArray;
+    Menu->OptionsCount = 5;
+    Menu->Value = Optionsarray;
+    Menu->ValueCount = 5;
+    //Free
+    free(TextArray);
+    free(Optionsarray);
+    return Menu;
+}
+
 void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
 {
     int num = 0;

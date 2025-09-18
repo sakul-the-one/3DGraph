@@ -51,31 +51,71 @@ Vector3 startInputVector3()
     gfx_Begin();
     return result;
 }
-int16_d * MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos)
+int16_d MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos)
 {
-    int16_d retVal = 0;
-    retVal.togther = 0;
+    int16_d retVal;
+    retVal.together = 0;
+    int8_t ret = 0;
+    int num = 0;
+    if(op1 != NULL) num++; else return retVal;
+    if(op2 != NULL) num++;
+    if(op3 != NULL && num == 2) num++;
+    if(op4 != NULL && num == 3) num++;
+    if(op5 != NULL && num == 4) num++;
 start:
-    uint8_t ret = 0;
+    ret = 0;
+    ResetScreen();
+    #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_black);
+        int xn = 64 * num;
+    gfx_HorizLine(0, 00, xn);
+    for (int i = 0; i < num; i++) 
+    {  
+        char * ptr;
+        switch (i) 
+        {
+            case 0: ptr = op1->Title; break;
+            case 1: ptr = op2->Title; break;
+            case 2: ptr = op3->Title; break;
+            case 3: ptr = op4->Title; break;
+            case 4: ptr = op5->Title; break;
+        }
+        uint24_t x = 64*i;
+        int Thickness = gfx_GetStringWidth(ptr);
+        int8_t mmmhh = (64 - Thickness)/2; //Today is the 14.06.2025... I just accidentally came back to this function... WTF IS `mmmhh`???
+    gfx_SetColor(gfx_white);
+        gfx_HorizLine(x-2, 00, 5);
+    gfx_SetColor(gfx_black);
+        gfx_PrintStringXY(ptr, x + mmmhh, 15);
+        gfx_SetPixel(x+1,01);gfx_SetPixel(x-1,01);
+        gfx_Line(x, 02, x, 40);
+    }
+    gfx_SetColor(gfx_white);
+        gfx_HorizLine(xn-2, 00, 5);
+    gfx_SetColor(gfx_black);
+        gfx_SetPixel(xn-1,01);
+        gfx_Line(xn, 02, xn, 40);
+#pragma GCC diagnostic pop
     switch (pos) 
     {
-        case 1: ret = MakeMenu(op1); break;
-        case 2: ret = MakeMenu(op2); break;
-        case 3: ret = MakeMenu(op3); break;
-        case 4: ret = MakeMenu(op4); break;
-        case 5: ret = MakeMenu(op5); break;
+        case 1: ret = MakeMenu(op1, false); break;
+        case 2: ret = MakeMenu(op2, false); break;
+        case 3: ret = MakeMenu(op3, false); break;
+        case 4: ret = MakeMenu(op4, false); break;
+        case 5: ret = MakeMenu(op5, false); break;
     }
     if (-1 > ret) 
     {
-        pos = (pos + ret.val1 + 3) % 5;
+        pos = (pos + ret + 3) % 5;
         goto start;
     }
     retVal.val1 = pos;
     retVal.val2 = ret;
-    return retVal.togther;
+    return retVal;
 }
 
-uint8_t MakeMenu(GUIMenu * menu) 
+uint8_t MakeMenu(GUIMenu * menu, bool reset) 
 {
     #define X 170
     #define YOffset 9
@@ -86,9 +126,10 @@ uint8_t MakeMenu(GUIMenu * menu)
     int MinOptionRender = 0;
     int offset = 0;
 generatingMainPart:
-    ResetScreen();
+    if(reset)
+        ResetScreen();
     betterY = YOffset + CursorPos*11 - offset; 
-    gfx_PrintStringXY(menu->title, 120, 1);
+    gfx_PrintStringXY(menu->Title, 120, 1);
     gfx_PrintStringXY(t, X, betterY);
     RenderButtons("Exit", "", "", "", "");
     for (int i = MinOptionRender; i < menu->OptionsCount; i++) 
@@ -145,7 +186,7 @@ generatingMainPart:
         //Confused Hungo Bungos with the Comment above this one
         gfx_PrintStringXY(t, X, betterY);
     }
-    return -0;
+    return -1;
 }
 void InitGUIInput(bool * exitVar) 
 {
