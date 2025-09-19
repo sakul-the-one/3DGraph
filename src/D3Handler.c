@@ -110,10 +110,23 @@ void AddConnection(uint8_t pos1,uint8_t pos2)
 void RemoveConnection(uint8_t pos) 
 {
     if(pos > LinkedListCount) return;
-    for (int i = 0; i < pos; i++) 
+    LinkedLines * curent = first;
+    LinkedLines * ToDelete;
+    for(int i = 0; i > pos -1; i++) 
     {
-        
+        curent = curent->next;
     }
+    ToDelete = curent->next;
+    curent->next = ToDelete; //curent->next->next; //I love C ^^^
+    free(ToDelete);
+}
+LinkedLines * GetConnection() 
+{
+    return first;
+}
+int GetConnectionCount()
+{
+    return LinkedListCount;
 }
 void Redraw() //When it is true, it should be "normal"
 {
@@ -131,7 +144,6 @@ void Redraw() //When it is true, it should be "normal"
     {
         if(is_bit_set(PointsSet,i)) 
             AddCubeLines(Points[i]);
-
     }
     while (next != 0)
     {
