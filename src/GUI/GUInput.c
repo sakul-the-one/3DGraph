@@ -69,7 +69,7 @@ start:
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_black);
         int xn = 64 * num;
-    gfx_HorizLine(0, 00, xn);
+    gfx_HorizLine(0, 39, xn);
     for (int i = 0; i < num; i++) 
     {  
         char * ptr;
@@ -84,17 +84,17 @@ start:
         uint24_t x = 64*i;
         int Thickness = gfx_GetStringWidth(ptr);
         int8_t mmmhh = (64 - Thickness)/2; //Today is the 14.06.2025... I just accidentally came back to this function... WTF IS `mmmhh`???
-    gfx_SetColor(gfx_white);
-        gfx_HorizLine(x-2, 00, 5);
+    gfx_SetColor(gfx_white); //Today is the 19.9.2025... I just wrote a chemistry test and copied this code from the other file... WTF IS'mmmhh'????
+        gfx_HorizLine(x-2, 40, 5);
     gfx_SetColor(gfx_black);
-        gfx_PrintStringXY(ptr, x + mmmhh, 15);
-        gfx_SetPixel(x+1,01);gfx_SetPixel(x-1,01);
+        gfx_PrintStringXY(ptr, x + mmmhh, 15); //mmmhh is the position difference between the line and Text. It is there, so the text is in the middle.
+        gfx_SetPixel(x+1,01);gfx_SetPixel(x-1,39);
         gfx_Line(x, 02, x, 40);
     }
     gfx_SetColor(gfx_white);
-        gfx_HorizLine(xn-2, 00, 5);
+        gfx_HorizLine(xn-2, 40, 5);
     gfx_SetColor(gfx_black);
-        gfx_SetPixel(xn-1,01);
+        gfx_SetPixel(xn-1,39);
         gfx_Line(xn, 02, xn, 40);
 #pragma GCC diagnostic pop
     switch (pos) 
@@ -115,7 +115,7 @@ start:
     return retVal;
 }
 
-uint8_t MakeMenu(GUIMenu * menu, bool reset) 
+int8_t MakeMenu(GUIMenu * menu, bool reset) 
 {
     #define X 170
     #define YOffset 9
@@ -166,8 +166,8 @@ generatingMainPart:
                 goto generatingMainPart;
                 break;
             case sk_Enter: return CursorPos;
-            case sk_Right: return -2;
-            case sk_Left: return -4;
+            case sk_Right: if(!reset) return -2; break;
+            case sk_Left: if(!reset) return -4; break;
             case sk_Mode:
             case sk_Del:
             //case sk_Clear: *exitPtrI = false; return -1; //Tf. Why do we want to exit the entire Programm?????

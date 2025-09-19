@@ -107,7 +107,14 @@ void AddConnection(uint8_t pos1,uint8_t pos2)
     buf->next = 0;
     LinkedListCount++;
 }
-
+void RemoveConnection(uint8_t pos) 
+{
+    if(pos > LinkedListCount) return;
+    for (int i = 0; i < pos; i++) 
+    {
+        
+    }
+}
 void Redraw() //When it is true, it should be "normal"
 {
     //Reset Screens (Ik, this block is ugly as fuck)

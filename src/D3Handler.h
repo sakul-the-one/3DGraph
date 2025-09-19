@@ -22,6 +22,7 @@ int LinkedListCount = 0;
 void AddPoint(uint8_t which, Vector3 value);
 bool GetPoint(uint8_t which, Vector3 * tmp);
 void AddConnection(uint8_t pos1,uint8_t pos2);
+void RemoveConnection(uint8_t pos);
 void toggleFunction(uint8_t function);
 void Redraw();
 void DrawUI(bool redraw);
