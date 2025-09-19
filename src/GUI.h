@@ -15,4 +15,5 @@ void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * te
 char *SettingsStrings[] = {"Distant  ","World X  ","World Y  ","World Z  ","Details  "};
 void FloatToString(float Value, char * str);
 void GFX_PrintFloat(float Value);
+char EmptyStr[] = "";
 #endif

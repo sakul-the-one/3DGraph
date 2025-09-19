@@ -75,6 +75,10 @@ void Init()
 {
     D3G_Init();
     Data = GetDataArray();
+    for(int i = 0; i<26; i++) 
+    {
+        Points[i] = (Vector3){0,0,0};
+    }
 }
 void Destroy() 
 {
@@ -90,6 +94,10 @@ void AddPoint(uint8_t which, Vector3 value)
 {
     Points[which] = value;
     if(!is_bit_set(PointsSet, which)) toggle_bit(&PointsSet,which);
+}
+uint32_t GetPointsSet()
+{
+    return PointsSet;
 }
 bool GetPoint(uint8_t which, Vector3 * tmp) 
 {

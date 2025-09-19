@@ -21,6 +21,7 @@ int LinkedListCount = 0;
 
 void AddPoint(uint8_t which, Vector3 value);
 bool GetPoint(uint8_t which, Vector3 * tmp);
+uint32_t GetPointsSet();
 void AddConnection(uint8_t pos1,uint8_t pos2);
 void RemoveConnection(uint8_t pos);
 int GetConnectionCount();
