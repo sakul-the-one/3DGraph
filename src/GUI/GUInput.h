@@ -11,10 +11,14 @@ typedef struct
  int OptionsCount; 
  int ValueCount;
 } GUIMenu;
+typedef struct 
+{
+    int8_t x;
+    int8_t y;
+} Vector2_16t;
 typedef union 
 {
-    int8_t val1;
-    int8_t val2;
+    Vector2_16t val;
     uint16_t together;
 } int16_d;
 bool startedInput = false;

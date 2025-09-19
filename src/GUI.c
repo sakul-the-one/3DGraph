@@ -91,34 +91,44 @@ End:
         free(DataStr[i]);
     if(Selective != -1)
         goto MSstart;
-    free(DataStr);
+    free(SetMenu->Value);
     free(SetMenu);
     return 0b11;
 }
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
     int16_d Result;
-    uint8_t pos = 0;
+    uint8_t pos = 1;
     GUIMenu * VectorMenu;
+    GUIMenu * LineMenu;
 Medium:
     VectorMenu = CreateVectorMenu();
+    LineMenu = CreateLineMenu();
     //Result = MakeMenu("Add Vectors",TextArray, Optionsarray, 26,26);
-    Result = MakeMenuList(VectorMenu,VectorMenu,NULL,NULL,NULL, pos);
+    Result = MakeMenuList(VectorMenu, LineMenu, NULL, NULL, NULL, pos);
     //gfx_PrintInt(Result,2);
-    if (Result.val1 == -1)
+
+    if (Result.val.y == -1)
         goto End;
+    pos = Result.val.x;
+    //while (os_GetCSC() != sk_Enter);;; 
     Vector3 MyVictorBuffer = startInputVector3();
-    AddPoint(Result.val1, MyVictorBuffer);
+    AddPoint(Result.val.y, MyVictorBuffer);
 End:
     for(int i = 0; i<26; i++) 
     {
         free(VectorMenu->Value[i]);
         free(VectorMenu->Options[i]);
+        free(LineMenu->Value[i]);
+        free(LineMenu->Options[i]);
     }
-    //free(VectorMenu->Value);
-    //free(VectorMenu->Options);
+    free(VectorMenu->Value);
+    free(VectorMenu->Options);
     free(VectorMenu);
-    if (Result.val1 != -1) //We could split it, but it is not needed
+    free(LineMenu->Value);
+    free(LineMenu->Options);
+    free(LineMenu);
+    if (Result.val.y != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
 }
@@ -140,7 +150,7 @@ void ResetArea()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_white);
-    gfx_FillRectangle(0,5,130,120);
+    gfx_FillRectangle(0,1,130,125);
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
 }
@@ -205,16 +215,14 @@ GUIMenu * CreateVectorMenu()
         TextArray[i] = Text;
         CreateVector3String(Optionsarray,i);
     }
-    GUIMenu * Menu = malloc(sizeof(Menu));
-    char title[] = "Vector";
+    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+    static char title[] = "Vector";
     Menu->Title = title;
     Menu->Options = TextArray;
     Menu->OptionsCount = 26;
     Menu->Value = Optionsarray;
     Menu->ValueCount = 26;
     //Free
-    free(TextArray);
-    free(Optionsarray);
     return Menu;
 }
 GUIMenu * CreateLineMenu() 
@@ -232,16 +240,14 @@ GUIMenu * CreateLineMenu()
         TextArray[i] = Text;
         CreateVector3String(Optionsarray,i);
     }
-    GUIMenu * Menu = malloc(sizeof(Menu));
-    char title[] = "Line Equ";
+    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+    static char title[] = "Line Equ";
     Menu->Title = title;
     Menu->Options = TextArray;
-    Menu->OptionsCount = 5;
+    Menu->OptionsCount = 26;
     Menu->Value = Optionsarray;
-    Menu->ValueCount = 5;
+    Menu->ValueCount = 26;
     //Free
-    free(TextArray);
-    free(Optionsarray);
     return Menu;
 }
 

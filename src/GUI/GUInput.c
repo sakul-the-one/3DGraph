@@ -54,22 +54,25 @@ Vector3 startInputVector3()
 int16_d MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos)
 {
     int16_d retVal;
-    retVal.together = 0;
-    int8_t ret = 0;
+    retVal.together = (uint16_t)0;
+    int8_t ret = (uint8_t)0;
     int num = 0;
     if(op1 != NULL) num++; else return retVal;
     if(op2 != NULL) num++;
     if(op3 != NULL && num == 2) num++;
     if(op4 != NULL && num == 3) num++;
     if(op5 != NULL && num == 4) num++;
+    retVal.val.x = (uint8_t)1;
+    if(pos > num) return retVal; //This made some funny bugs btw
 start:
     ret = 0;
+    //Paint:
     ResetScreen();
     #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_SetColor(gfx_black);
         int xn = 64 * num;
-    gfx_HorizLine(0, 39, xn);
+    gfx_HorizLine(0, 40, xn);
     for (int i = 0; i < num; i++) 
     {  
         char * ptr;
@@ -87,38 +90,49 @@ start:
     gfx_SetColor(gfx_white); //Today is the 19.9.2025... I just wrote a chemistry test and copied this code from the other file... WTF IS'mmmhh'????
         gfx_HorizLine(x-2, 40, 5);
     gfx_SetColor(gfx_black);
-        gfx_PrintStringXY(ptr, x + mmmhh, 15); //mmmhh is the position difference between the line and Text. It is there, so the text is in the middle.
-        gfx_SetPixel(x+1,01);gfx_SetPixel(x-1,39);
-        gfx_Line(x, 02, x, 40);
+        gfx_PrintStringXY(ptr, x + mmmhh, 17); //mmmhh is the position difference between the line and Text. It is there, so the text is in the middle.
+        gfx_SetPixel(x+1,39);gfx_SetPixel(x-1,39);
+        gfx_Line(x, 38, x, 0);
     }
     gfx_SetColor(gfx_white);
         gfx_HorizLine(xn-2, 40, 5);
     gfx_SetColor(gfx_black);
         gfx_SetPixel(xn-1,39);
-        gfx_Line(xn, 02, xn, 40);
+        gfx_Line(xn, 38, xn, 0);
+    //Recolour the Selected one!
+    gfx_SetColor(gfx_red);
+    int xs = 64 * (pos-1);
+        gfx_Line(xs,0,xs,38);
+        gfx_HorizLine(xs, 40, 64);
+        gfx_Line(xs+64,0,xs+64,38);
+    gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop
+    //Paint End
     switch (pos) 
     {
+        case 0: pos++; //if someone (like me) accidentally writes 0 instead of 1, then correct it and go to 1.
         case 1: ret = MakeMenu(op1, false); break;
         case 2: ret = MakeMenu(op2, false); break;
         case 3: ret = MakeMenu(op3, false); break;
         case 4: ret = MakeMenu(op4, false); break;
         case 5: ret = MakeMenu(op5, false); break;
+
+        default: pos = 0; goto start;
     }
     if (-1 > ret) 
     {
-        pos = (pos + ret + 3) % 5;
+        pos = (pos + ret + 3) % (num+1);
         goto start;
     }
-    retVal.val1 = pos;
-    retVal.val2 = ret;
+    retVal.val.x = pos;
+    retVal.val.y = ret;
     return retVal;
 }
 
 int8_t MakeMenu(GUIMenu * menu, bool reset) 
 {
     #define X 170
-    #define YOffset 9
+    int YOffset = 9;
     uint8_t CursorPos = 0;
     char t[2] = {64, '\0'};
     uint8_t betterY = YOffset;
@@ -128,8 +142,19 @@ int8_t MakeMenu(GUIMenu * menu, bool reset)
 generatingMainPart:
     if(reset)
         ResetScreen();
+    else 
+    {
+        YOffset = 45;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W#pragma-messages"
+    gfx_SetColor(gfx_white);
+    gfx_FillRectangle(0,41,320,ButtomGUIBorder-35);
+    gfx_SetColor(gfx_black);
+#pragma GCC diagnostic pop
+    }
     betterY = YOffset + CursorPos*11 - offset; 
-    gfx_PrintStringXY(menu->Title, 120, 1);
+    if(reset)
+        gfx_PrintStringXY(menu->Title, 120, 1);
     gfx_PrintStringXY(t, X, betterY);
     RenderButtons("Exit", "", "", "", "");
     for (int i = MinOptionRender; i < menu->OptionsCount; i++) 
