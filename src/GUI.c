@@ -103,11 +103,12 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
     GUIMenu * LineMenu;
 Medium:
     VectorMenu = CreateVectorMenu(false);
+    if(VectorMenu == NULL) gfx_PrintString("ERROR VECMENU");
     LineMenu = CreateLineMenu();
+    if(LineMenu == NULL) gfx_PrintString("ERROR LINEMENU");
     //Result = MakeMenu("Add Vectors",TextArray, Optionsarray, 26,26);
     Result = MakeMenuList(VectorMenu, LineMenu, NULL, NULL, NULL, pos);
     //gfx_PrintInt(Result,2);
-    gfx_PrintString("MOIN!1");
     if (Result.val.y == -1) //User wants to leave
         goto End;
     if(Result.val.x == 1) //Means it is on VectorMenu #1
@@ -118,7 +119,6 @@ Medium:
     }
     else if (Result.val.y == 0) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
     {
-        gfx_PrintString("MOIN!");
         uint8_t Result1;
         uint8_t Result2;
         //Freeing old:
@@ -146,13 +146,12 @@ Medium:
     else  //If everything above fails, the user WANTS to delete a value! 
         RemoveConnection(Result.val.y);  
 End:
-    gfx_PrintString("MOIN!2");
     for(int i = 0; i < VectorMenu->OptionsCount; i++) 
     {
         free(VectorMenu->Value[i]);
-        free(VectorMenu->Options[i]);
+        free(VectorMenu->Options[i]);     
     }
-    for(int i = 0; i < LineMenu->ValueCount; i++) 
+    for(int i = 1; i < LineMenu->ValueCount; i++) 
     {
         free(LineMenu->Value[i]);
         free(LineMenu->Options[i]);
@@ -163,7 +162,8 @@ End:
     free(LineMenu->Value);
     free(LineMenu->Options);
     free(LineMenu);
-    gfx_PrintString("MOIN3!");
+    LineMenu = NULL;
+    VectorMenu = NULL;
     if (Result.val.y != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
@@ -240,6 +240,8 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
 {
     int num = 26;
     uint32_t PS = GetPointsSet();
+    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+    if(Menu == NULL) return NULL;
     if(ActivePointsOnly) 
     {     
         num = 0;
@@ -250,8 +252,8 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
     }
     char ** TextArray = NULL;
     char ** Optionsarray = NULL;
-    Optionsarray = malloc(num*sizeof(TextArray));
-    TextArray = malloc(num*sizeof(TextArray));
+    Optionsarray = malloc(num*sizeof(char*));
+    TextArray = malloc(num*sizeof(char*));
     //char A = 'A';
     for(int i = 0, x = 0; i < 26; i++) 
     {
@@ -264,15 +266,16 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
             TextArray[x] = Text;
             CreateVector3String(Optionsarray,x);
             x++;
-            continue;
         }
-        char * Text = malloc(2);
-        Text[0] = 'A'+i;
-        Text[1] = '\0';
-        TextArray[i] = Text;
-        CreateVector3String(Optionsarray,i);
-    }
-    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+        else 
+        {
+            char * Text = malloc(2);
+            Text[0] = 'A'+i;
+            Text[1] = '\0';
+            TextArray[i] = Text;
+            CreateVector3String(Optionsarray,i);
+        }
+    }  
     static char title[] = "Vector";
     Menu->Title = title;
     Menu->Options = TextArray;
@@ -286,12 +289,16 @@ GUIMenu * CreateLineMenu()
 {
     char ** TextArray = NULL;
     char ** Optionsarray = NULL;
+    static char first[] = "Add Equation";
+    static char title[] = "Line Equ";
+    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+    if(Menu == NULL) return NULL;
     LinkedLines * current = GetConnection();
     int LineCount = GetConnectionCount();
-    Optionsarray = malloc((LineCount+ 1) *sizeof(TextArray));
-    TextArray = malloc((LineCount+ 1) *sizeof(TextArray));
+    Optionsarray = malloc((LineCount+ 1) *sizeof(char*));
+    TextArray = malloc((LineCount+ 1) *sizeof(char*));
     //char A = 'A';
-    static char first[] = "Add Equation";
+    
     TextArray[0] = first;
     Optionsarray[0] = EmptyStr;
     for(int i = 0; i<LineCount; i++) 
@@ -305,8 +312,6 @@ GUIMenu * CreateLineMenu()
         CreateVector3String(Optionsarray,i+1);
         current = current->next;
     }
-    GUIMenu * Menu = malloc(sizeof(GUIMenu));
-    static char title[] = "Line Equ";
     Menu->Title = title;
     Menu->Options = TextArray;
     Menu->OptionsCount = LineCount+ 1;
