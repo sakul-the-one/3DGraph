@@ -18,6 +18,7 @@ Vector3 Points[26];
 LinkedLines * first = NULL;
 LinkedLines * last = NULL;
 int LinkedListCount = 0;
+float * Data = NULL;
 
 void AddPoint(uint8_t which, Vector3 value);
 bool GetPoint(uint8_t which, Vector3 * tmp);

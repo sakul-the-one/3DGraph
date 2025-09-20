@@ -25,17 +25,11 @@ bool is_bit_set(uint32_t value, int bit_position) {
     return (value & (1 << bit_position)) != 0;
 }//*/
 #pragma endregion
-float * Data = 0;
+
 void AddCubeLines(Vector3 pos) 
 {
     Vector3 vertices[8]; //D3G_RotatePoint(pos1, WorldRotation);
     #define halfsize 5
-    //int multiplicator = GetDataArray()[0];
-    if(Data[0] == 0) 
-    {
-        Data[0] = 5;
-        SetDataValue(5,0);
-    }
     //Move the Point:
     pos.x += Data[1];
     pos.y += Data[2];
@@ -55,7 +49,7 @@ void AddCubeLines(Vector3 pos)
     vertices[5].x = pos.x - halfsize; vertices[5].y = pos.y + halfsize; vertices[5].z = pos.z - halfsize;  // Top left back
     vertices[6].x = pos.x - halfsize; vertices[6].y = pos.y - halfsize; vertices[6].z = pos.z - halfsize;  // Bottom left back
     vertices[7].x = pos.x + halfsize; vertices[7].y = pos.y - halfsize; vertices[7].z = pos.z - halfsize;  // Bottom right back
-
+    D3R_PreMallocLine(12);
     D3R_AddLine((Vector3){vertices[0].x,vertices[0].y,vertices[0].z}, (Vector3){vertices[1].x, vertices[1].y,vertices[1].z}, 0x00);
     D3R_AddLine((Vector3){vertices[1].x,vertices[1].y,vertices[1].z}, (Vector3){vertices[2].x, vertices[2].y,vertices[2].z}, 0x00);
     D3R_AddLine((Vector3){vertices[2].x,vertices[2].y,vertices[2].z}, (Vector3){vertices[3].x, vertices[3].y,vertices[3].z}, 0x00);
@@ -75,6 +69,12 @@ void Init()
 {
     D3G_Init();
     Data = GetDataArray();
+    //int multiplicator = GetDataArray()[0];
+    if(Data[0] <= 0) 
+    {
+        Data[0] = 10;
+        //SetDataValue(10,0); //BROTHER! ITS ALL THE SAME POINTER. THATS DOPPELT GEMOPELT!
+    }
     for(int i = 0; i<26; i++) 
     {
         Points[i] = (Vector3){0,0,0};
@@ -112,20 +112,29 @@ void AddConnection(uint8_t pos1,uint8_t pos2)
     last = buf;
     buf->pos1 = pos1;
     buf->pos2 = pos2;
-    buf->next = 0;
+    buf->next = NULL;
     LinkedListCount++;
 }
 void RemoveConnection(uint8_t pos) 
 {
     if(pos > LinkedListCount) return;
-    LinkedLines * curent = first;
     LinkedLines * ToDelete;
+    LinkedListCount--;
+    if(pos == 0) 
+    {
+        ToDelete = first;
+        first = first->next;
+        free(ToDelete);
+        return;
+    }
+    LinkedLines * curent = first;
     for(int i = 0; i > pos -1; i++) 
     {
         curent = curent->next;
     }
     ToDelete = curent->next;
     curent->next = ToDelete; //curent->next->next; //I love C ^^^
+
     free(ToDelete);
 }
 LinkedLines * GetConnection() 
@@ -153,9 +162,26 @@ void Redraw() //When it is true, it should be "normal"
         if(is_bit_set(PointsSet,i)) 
             AddCubeLines(Points[i]);
     }
-    while (next != 0)
+    D3R_PreMallocLine(LinkedListCount);
+    while (next != NULL)
     {
-        D3R_AddLine(Points[next->pos1],Points[next->pos2], 0x00);
+        Vector3 p1 = Points[next->pos1];
+        Vector3 p2 = Points[next->pos2];
+        //Move the Point:
+        p1.x += Data[1];
+        p1.y += Data[2];
+        p1.z += Data[3];
+        p2.x += Data[1];
+        p2.y += Data[2];
+        p2.z += Data[3];
+        //Distance: Standart: 10
+        p1.x *= Data[0];
+        p1.y *= Data[0];
+        p1.z *= Data[0];
+        p2.x *= Data[0];
+        p2.y *= Data[0];
+        p2.z *= Data[0];
+        D3R_AddLine(p1,p2, 0x00);
         next = next->next;
     }
     DrawUI(true);//Old system, so idk. This will work!

@@ -18,8 +18,8 @@ int main()
     os_PutStrLine(&str);
     sleep(1);
   }*/
-    Init();
     InitData();
+    Init();
     bool exit = true;
     int8_t needToRedraw = 0b00;
     InitGUI(&exit);

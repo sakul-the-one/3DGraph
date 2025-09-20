@@ -13,6 +13,7 @@ void CloseData()
     uint8_t file = ti_Open("D3GS","w"); //D3GS: 3DGraph Settings
     ti_Write(DataArray, sizeof(float), 5, file);
     ti_Close(file);
+    free(DataArray);
 }
 void SetDataArray(float * NewData) 
 {
