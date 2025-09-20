@@ -193,8 +193,8 @@ generatingMainPart:
             case sk_Enter: return CursorPos;
             case sk_Right: if(!reset) return -2; break;
             case sk_Left: if(!reset) return -4; break;
-            case sk_Mode:
-            case sk_Del:
+            //case sk_Mode: //this breaks some logic. So instead of adding Gates to keep you safe, im going to remove your freedom ^^
+            //case sk_Del:
             //case sk_Clear: *exitPtrI = false; return -1; //Tf. Why do we want to exit the entire Programm?????
             /*case sk_Window: break;
             case sk_Zoom: break;

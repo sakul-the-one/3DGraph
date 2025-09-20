@@ -130,7 +130,7 @@ Medium:
         //Making New:
         static char T1[] = "First Vector";
         static char T2[] = "Second Vector";
-        VectorMenu = CreateVectorMenu(false);
+        VectorMenu = CreateVectorMenu(true);
         if(VectorMenu->ValueCount < 2) goto End; //Always use protection!
         //Get Data
         VectorMenu->Title = T1;
@@ -139,7 +139,7 @@ Medium:
         Result2 = MakeMenu(VectorMenu,true);
         //Do Stuff with Data
         AddConnection(Result1,Result2);
-        //AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A');
+        //AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
     }
     else  //If everything above fails, the user WANTS to delete a value! 
         RemoveConnection(Result.val.y-1);  
@@ -247,28 +247,34 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
     //char A = 'A';
     for(int i = 0, x = 0; i < 26; i++) 
     {
-        Vector3 tmp;
         if(ActivePointsOnly)  
         {
-            if(!GetPoint(i,&tmp)) continue;
+            if(!is_bit_set(PS, i)) continue;
+            Vector3 tmp;
+            GetPoint(i, &tmp);
             char * Text = malloc(2);
             Text[0] = 'A'+i;
             Text[1] = '\0';
             TextArray[x] = Text;
-            x++;
             CreateVector3String(Optionsarray,&tmp,x);
+            x++;
         }
         else 
         {
             char * Text = malloc(2);
             Text[0] = 'A'+i;
             Text[1] = '\0';
-            TextArray[i] = Text;      
-            if(GetPoint(i,&tmp))     
+            TextArray[i] = Text;   
+            Vector3 tmp;
+            GetPoint(i, &tmp);
+            if(is_bit_set(PS, i))     
                 CreateVector3String(Optionsarray,&tmp, i);      
             else
-                Optionsarray[i] = EmptyStr;
-            
+            {
+                char * NewEmptyStr = malloc(1);
+                0[NewEmptyStr] = '\0';
+                Optionsarray[i] = NewEmptyStr;
+            }             
         }
     }  
     static char title[] = "Vector";
@@ -296,7 +302,7 @@ GUIMenu * CreateLineMenu()
     
     TextArray[0] = first;
     Optionsarray[0] = EmptyStr;
-    for(int i = 1; i<LineCount; i++) 
+    for(int i = 0; i < LineCount; i++) 
     {
 
         char * Text = malloc(3);
@@ -304,15 +310,13 @@ GUIMenu * CreateLineMenu()
         Text[1] = 'A'+current->pos2;
         Text[2] = '\0';
         TextArray[i+1] = Text;
-        Vector3 * p1 = malloc(sizeof(Vector3));
-        Vector3 * p2 = malloc(sizeof(Vector3));
-        Vector3 * p3 = malloc(sizeof(Vector3));
-        GetPoint(current->pos1, p2);
-        GetPoint(current->pos2, p1);
-        p3->x = p1->x - p2->x;
-        p3->y = p1->y - p2->y;
-        p3->z = p1->z - p2->z;
-        CreateVector3String(Optionsarray, p3, i);
+        Vector3  p1,p2,p3;
+        GetPoint(current->pos1, &p2);
+        GetPoint(current->pos2, &p1);
+        p3.x = p1.x - p2.x;
+        p3.y = p1.y - p2.y;
+        p3.z = p1.z - p2.z;
+        CreateVector3String(Optionsarray, &p3, i+1);
         current = current->next;
     }
     Menu->Title = title;
