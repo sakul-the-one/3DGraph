@@ -213,6 +213,19 @@ generatingMainPart:
     }
     return -1;
 }
+
+void freeGUIMenu(GUIMenu * menu) 
+{
+    for(int i = 0; i < menu->OptionsCount; i++) 
+    {
+        if(menu->Value[i] != EmptyStr && i < menu->ValueCount)
+            free(menu->Value[i]);
+        free(menu->Options[i]);     
+    }
+    free(menu->Value);
+    free(menu->Options);
+    free(menu);
+}
 void InitGUIInput(bool * exitVar) 
 {
     //exitPtrI = exitVar; //Tf. Why do we want to exit the entire Programm????? Anyway, not removing because maybe I need it and compiler will fix it anyway, trust!

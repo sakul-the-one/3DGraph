@@ -52,9 +52,12 @@ void ResetScreen()
 void ResetArea();
 //void DrawEqu(int y);
 void CreateVector3String(char **StrPP, Vector3 * vec, int index);
-void CalcZ();
 GUIMenu * CreateVectorMenu(bool ActivePointsOnly);
 GUIMenu * CreateLineMenu();
+#pragma endregion
+
+#pragma region CalcFunctions
+void IsOnLine();
 #pragma endregion
 
 #pragma region AllMains
@@ -119,14 +122,7 @@ Medium:
         uint8_t Result1;
         uint8_t Result2;
         //Freeing old:
-        for(int i = 0; i < VectorMenu->OptionsCount; i++) 
-        {
-            free(VectorMenu->Value[i]);
-            free(VectorMenu->Options[i]);
-        }
-        free(VectorMenu->Value);
-        free(VectorMenu->Options);
-        free(VectorMenu);
+        freeGUIMenu(VectorMenu);
         //Making New:
         static char T1[] = "First Vector";
         static char T2[] = "Second Vector";
@@ -138,36 +134,26 @@ Medium:
         VectorMenu->Title = T2;
         Result2 = MakeMenu(VectorMenu,true);
         //Do Stuff with Data
-        AddConnection(Result1,Result2);
-        //AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
+        //AddConnection(Result1,Result2);
+        AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
     }
     else  //If everything above fails, the user WANTS to delete a value! 
         RemoveConnection(Result.val.y-1);  
 End:
-    for(int i = 0; i < VectorMenu->OptionsCount; i++) 
-    {
-        free(VectorMenu->Value[i]);
-        free(VectorMenu->Options[i]);     
-    }
-    for(int i = 1; i < LineMenu->ValueCount; i++) 
-    {
-        free(LineMenu->Value[i]);
-        free(LineMenu->Options[i]);
-    }
-    free(VectorMenu->Value);
-    free(VectorMenu->Options);
-    free(VectorMenu);
-    free(LineMenu->Value);
-    free(LineMenu->Options);
-    free(LineMenu);
-    LineMenu = NULL;
-    VectorMenu = NULL;
+    freeGUIMenu(LineMenu);
+    freeGUIMenu(VectorMenu);
     if (Result.val.y != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
 {
+    int8_t result = MakeMenu(&CalcMenu, true);
+    switch (result)
+    {
+    case 0: IsOnLine(); break; 
+    default: break;
+    }
     return 0b10;
 }
 uint8_t MainFive() 
@@ -177,6 +163,13 @@ uint8_t MainFive()
 }
 #pragma endregion
 
+void IsOnLine() 
+{
+    GUIMenu * Menus = CreateVectorMenu(true);
+    static char T1[] = "Stützvektor";
+    Menus->Title = T1;
+    int v1 = MakeMenu(Menus, true); //V1 or Vector 1
+}
 
 #pragma region  ImportantFunctionsInit
 void ResetArea() 
@@ -189,11 +182,6 @@ void ResetArea()
 #pragma GCC diagnostic pop
 }
 
-void PrintCalc() 
-{
-    ResetArea();
-    gfx_PrintStringXY("Calc Z", 10, 5);
-}
 void CreateVector3String(char **StrPP, Vector3 * vec, int index) 
 {
     char * result = malloc(26);//3*7 (for float) + 2 (fo Brackets) + 2 (for spaces) + 1 (for \0)= 26
@@ -271,9 +259,9 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
                 CreateVector3String(Optionsarray,&tmp, i);      
             else
             {
-                char * NewEmptyStr = malloc(1);
-                0[NewEmptyStr] = '\0';
-                Optionsarray[i] = NewEmptyStr;
+                //char * NewEmptyStr = malloc(1);
+                //0[NewEmptyStr] = '\0';
+                Optionsarray[i] = EmptyStr;
             }             
         }
     }  
