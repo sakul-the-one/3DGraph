@@ -214,13 +214,13 @@ generatingMainPart:
     return -1;
 }
 
-void freeGUIMenu(GUIMenu * menu) 
+void freeGUIMenu(GUIMenu * menu, int StartingI) 
 {
-    for(int i = 0; i < menu->OptionsCount; i++) 
+    for(int i = StartingI; i < menu->OptionsCount; i++) 
     {
+        free(menu->Options[i]);     
         if(menu->Value[i] != EmptyStr && i < menu->ValueCount)
             free(menu->Value[i]);
-        free(menu->Options[i]);     
     }
     free(menu->Value);
     free(menu->Options);

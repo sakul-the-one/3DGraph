@@ -122,7 +122,7 @@ Medium:
         uint8_t Result1;
         uint8_t Result2;
         //Freeing old:
-        freeGUIMenu(VectorMenu);
+        freeGUIMenu(VectorMenu, 0);
         //Making New:
         static char T1[] = "First Vector";
         static char T2[] = "Second Vector";
@@ -140,8 +140,8 @@ Medium:
     else  //If everything above fails, the user WANTS to delete a value! 
         RemoveConnection(Result.val.y-1);  
 End:
-    freeGUIMenu(LineMenu);
-    freeGUIMenu(VectorMenu);
+    freeGUIMenu(LineMenu, 1);
+    freeGUIMenu(VectorMenu, 0);
     if (Result.val.y != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
@@ -259,9 +259,10 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
                 CreateVector3String(Optionsarray,&tmp, i);      
             else
             {
-                //char * NewEmptyStr = malloc(1);
-                //0[NewEmptyStr] = '\0';
-                Optionsarray[i] = EmptyStr;
+                char * NewEmptyStr = malloc(1);
+                0[NewEmptyStr] = '\0';
+                Optionsarray[i] = NewEmptyStr;
+                //Optionsarray[i] = EmptyStr;
             }             
         }
     }  
