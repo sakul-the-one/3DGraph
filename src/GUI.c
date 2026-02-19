@@ -315,48 +315,6 @@ GUIMenu * CreateLineMenu()
     Menu->ValueCount = LineCount+ 1;
     return Menu;
 }
-
-void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5) 
-{
-    int num = 0;
-    if(text1[0] != '\0') num++; else return;
-    if(text2[0] != '\0') num++;
-    if(text3[0] != '\0' && num == 2) num++;
-    if(text4[0] != '\0' && num == 3) num++;
-    if(text5[0] != '\0' && num == 4) num++;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-W#pragma-messages"
-    gfx_SetColor(gfx_black);
-        int xn = 64 * num;
-    gfx_HorizLine(0, 200, xn);
-    for (int i = 0; i < num; i++) 
-    {  
-        char * ptr;
-        switch (i) 
-        {
-            case 0: ptr = text1; break;
-            case 1: ptr = text2; break;
-            case 2: ptr = text3; break;
-            case 3: ptr = text4; break;
-            case 4: ptr = text5; break;
-        }
-        uint24_t x = 64*i;
-        int Thickness = gfx_GetStringWidth(ptr);
-        int8_t mmmhh = (64 - Thickness)/2; //Today is the 14.06.2025... I just accidentally came back to this function... WTF IS `mmmhh`???
-    gfx_SetColor(gfx_white);
-        gfx_HorizLine(x-2, 200, 5);
-    gfx_SetColor(gfx_black);
-        gfx_PrintStringXY(ptr, x + mmmhh, 215);
-        gfx_SetPixel(x+1,201);gfx_SetPixel(x-1,201);
-        gfx_Line(x, 202, x, 240);
-    }
-    gfx_SetColor(gfx_white);
-        gfx_HorizLine(xn-2, 200, 5);
-    gfx_SetColor(gfx_black);
-        gfx_SetPixel(xn-1,201);
-        gfx_Line(xn, 202, xn, 240);
-#pragma GCC diagnostic pop
-}
 #pragma endregion
 
 #pragma region F2S

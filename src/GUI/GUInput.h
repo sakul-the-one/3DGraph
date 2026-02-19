@@ -29,6 +29,7 @@ Vector3 startInputVector3();
 int8_t MakeMenu(GUIMenu * menu, bool reset); //Reset is on if not a MenuList. Very important difference!
 int16_d MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos);
 void freeGUIMenu(GUIMenu * menu,int StartingI);
+void RenderButtons(char * text1,char * text2,char * text3,char * text4,char * text5);
 //float StringToFloat(char string[]);
 
 #endif
