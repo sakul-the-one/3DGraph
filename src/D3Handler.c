@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include "D3/3DGraphics.h"
 #include "D3/3DRenderer.h"
+#include "D3/3DMath.h"
 #include "StaticData.h"
 #include "GUI.h"
 #include "StaticData.h"
@@ -79,6 +80,8 @@ void Init()
     {
         Points[i] = (Vector3){0,0,0};
     }
+    Lines = CreateList();
+    Layers = CreateList();
 }
 void AddPoint(uint8_t which, Vector3 value) 
 {
@@ -99,7 +102,7 @@ LinkedList * GetLinesList()
 {
     return Lines;
 }
-LinkedList * GetLayersList() 
+LinkedList * GetPlanesList() 
 {
     return Layers;
 }
@@ -108,6 +111,7 @@ void Redraw() //When it is true, it should be "normal"
 {
     //Reset Screens (Ik, this block is ugly as fuck)
     LinkedItem * nextLine = Lines->first;
+    LinkedItem * nextPlane = Layers->first;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_FillScreen(gfx_white);
@@ -122,12 +126,12 @@ void Redraw() //When it is true, it should be "normal"
             AddCubeLines(Points[i]);
     }
     D3R_PreMallocLine(Lines->count);
-    //ToDo: Add here some same shit for Layers
+    //Draws Layers/Planes. I know, that I use them interchangeable. Whoops
     while (nextLine != NULL)
     {
-        int* Data = nextLine->Data; //Pls love C!
-        Vector3 p1 = Points[Data[0]];
-        Vector3 p2 = Points[Data[1]];
+        int* pData = nextLine->Data; //Pls love C!
+        Vector3 p1 = Points[pData[0]];
+        Vector3 p2 = Points[pData[1]];
         //Move the Point:
         p1.x += Data[1];
         p1.y += Data[2];
@@ -136,15 +140,48 @@ void Redraw() //When it is true, it should be "normal"
         p2.y += Data[2];
         p2.z += Data[3];
         //Distance: Standart: 10
-        p1.x *= Data[0];
-        p1.y *= Data[0];
-        p1.z *= Data[0];
-        p2.x *= Data[0];
-        p2.y *= Data[0];
-        p2.z *= Data[0];
+        p1 = D3_MULf(p1, Data[0]);
+        p2 = D3_MULf(p2, Data[0]);
         D3R_AddLine(p1,p2, 0x00);
         nextLine = nextLine->next;
     }
+    int colour = 0;
+    while (nextPlane != NULL)
+    {
+        //Get All Points
+        int* pData = nextPlane->Data; //Pls love C!
+        Vector3 p1 = Points[pData[0]];
+        Vector3 p2 = Points[pData[1]];
+        Vector3 p3 = Points[pData[2]];
+        //Richtungsvektor = Intimidate
+        Vector3 i1,i2;
+        i1 = D3_SUB(p2, p1);
+        i2 = D3_SUB(p3, p1);
+        //Draw:
+        Vector3 last = p1;
+
+        float step = 1/Data[4];
+        for (float x = p1.x; x < p1.x + 1; x += step) 
+        {
+            for (float y = p1.y; y < p1.y + 1; y += step)
+            {  
+                if (y != p1.y) {
+                    Vector3 p = D3_ADD(p1, D3_ADD(D3_MULf(i1, x), D3_MULf(i2, y)));
+                    p.x += Data[1];
+                    p.y += Data[2];
+                    p.z += Data[3];
+                    //Distance: Standart: 10
+                    p = D3_MULf(p, Data[0]);
+                    //D3R_AddLine(p, last, colour);
+                    AddCubeLines(p);
+                    last = p;
+                }
+            }
+        }
+        nextPlane = nextPlane->next;
+        colour++;
+    }
+
     DrawUI(true);//Old system, so idk. This will work!
     D3R_Draw(true);
 #pragma GCC diagnostic push

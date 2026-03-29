@@ -17,7 +17,7 @@ void AddPoint(uint8_t which, Vector3 value);
 bool GetPoint(uint8_t which, Vector3 * tmp);
 uint32_t GetPointsSet();
 LinkedList * GetLinesList();
-LinkedList * GetLayersList();
+LinkedList * GetPlanesList();
 void toggleFunction(uint8_t function);
 void Redraw();
 void DrawUI(bool redraw);

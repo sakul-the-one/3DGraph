@@ -8,6 +8,7 @@
 #include "GUI/GUInput.h"
 #include "StaticData.h"
 #include <math.h>
+#include "D3/3DMath.h"
 #include <string.h>
 
 #pragma region Init//First Return
@@ -107,11 +108,12 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
     GUIMenu * LineMenu;
     GUIMenu * PlaneMenu;
     LinkedList * LinesList = GetLinesList();
+    LinkedList * PlanesList = GetPlanesList();
 Medium:
     VectorMenu = CreateVectorMenu(false);
     LineMenu = CreateLineMenu();
     PlaneMenu = CreatePlaneMenu();
-    Result = MakeMenuList(VectorMenu, LineMenu, NULL, NULL, NULL, pos);
+    Result = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, pos);
 
     if (Result.val.y == -1) //User wants to leave
         goto End;
@@ -121,7 +123,7 @@ Medium:
         Vector3 MyVictorBuffer = startInputVector3();
         AddPoint(Result.val.y, MyVictorBuffer);
     }
-    else if (Result.val.y == 0) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
+    else if (Result.val.y == 0 && Result.val.x == 2) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
     {
         uint8_t Result1;
         uint8_t Result2;
@@ -146,11 +148,41 @@ Medium:
         arr[1] = VectorMenu->Options[Result2][0] - 'A';
         AddItem(LinesList, arr, ArraySize);
     }
-    else  //If everything above fails, the user WANTS to delete a value! 
+    else if (Result.val.x == 2)  //If everything above fails, the user WANTS to delete a value! 
         RemoveItem(LinesList, Result.val.y-1);
-        //RemoveConnection(Result.val.y-1);  
+    else if (Result.val.y == 0 && Result.val.x == 3) //We are here on Add Layer
+    {
+        uint8_t Result1;
+        uint8_t Result2;
+        uint8_t Result3;
+        //Freeing old:
+        freeGUIMenu(VectorMenu, 0);
+        //Making New:
+        static char T1[] = "Base Vector";
+        static char T2[] = "First Vector";
+        static char T3[] = "Second Vector";
+        VectorMenu = CreateVectorMenu(true);
+        if(VectorMenu->ValueCount < 2) goto End; //Always use protection!
+        //Get Data
+        VectorMenu->Title = T1;
+        Result1 = MakeMenu(VectorMenu,true);
+        VectorMenu->Title = T2;
+        Result2 = MakeMenu(VectorMenu,true);
+        VectorMenu->Title = T3;
+        Result3 = MakeMenu(VectorMenu,true);
+        //Do Stuff with Data
+        size_t ArraySize = sizeof(int) * 3;
+        int * arr = malloc(ArraySize);
+        arr[0] = VectorMenu->Options[Result1][0] - 'A';
+        arr[1] = VectorMenu->Options[Result2][0] - 'A';
+        arr[2] = VectorMenu->Options[Result3][0] - 'A';
+        AddItem(PlanesList, arr, ArraySize);
+    }
+    else if (Result.val.x == 3)
+        RemoveItem(PlanesList, Result.val.y-1); 
 End:
     freeGUIMenu(LineMenu, 1);
+    freeGUIMenu(PlaneMenu, 1);
     freeGUIMenu(VectorMenu, 0);
     if (Result.val.y != -1) //We could split it, but it is not needed
         goto Medium;
@@ -313,9 +345,10 @@ GUIMenu * CreateLineMenu()
         Vector3  p1,p2,p3;
         GetPoint(Data[0], &p2);
         GetPoint(Data[1], &p1);
-        p3.x = p1.x - p2.x;
-        p3.y = p1.y - p2.y;
-        p3.z = p1.z - p2.z;
+        //p3.x = p1.x - p2.x;
+        //p3.y = p1.y - p2.y;
+        //p3.z = p1.z - p2.z;
+        p3 = D3_SUB(p1, p2);
         CreateVector3String(Optionsarray, &p3, i+1);
         current = current->next;
     }
@@ -331,41 +364,43 @@ GUIMenu * CreatePlaneMenu()
 {
     char ** TextArray = NULL;
     char ** Optionsarray = NULL;
-    static char first[] = "Add Equation";
-    static char title[] = "Line Equ";
+    static char first[] = "Add Plane";
+    static char title[] = "Plane Equ";
     GUIMenu * Menu = malloc(sizeof(GUIMenu));
     if(Menu == NULL) return NULL;
-    LinkedList * LineList = GetLinesList();
-    LinkedItem * current = LineList->first;
-    int LineCount = LineList->count;
-    Optionsarray = malloc((LineCount+ 1) *sizeof(char*));
-    TextArray = malloc((LineCount+ 1) *sizeof(char*));
+    LinkedList * PlaneList = GetPlanesList();
+    LinkedItem * current = PlaneList->first;
+    int PlaneCount = PlaneList->count;
+    Optionsarray = malloc((PlaneCount+ 1) *sizeof(char*));
+    TextArray = malloc((PlaneCount+ 1) *sizeof(char*));
     //char A = 'A';
     
     TextArray[0] = first;
     Optionsarray[0] = EmptyStr;
-    for(int i = 0; i < LineCount; i++) 
+    for(int i = 0; i < PlaneCount; i++) 
     {
         int* Data = current->Data;
-        char * Text = malloc(3);
+        char * Text = malloc(4);
         Text[0] = 'A'+Data[0];
         Text[1] = 'A'+Data[1];
-        Text[2] = '\0';
+        Text[2] = 'A'+Data[2];
+        Text[3] = '\0';
         TextArray[i+1] = Text;
         Vector3  p1,p2,p3;
         GetPoint(Data[0], &p2);
         GetPoint(Data[1], &p1);
-        p3.x = p1.x - p2.x;
-        p3.y = p1.y - p2.y;
-        p3.z = p1.z - p2.z;
+        //p3.x = p1.x - p2.x;
+        //p3.y = p1.y - p2.y;
+        //p3.z = p1.z - p2.z;
+        p3 = D3_CreateNormal(p1, p2);
         CreateVector3String(Optionsarray, &p3, i+1);
         current = current->next;
     }
     Menu->Title = title;
     Menu->Options = TextArray;
-    Menu->OptionsCount = LineCount+ 1;
+    Menu->OptionsCount = PlaneCount+ 1;
     Menu->Value = Optionsarray;
-    Menu->ValueCount = LineCount+ 1;
+    Menu->ValueCount = PlaneCount+ 1;
     return Menu;
 }
 #pragma endregion

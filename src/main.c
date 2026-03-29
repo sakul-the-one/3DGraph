@@ -49,7 +49,7 @@ int main()
     CloseData();
     //Destroy();
     LinkedList * Lines = GetLinesList();
-    LinkedList * Layers = GetLayersList();
+    LinkedList * Layers = GetPlanesList();
     DestroyList(Lines);
     DestroyList(Layers);
     return 0;
