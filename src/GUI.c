@@ -54,6 +54,7 @@ void ResetArea();
 void CreateVector3String(char **StrPP, Vector3 * vec, int index);
 GUIMenu * CreateVectorMenu(bool ActivePointsOnly);
 GUIMenu * CreateLineMenu();
+GUIMenu * CreatePlaneMenu();
 #pragma endregion
 
 #pragma region CalcFunctions
@@ -104,9 +105,12 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
     uint8_t pos = 1;
     GUIMenu * VectorMenu;
     GUIMenu * LineMenu;
+    GUIMenu * PlaneMenu;
+    LinkedList * LinesList = GetLinesList();
 Medium:
     VectorMenu = CreateVectorMenu(false);
     LineMenu = CreateLineMenu();
+    PlaneMenu = CreatePlaneMenu();
     Result = MakeMenuList(VectorMenu, LineMenu, NULL, NULL, NULL, pos);
 
     if (Result.val.y == -1) //User wants to leave
@@ -135,10 +139,16 @@ Medium:
         Result2 = MakeMenu(VectorMenu,true);
         //Do Stuff with Data
         //AddConnection(Result1,Result2);
-        AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
+        //AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
+        size_t ArraySize = sizeof(int) * 2;
+        int * arr = malloc(ArraySize);
+        arr[0] = VectorMenu->Options[Result1][0] - 'A';
+        arr[1] = VectorMenu->Options[Result2][0] - 'A';
+        AddItem(LinesList, arr, ArraySize);
     }
     else  //If everything above fails, the user WANTS to delete a value! 
-        RemoveConnection(Result.val.y-1);  
+        RemoveItem(LinesList, Result.val.y-1);
+        //RemoveConnection(Result.val.y-1);  
 End:
     freeGUIMenu(LineMenu, 1);
     freeGUIMenu(VectorMenu, 0);
@@ -283,8 +293,9 @@ GUIMenu * CreateLineMenu()
     static char title[] = "Line Equ";
     GUIMenu * Menu = malloc(sizeof(GUIMenu));
     if(Menu == NULL) return NULL;
-    LinkedLines * current = GetConnection();
-    int LineCount = GetConnectionCount();
+    LinkedList * LineList = GetLinesList();
+    LinkedItem * current = LineList->first;
+    int LineCount = LineList->count;
     Optionsarray = malloc((LineCount+ 1) *sizeof(char*));
     TextArray = malloc((LineCount+ 1) *sizeof(char*));
     //char A = 'A';
@@ -293,15 +304,57 @@ GUIMenu * CreateLineMenu()
     Optionsarray[0] = EmptyStr;
     for(int i = 0; i < LineCount; i++) 
     {
-
+        int* Data = current->Data;
         char * Text = malloc(3);
-        Text[0] = 'A'+current->pos1;
-        Text[1] = 'A'+current->pos2;
+        Text[0] = 'A'+Data[0];
+        Text[1] = 'A'+Data[1];
         Text[2] = '\0';
         TextArray[i+1] = Text;
         Vector3  p1,p2,p3;
-        GetPoint(current->pos1, &p2);
-        GetPoint(current->pos2, &p1);
+        GetPoint(Data[0], &p2);
+        GetPoint(Data[1], &p1);
+        p3.x = p1.x - p2.x;
+        p3.y = p1.y - p2.y;
+        p3.z = p1.z - p2.z;
+        CreateVector3String(Optionsarray, &p3, i+1);
+        current = current->next;
+    }
+    Menu->Title = title;
+    Menu->Options = TextArray;
+    Menu->OptionsCount = LineCount+ 1;
+    Menu->Value = Optionsarray;
+    Menu->ValueCount = LineCount+ 1;
+    return Menu;
+}
+
+GUIMenu * CreatePlaneMenu() 
+{
+    char ** TextArray = NULL;
+    char ** Optionsarray = NULL;
+    static char first[] = "Add Equation";
+    static char title[] = "Line Equ";
+    GUIMenu * Menu = malloc(sizeof(GUIMenu));
+    if(Menu == NULL) return NULL;
+    LinkedList * LineList = GetLinesList();
+    LinkedItem * current = LineList->first;
+    int LineCount = LineList->count;
+    Optionsarray = malloc((LineCount+ 1) *sizeof(char*));
+    TextArray = malloc((LineCount+ 1) *sizeof(char*));
+    //char A = 'A';
+    
+    TextArray[0] = first;
+    Optionsarray[0] = EmptyStr;
+    for(int i = 0; i < LineCount; i++) 
+    {
+        int* Data = current->Data;
+        char * Text = malloc(3);
+        Text[0] = 'A'+Data[0];
+        Text[1] = 'A'+Data[1];
+        Text[2] = '\0';
+        TextArray[i+1] = Text;
+        Vector3  p1,p2,p3;
+        GetPoint(Data[0], &p2);
+        GetPoint(Data[1], &p1);
         p3.x = p1.x - p2.x;
         p3.y = p1.y - p2.y;
         p3.z = p1.z - p2.z;

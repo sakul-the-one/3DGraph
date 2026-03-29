@@ -47,7 +47,11 @@ int main()
     }
     D3G_Destroy();
     CloseData();
-    Destroy();
+    //Destroy();
+    LinkedList * Lines = GetLinesList();
+    LinkedList * Layers = GetLayersList();
+    DestroyList(Lines);
+    DestroyList(Layers);
     return 0;
 }
 

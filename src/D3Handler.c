@@ -80,16 +80,6 @@ void Init()
         Points[i] = (Vector3){0,0,0};
     }
 }
-void Destroy() 
-{
-    LinkedLines * next = first;
-    while (next != 0)
-    {
-        LinkedLines * buffer = next;
-        next = next->next;
-        free(buffer);
-    }
-}
 void AddPoint(uint8_t which, Vector3 value) 
 {
     Points[which] = value;
@@ -104,51 +94,20 @@ bool GetPoint(uint8_t which, Vector3 * tmp)
     *tmp = Points[which];
     return is_bit_set(PointsSet, which);
 }
-void AddConnection(uint8_t pos1,uint8_t pos2) 
-{
-    LinkedLines * buf = malloc(sizeof(LinkedLines));
-    if(first == NULL) first = buf;
-    else last->next = buf;
-    last = buf;
-    buf->pos1 = pos1;
-    buf->pos2 = pos2;
-    buf->next = NULL;
-    LinkedListCount++;
-}
-void RemoveConnection(uint8_t pos) 
-{
-    if(pos > LinkedListCount) return;
-    LinkedLines * ToDelete;
-    LinkedListCount--;
-    if(pos == 0) 
-    {
-        ToDelete = first;
-        first = first->next;
-        free(ToDelete);
-        return;
-    }
-    LinkedLines * curent = first;
-    for(int i = 0; i > pos -1; i++) 
-    {
-        curent = curent->next;
-    }
-    ToDelete = curent->next;
-    curent->next = ToDelete; //curent->next->next; //I love C ^^^
 
-    free(ToDelete);
-}
-LinkedLines * GetConnection() 
+LinkedList * GetLinesList()
 {
-    return first;
+    return Lines;
 }
-int GetConnectionCount()
+LinkedList * GetLayersList() 
 {
-    return LinkedListCount;
+    return Layers;
 }
+
 void Redraw() //When it is true, it should be "normal"
 {
     //Reset Screens (Ik, this block is ugly as fuck)
-    LinkedLines * next = first;
+    LinkedItem * nextLine = Lines->first;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-W#pragma-messages"
     gfx_FillScreen(gfx_white);
@@ -162,11 +121,13 @@ void Redraw() //When it is true, it should be "normal"
         if(is_bit_set(PointsSet,i)) 
             AddCubeLines(Points[i]);
     }
-    D3R_PreMallocLine(LinkedListCount);
-    while (next != NULL)
+    D3R_PreMallocLine(Lines->count);
+    //ToDo: Add here some same shit for Layers
+    while (nextLine != NULL)
     {
-        Vector3 p1 = Points[next->pos1];
-        Vector3 p2 = Points[next->pos2];
+        int* Data = nextLine->Data; //Pls love C!
+        Vector3 p1 = Points[Data[0]];
+        Vector3 p2 = Points[Data[1]];
         //Move the Point:
         p1.x += Data[1];
         p1.y += Data[2];
@@ -182,7 +143,7 @@ void Redraw() //When it is true, it should be "normal"
         p2.y *= Data[0];
         p2.z *= Data[0];
         D3R_AddLine(p1,p2, 0x00);
-        next = next->next;
+        nextLine = nextLine->next;
     }
     DrawUI(true);//Old system, so idk. This will work!
     D3R_Draw(true);
