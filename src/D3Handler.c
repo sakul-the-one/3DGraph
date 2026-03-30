@@ -118,7 +118,7 @@ void Redraw() //When it is true, it should be "normal"
     gfx_SetColor(gfx_black);
 #pragma GCC diagnostic pop //Ressetting and putting new Data
     D3R_Clear();
-    RenderButtons(" ","Settings","Add","Calc","Exit");
+    RenderButtons(" ","Settings","Vectors","Calc","Exit");
     gfx_PrintStringXY("Generating Next frame..",1,1);
     for (int i = 0; i< 27; i++) 
     {

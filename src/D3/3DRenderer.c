@@ -90,9 +90,8 @@ void D3R_Clear() { //Clears everything used
     _DLDCountUsed = 0;
     //_lowestLD = 255.0f;
     if(_DLD == NULL) return;
-    free(_DLD);
+        free(_DLD);
     _DLD = NULL;
-
     Rotated = false;
 }
 

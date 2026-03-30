@@ -82,12 +82,17 @@ MSstart: //GoTos are confusing... If I dont have a function above Variable decle
     char title = '\0';
     SetMenu->Title = &title;
     SetMenu->Options = SettingsStrings;
-    SetMenu->OptionsCount = 5;
+    SetMenu->OptionsCount = 6;
     SetMenu->Value = DataStr;
     SetMenu->ValueCount = 5;
     int Selective = MakeMenu(SetMenu, true);
     if(Selective == -1)
         goto End;
+    else if (Selective == 5) 
+    {
+        SaveVectorData();
+        goto End;
+    }
     value = startInputFloat(SettingsStrings[Selective]);
     data[Selective] = value; 
     //Free:
