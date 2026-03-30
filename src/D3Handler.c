@@ -92,7 +92,7 @@ uint32_t GetPointsSet()
 {
     return PointsSet;
 }
-bool GetPoint(uint8_t which, Vector3 * tmp) 
+bool GetPoint(uint8_t which, Vector3 * tmp)
 {
     *tmp = Points[which];
     return is_bit_set(PointsSet, which);
@@ -146,6 +146,8 @@ void Redraw() //When it is true, it should be "normal"
         nextLine = nextLine->next;
     }
     int colour = 0;
+    float step = 1/Data[4];
+    D3R_PreMallocLine(Layers->count * (Data[4] + 2));//Function for premallocing lines: Data[4] * Layers->count + Layers->count * 2 <=> Layers->count * (Data[4] + 2) //Distributionsgesetzt Motherfucker :)
     while (nextPlane != NULL)
     {
         //Get All Points
@@ -158,26 +160,25 @@ void Redraw() //When it is true, it should be "normal"
         i1 = D3_SUB(p2, p1);
         i2 = D3_SUB(p3, p1);
         //Draw:
-        Vector3 last = p1;
         D3R_AddLine(p1,p2, colour);
         D3R_AddLine(p1,p3, colour);
-        float step = 1/Data[4];
-        for (float x = 0; x < 1; x += step) 
-        {
-            for (float y = 0; y < 1; y += step)
-            {  
-                if (y != 0) {
-                    Vector3 p = D3_ADD(p1, D3_ADD(D3_MULf(i1, x), D3_MULf(i2, y)));
-                    p.x += Data[1];
-                    p.y += Data[2];
-                    p.z += Data[3];
-                    //Distance: Standart: 10
-                    p = D3_MULf(p, Data[0]);
-                    D3R_AddLine(p, last, colour);
-                    //AddCubeLines(p);
-                    last = p;
-                }
-            }
+        for (float x = 0; x < 1; x += step)
+        { 
+            //First line:
+            Vector3 ndp1 = D3_ADD(p1, D3_MULf(i1, x));
+            ndp1.x += Data[1];
+            ndp1.y += Data[2];
+            ndp1.z += Data[3];
+            //Second Line
+            Vector3 ndp2 = D3_ADD(p1, D3_MULf(i2, x));
+            ndp2.x += Data[1];
+            ndp2.y += Data[2];
+            ndp2.z += Data[3];
+            //Distance: Standart: 10
+            ndp1 = D3_MULf(ndp1, Data[0]);
+            ndp2 = D3_MULf(ndp2, Data[0]);
+            //Connect those lines :)
+            D3R_AddLine(ndp1, ndp2, colour);
         }
         nextPlane = nextPlane->next;
         colour++;
