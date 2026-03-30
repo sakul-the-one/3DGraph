@@ -159,21 +159,22 @@ void Redraw() //When it is true, it should be "normal"
         i2 = D3_SUB(p3, p1);
         //Draw:
         Vector3 last = p1;
-
+        D3R_AddLine(p1,p2, colour);
+        D3R_AddLine(p1,p3, colour);
         float step = 1/Data[4];
-        for (float x = p1.x; x < p1.x + 1; x += step) 
+        for (float x = 0; x < 1; x += step) 
         {
-            for (float y = p1.y; y < p1.y + 1; y += step)
+            for (float y = 0; y < 1; y += step)
             {  
-                if (y != p1.y) {
+                if (y != 0) {
                     Vector3 p = D3_ADD(p1, D3_ADD(D3_MULf(i1, x), D3_MULf(i2, y)));
                     p.x += Data[1];
                     p.y += Data[2];
                     p.z += Data[3];
                     //Distance: Standart: 10
                     p = D3_MULf(p, Data[0]);
-                    //D3R_AddLine(p, last, colour);
-                    AddCubeLines(p);
+                    D3R_AddLine(p, last, colour);
+                    //AddCubeLines(p);
                     last = p;
                 }
             }
