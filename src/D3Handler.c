@@ -88,9 +88,18 @@ void AddPoint(uint8_t which, Vector3 value)
     Points[which] = value;
     if(!is_bit_set(PointsSet, which)) toggle_bit(&PointsSet,which);
 }
+void DeletePoint(uint8_t which) 
+{
+    if(is_bit_set(PointsSet, which)) toggle_bit(&PointsSet,which);
+}
 uint32_t GetPointsSet()
 {
     return PointsSet;
+}
+bool IsVectorEmpty(Vector3 * vec) 
+{
+    if (vec->x == vec->y && vec->z == 0 && vec->z == vec->x) return true;
+    return false;
 }
 bool GetPoint(uint8_t which, Vector3 * tmp)
 {

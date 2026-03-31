@@ -6,7 +6,7 @@ typedef struct LinkedItem;
 typedef struct
 {
     void * Data;
-    size_t DataLenght;
+    int DataLenght;
     struct LinkedItem * next;
 } LinkedItem;
 
@@ -18,7 +18,7 @@ typedef struct
 } LinkedList;
 
 LinkedList * CreateList();
-void AddItem(LinkedList * List, void * Data, size_t DataLenght);
+void AddItem(LinkedList * List, void * Data, int DataLenght);
 void RemoveItem(LinkedList * List, uint8_t pos);
 void DestroyList(LinkedList * List);
 #endif

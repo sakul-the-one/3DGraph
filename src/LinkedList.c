@@ -8,7 +8,7 @@ LinkedList * CreateList()
     ret->last = NULL;
     return ret;
 }
-void AddItem(LinkedList * List, void * Data, size_t DataLenght) 
+void AddItem(LinkedList * List, void * Data, int DataLenght) 
 {
     LinkedItem * buf = malloc(sizeof(LinkedItem));
     if(List->first == NULL) List->first = buf;
@@ -35,6 +35,7 @@ void RemoveItem(LinkedList * List, uint8_t pos)
     for(int i = 0; i > pos -1; i++) 
     {
         curent = curent->next;
+        if(curent == NULL) return;
     }
     ToDelete = curent->next;
     curent->next = ToDelete; //curent->next->next; //I love C ^^^

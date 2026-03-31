@@ -24,7 +24,9 @@ int main()
     int8_t needToRedraw = 0b00;
     InitGUI(&exit);
     //DebugMain();
-    LoadVectorData();
+    int error = LoadVectorData();
+    if(error != 0)
+      os_GetKey();
     Redraw();
     while (exit)
     {

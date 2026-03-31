@@ -16,6 +16,8 @@ LinkedList * Layers;
 void AddPoint(uint8_t which, Vector3 value);
 bool GetPoint(uint8_t which, Vector3 * tmp);
 uint32_t GetPointsSet();
+void DeletePoint(uint8_t which);
+bool IsVectorEmpty(Vector3 * vec);
 LinkedList * GetLinesList();
 LinkedList * GetPlanesList();
 void toggleFunction(uint8_t function);

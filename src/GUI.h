@@ -18,7 +18,7 @@ bool * exitPtr;
 uint8_t Input(uint8_t key);
 void InitGUI(bool * exitVar);
 void ResetScreen();
-char *SettingsStrings[] = {"Distant  ","World X  ","World Y  ","World Z  ","Details  ", "Save Vectors"};
+char *SettingsStrings[] = {"Distant  ","World X  ","World Y  ","World Z  ","Details  ", "Save Vectors", "Delete Saved"};
 void FloatToString(float Value, char * str);
 void GFX_PrintFloat(float Value);
 static char EmptyStr[] = "";

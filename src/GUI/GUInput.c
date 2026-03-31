@@ -51,7 +51,7 @@ Vector3 startInputVector3()
     gfx_Begin();
     return result;
 }
-int16_d MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos)
+int16_d MakeMenuList(GUIMenu * op1, GUIMenu* op2, GUIMenu * op3, GUIMenu * op4, GUIMenu * op5, uint8_t pos, bool * DeleteKeyPressed)
 {
     int16_d retVal;
     retVal.together = (uint16_t)0;
@@ -111,11 +111,11 @@ start:
     switch (pos) 
     {
         case 0: pos++; //if someone (like me) accidentally writes 0 instead of 1, then correct it and go to 1.
-        case 1: ret = MakeMenu(op1, false); break;
-        case 2: ret = MakeMenu(op2, false); break;
-        case 3: ret = MakeMenu(op3, false); break;
-        case 4: ret = MakeMenu(op4, false); break;
-        case 5: ret = MakeMenu(op5, false); break;
+        case 1: ret = MakeMenu(op1, false, DeleteKeyPressed); break;
+        case 2: ret = MakeMenu(op2, false, DeleteKeyPressed); break;
+        case 3: ret = MakeMenu(op3, false, DeleteKeyPressed); break;
+        case 4: ret = MakeMenu(op4, false, DeleteKeyPressed); break;
+        case 5: ret = MakeMenu(op5, false, DeleteKeyPressed); break;
 
         default: pos = 0; goto start;
     }
@@ -129,7 +129,7 @@ start:
     return retVal;
 }
 
-int8_t MakeMenu(GUIMenu * menu, bool reset) 
+int8_t MakeMenu(GUIMenu * menu, bool reset, bool * DeleteKeyPressed) 
 {
     #define X 170
     int YOffset = 9;
@@ -139,6 +139,8 @@ int8_t MakeMenu(GUIMenu * menu, bool reset)
     int MaxOptionRender = 0;
     int MinOptionRender = 0;
     int offset = 0;
+    if (DeleteKeyPressed != NULL)
+        *DeleteKeyPressed = false;
 generatingMainPart:
     if(reset)
         ResetScreen();
@@ -190,6 +192,7 @@ generatingMainPart:
                 //if(MinOptionRender <=-1) {MinOptionRender = OptionsCount-MaxOptionRender +1;offset=(MinOptionRender)*11;MaxOptionRender = OptionsCount; CursorPos = OptionsCount;} ITS NOT WORKING SO IM NOT EVEN TRYING
                 goto generatingMainPart;
                 break;
+            case sk_Del: if (DeleteKeyPressed == NULL) break; *DeleteKeyPressed = true; return CursorPos;//And then return CursorPos -> No break :)
             case sk_Enter: return CursorPos;
             case sk_Right: if(!reset) return -2; break;
             case sk_Left: if(!reset) return -4; break;

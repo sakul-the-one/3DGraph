@@ -82,15 +82,22 @@ MSstart: //GoTos are confusing... If I dont have a function above Variable decle
     char title = '\0';
     SetMenu->Title = &title;
     SetMenu->Options = SettingsStrings;
-    SetMenu->OptionsCount = 6;
+    SetMenu->OptionsCount = 7;
     SetMenu->Value = DataStr;
     SetMenu->ValueCount = 5;
-    int Selective = MakeMenu(SetMenu, true);
+    int Selective = MakeMenu(SetMenu, true, NULL);
     if(Selective == -1)
         goto End;
     else if (Selective == 5) 
     {
         SaveVectorData();
+        Selective = -1;
+        goto End;
+    }
+    else if (Selective == 6) 
+    {
+        ti_Delete("D3SV");
+        Selective = -1;
         goto End;
     }
     value = startInputFloat(SettingsStrings[Selective]);
@@ -108,27 +115,35 @@ End:
 uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty for now, would use to much space...//EDIT: ITS THE MAIN THING FOR THE VECTOR VERSION
 {
     int16_d Result;
-    uint8_t pos = 1;
+    int8_t pos = 1;
+    int8_t count = 0;
     GUIMenu * VectorMenu;
     GUIMenu * LineMenu;
     GUIMenu * PlaneMenu;
     LinkedList * LinesList = GetLinesList();
     LinkedList * PlanesList = GetPlanesList();
+    bool DeleteVar = false;
 Medium:
     VectorMenu = CreateVectorMenu(false);
     LineMenu = CreateLineMenu();
     PlaneMenu = CreatePlaneMenu();
-    Result = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, pos);
+    Result = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, pos, &DeleteVar);
 
-    if (Result.val.y == -1) //User wants to leave
+    pos = Result.val.x; //From the MakeMenuList
+    count = Result.val.y; //From the MakeMenu
+
+    if (count == -1) //User wants to leave
         goto End;
-    pos = Result.val.x;
-    if(Result.val.x == 1) //Means it is on VectorMenu #1
+    if (DeleteVar && pos == 1) 
+    {
+        DeletePoint(count);
+    }
+    else if(pos == 1) //Means it is on VectorMenu #1
     {     
         Vector3 MyVictorBuffer = startInputVector3();
-        AddPoint(Result.val.y, MyVictorBuffer);
+        AddPoint(count, MyVictorBuffer);
     }
-    else if (Result.val.y == 0 && Result.val.x == 2) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
+    else if (count == 0 && pos == 2) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
     {
         uint8_t Result1;
         uint8_t Result2;
@@ -141,9 +156,9 @@ Medium:
         if(VectorMenu->ValueCount < 2) goto End; //Always use protection!
         //Get Data
         VectorMenu->Title = T1;
-        Result1 = MakeMenu(VectorMenu,true);
+        Result1 = MakeMenu(VectorMenu,true, NULL);
         VectorMenu->Title = T2;
-        Result2 = MakeMenu(VectorMenu,true);
+        Result2 = MakeMenu(VectorMenu,true, NULL);
         //Do Stuff with Data
         //AddConnection(Result1,Result2);
         //AddConnection(VectorMenu->Options[Result1][0] - 'A',VectorMenu->Options[Result2][0] - 'A'); //Im doing Magic later again :)
@@ -153,9 +168,9 @@ Medium:
         arr[1] = VectorMenu->Options[Result2][0] - 'A';
         AddItem(LinesList, arr, ArraySize);
     }
-    else if (Result.val.x == 2)  //If everything above fails, the user WANTS to delete a value! 
-        RemoveItem(LinesList, Result.val.y-1);
-    else if (Result.val.y == 0 && Result.val.x == 3) //We are here on Add Layer
+    else if (pos == 2)  //If everything above fails, the user WANTS to delete a value! 
+        RemoveItem(LinesList, count-1);
+    else if (count == 0 && pos == 3) //We are here on Add Layer
     {
         uint8_t Result1;
         uint8_t Result2;
@@ -167,14 +182,14 @@ Medium:
         static char T2[] = "First Vector";
         static char T3[] = "Second Vector";
         VectorMenu = CreateVectorMenu(true);
-        if(VectorMenu->ValueCount < 2) goto End; //Always use protection!
+        if(VectorMenu->ValueCount < 3) goto End; //Always use protection!
         //Get Data
         VectorMenu->Title = T1;
-        Result1 = MakeMenu(VectorMenu,true);
+        Result1 = MakeMenu(VectorMenu,true, NULL);
         VectorMenu->Title = T2;
-        Result2 = MakeMenu(VectorMenu,true);
+        Result2 = MakeMenu(VectorMenu,true, NULL);
         VectorMenu->Title = T3;
-        Result3 = MakeMenu(VectorMenu,true);
+        Result3 = MakeMenu(VectorMenu,true, NULL);
         //Do Stuff with Data
         size_t ArraySize = sizeof(int) * 3;
         int * arr = malloc(ArraySize);
@@ -184,18 +199,18 @@ Medium:
         AddItem(PlanesList, arr, ArraySize);
     }
     else if (Result.val.x == 3)
-        RemoveItem(PlanesList, Result.val.y-1); 
+        RemoveItem(PlanesList, count-1); 
 End:
     freeGUIMenu(LineMenu, 1);
     freeGUIMenu(PlaneMenu, 1);
     freeGUIMenu(VectorMenu, 0);
-    if (Result.val.y != -1) //We could split it, but it is not needed
+    if (count != -1) //We could split it, but it is not needed
         goto Medium;
     return 0b11;
 }
 uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
 {
-    int8_t result = MakeMenu(&CalcMenu, true);
+    int8_t result = MakeMenu(&CalcMenu, true, NULL);
     switch (result)
     {
     case 0: IsOnLine(); break; 
@@ -215,7 +230,7 @@ void IsOnLine()
     GUIMenu * Menus = CreateVectorMenu(true);
     static char T1[] = "Stützvektor";
     Menus->Title = T1;
-    int v1 = MakeMenu(Menus, true); //V1 or Vector 1
+    int v1 = MakeMenu(Menus, true, NULL); //V1 or Vector 1
 }
 
 #pragma region  ImportantFunctionsInit

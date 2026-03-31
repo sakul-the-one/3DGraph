@@ -1,6 +1,8 @@
 #ifndef STDT_H
 #define STDT_H
 
+#include <stdint.h>
+
 float * DataArray;
 
 void InitData();
@@ -10,5 +12,5 @@ float * GetDataArray();
 void CloseData();
 //Saving Vectors:
 void SaveVectorData();
-void LoadVectorData();
+int LoadVectorData();
 #endif
