@@ -10,6 +10,7 @@
 #include <math.h>
 #include "D3/3DMath.h"
 #include <string.h>
+#include <ti/getkey.h>
 
 #pragma region Init//First Return
 void InitGUI(bool * exitVar) 
@@ -54,12 +55,12 @@ void ResetArea();
 //void DrawEqu(int y);
 void CreateVector3String(char **StrPP, Vector3 * vec, int index);
 GUIMenu * CreateVectorMenu(bool ActivePointsOnly);
-GUIMenu * CreateLineMenu();
-GUIMenu * CreatePlaneMenu();
+GUIMenu * CreateLineMenu(bool SkipAdding);
+GUIMenu * CreatePlaneMenu(bool SkipAdding);
 #pragma endregion
 
 #pragma region CalcFunctions
-void IsOnLine();
+void CalcDistance();
 #pragma endregion
 
 #pragma region AllMains
@@ -125,8 +126,8 @@ uint8_t MainThird() // Draw - like a Cube or so, although i would leave it empty
     bool DeleteVar = false;
 Medium:
     VectorMenu = CreateVectorMenu(false);
-    LineMenu = CreateLineMenu();
-    PlaneMenu = CreatePlaneMenu();
+    LineMenu = CreateLineMenu(false);
+    PlaneMenu = CreatePlaneMenu(false);
     Result = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, pos, &DeleteVar);
 
     pos = Result.val.x; //From the MakeMenuList
@@ -143,7 +144,7 @@ Medium:
         Vector3 MyVictorBuffer = startInputVector3();
         AddPoint(count, MyVictorBuffer);
     }
-    else if (count == 0 && pos == 2) //Means it isnt on Vectormenu #1, since it is already exlcluded. Additionally if the Value is 0, so a new Line can be created
+    else if (count == 0 && pos == 2) //Means it is on Linemenu #2. Additionally if the Value is 0, so a new Line can be created
     {
         uint8_t Result1;
         uint8_t Result2;
@@ -213,7 +214,7 @@ uint8_t MainFourth() // Calc - To get the Z point f.e. or to find zero
     int8_t result = MakeMenu(&CalcMenu, true, NULL);
     switch (result)
     {
-    case 0: IsOnLine(); break; 
+    case 0: CalcDistance(); break;//IsOnLine(); break; 
     default: break;
     }
     return 0b10;
@@ -224,14 +225,78 @@ uint8_t MainFive()
     return 0b00;
 }
 #pragma endregion
-
-void IsOnLine() 
+#pragma region Calc
+void CalcDistance() 
 {
-    GUIMenu * Menus = CreateVectorMenu(true);
-    static char T1[] = "Stützvektor";
-    Menus->Title = T1;
-    int v1 = MakeMenu(Menus, true, NULL); //V1 or Vector 1
+    //Vars
+    GUIMenu * VectorMenu = CreateVectorMenu(true);
+    GUIMenu * PlaneMenu = CreatePlaneMenu(true);
+    GUIMenu * LineMenu = CreateLineMenu(true);
+    char * AdditionalString = NULL;
+    bool freeString = false;
+    int16_d result1;
+    int16_d result2;
+    Vector3 v1;
+    Vector3 v2;
+    float CalcResult = 0;
+    //For Getting all vars:
+    Vector3 i1, i2, i3, ii1, ii2 = NULLVector; 
+    int * Data = NULL;
+    LinkedItem * Line = NULL;
+    LinkedItem * Plane = NULL;
+    //Get Vars:
+    result1 = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, 1, NULL);
+    result2 = MakeMenuList(VectorMenu, LineMenu, PlaneMenu, NULL, NULL, 1, NULL);
+
+    //Get Vectors:
+    switch (result1.val.x)
+    {
+        case 1: GetPoint(result1.val.y, &v1); break; //Single Vector
+        case 2: Line = GetItem(GetLinesList(), result1.val.y); Data = Line->Data; GetPoint(Data[0], &i1); GetPoint(Data[1], &i2); //Line
+            v1 = D3_SUB(i1, i2); 
+            break;
+        case 3: Plane = GetItem(GetPlanesList(), result1.val.y); Data = Plane->Data; //Plane
+            GetPoint(Data[0], &i1); GetPoint(Data[1], &i2); GetPoint(Data[2], &i3);
+            ii1 = D3_SUB(i1, i2); ii2 = D3_SUB(i1, i3); 
+            v1 = D3_CreateNormal(ii1, ii2);
+            break;
+    }
+    switch (result2.val.x)
+    {
+        case 1: GetPoint(result2.val.y, &v2); break; //Single Vector
+        case 2: Line = GetItem(GetLinesList(), result2.val.y); Data = Line->Data; GetPoint(Data[0], &i1); GetPoint(Data[1], &i2);//Line
+            v2 = D3_SUB(i1, i2); 
+            break;
+        case 3:  Plane = GetItem(GetPlanesList(), result2.val.y); Data = Plane->Data; //Plane
+            GetPoint(Data[0], &i1); GetPoint(Data[1], &i2); GetPoint(Data[2], &i3);
+            ii1 = D3_SUB(i1, i2); ii2 = D3_SUB(i1, i3); 
+            v2 = D3_CreateNormal(ii1, ii2);
+            break;
+    }
+    //Calc:
+    if(result1.val.x == 1 && result2.val.x == 1) //Both Single Vectors
+    {
+        CalcResult = D3_VectorDistance(v1, v2);
+    }
+    else 
+    {
+        static char * Error1 = "Not yet supported";
+        AdditionalString = Error1;
+    }
+    //print Results:
+    ResetScreen();
+    gfx_PrintStringXY("The Distance between the two is: ", 1,1);
+    GFX_PrintFloat(CalcResult);
+    gfx_PrintStringXY(AdditionalString, 1,12);
+    os_GetKey();
+    //Free Vars
+    freeGUIMenu(VectorMenu, 0);
+    freeGUIMenu(LineMenu, 0);
+    freeGUIMenu(PlaneMenu, 0);
+    if(freeString)
+        free(AdditionalString);
 }
+#pragma endregion
 
 #pragma region  ImportantFunctionsInit
 void ResetArea() 
@@ -275,6 +340,7 @@ void CreateVector3String(char **StrPP, Vector3 * vec, int index)
     result[25] = '\0';
     StrPP[index] = result;
 }
+
 
 GUIMenu * CreateVectorMenu(bool ActivePointsOnly) 
 {
@@ -337,7 +403,7 @@ GUIMenu * CreateVectorMenu(bool ActivePointsOnly)
     //Free
     return Menu;
 }
-GUIMenu * CreateLineMenu() 
+GUIMenu * CreateLineMenu(bool SkipAdding) 
 {
     char ** TextArray = NULL;
     char ** Optionsarray = NULL;
@@ -347,40 +413,43 @@ GUIMenu * CreateLineMenu()
     if(Menu == NULL) return NULL;
     LinkedList * LineList = GetLinesList();
     LinkedItem * current = LineList->first;
+
     int LineCount = LineList->count;
-    Optionsarray = malloc((LineCount+ 1) *sizeof(char*));
-    TextArray = malloc((LineCount+ 1) *sizeof(char*));
+    if(!SkipAdding)
+        LineCount++;
+    Optionsarray = malloc((LineCount) *sizeof(char*));
+    TextArray = malloc((LineCount) *sizeof(char*));
     //char A = 'A';
-    
-    TextArray[0] = first;
-    Optionsarray[0] = EmptyStr;
-    for(int i = 0; i < LineCount; i++) 
+    int i = 0;
+    if(!SkipAdding) 
+    {
+        TextArray[0] = first;
+        Optionsarray[0] = EmptyStr;
+        i = 1;
+    }    
+    for(; i < LineCount; i++) 
     {
         int* Data = current->Data;
         char * Text = malloc(3);
         Text[0] = 'A'+Data[0];
         Text[1] = 'A'+Data[1];
         Text[2] = '\0';
-        TextArray[i+1] = Text;
+        TextArray[i] = Text;
         Vector3  p1,p2,p3;
         GetPoint(Data[0], &p2);
         GetPoint(Data[1], &p1);
-        //p3.x = p1.x - p2.x;
-        //p3.y = p1.y - p2.y;
-        //p3.z = p1.z - p2.z;
         p3 = D3_SUB(p1, p2);
-        CreateVector3String(Optionsarray, &p3, i+1);
+        CreateVector3String(Optionsarray, &p3, i);
         current = current->next;
     }
     Menu->Title = title;
     Menu->Options = TextArray;
-    Menu->OptionsCount = LineCount+ 1;
+    Menu->OptionsCount = LineCount;
     Menu->Value = Optionsarray;
-    Menu->ValueCount = LineCount+ 1;
+    Menu->ValueCount = LineCount;
     return Menu;
 }
-
-GUIMenu * CreatePlaneMenu() 
+GUIMenu * CreatePlaneMenu(bool SkipAdding) 
 {
     char ** TextArray = NULL;
     char ** Optionsarray = NULL;
@@ -391,13 +460,19 @@ GUIMenu * CreatePlaneMenu()
     LinkedList * PlaneList = GetPlanesList();
     LinkedItem * current = PlaneList->first;
     int PlaneCount = PlaneList->count;
-    Optionsarray = malloc((PlaneCount+ 1) *sizeof(char*));
-    TextArray = malloc((PlaneCount+ 1) *sizeof(char*));
+    if(!SkipAdding)
+        PlaneCount++;
+    Optionsarray = malloc((PlaneCount) *sizeof(char*));
+    TextArray = malloc((PlaneCount) *sizeof(char*));
     //char A = 'A';
-    
-    TextArray[0] = first;
-    Optionsarray[0] = EmptyStr;
-    for(int i = 0; i < PlaneCount; i++) 
+    int i = 0;
+    if(!SkipAdding) 
+    {
+        TextArray[0] = first;
+        Optionsarray[0] = EmptyStr;
+        i = 1;
+    }
+    for(; i < PlaneCount; i++) 
     {
         int* Data = current->Data;
         char * Text = malloc(4);
@@ -405,22 +480,19 @@ GUIMenu * CreatePlaneMenu()
         Text[1] = 'A'+Data[1];
         Text[2] = 'A'+Data[2];
         Text[3] = '\0';
-        TextArray[i+1] = Text;
+        TextArray[i] = Text;
         Vector3  p1,p2,p3;
         GetPoint(Data[0], &p2);
         GetPoint(Data[1], &p1);
-        //p3.x = p1.x - p2.x;
-        //p3.y = p1.y - p2.y;
-        //p3.z = p1.z - p2.z;
         p3 = D3_CreateNormal(p1, p2);
-        CreateVector3String(Optionsarray, &p3, i+1);
+        CreateVector3String(Optionsarray, &p3, i);
         current = current->next;
     }
     Menu->Title = title;
     Menu->Options = TextArray;
-    Menu->OptionsCount = PlaneCount+ 1;
+    Menu->OptionsCount = PlaneCount;
     Menu->Value = Optionsarray;
-    Menu->ValueCount = PlaneCount+ 1;
+    Menu->ValueCount = PlaneCount;
     return Menu;
 }
 #pragma endregion

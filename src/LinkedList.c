@@ -19,6 +19,18 @@ void AddItem(LinkedList * List, void * Data, int DataLenght)
     buf->next = NULL;
     List->count++;
 }
+LinkedItem * GetItem(LinkedList * List, int which) 
+{
+    LinkedItem * result = List->first;
+    if (List->count < which) return NULL;
+    for (int i = 0; i < which; i++) 
+    {
+        if(result->next != NULL)
+            result = result->next;
+        return NULL;
+    }
+    return result;
+}
 void RemoveItem(LinkedList * List, uint8_t pos) 
 {
     if(pos > List->count) return;

@@ -169,8 +169,6 @@ void Redraw() //When it is true, it should be "normal"
         i1 = D3_SUB(p2, p1);
         i2 = D3_SUB(p3, p1);
         //Draw:
-        D3R_AddLine(p1,p2, colour);
-        D3R_AddLine(p1,p3, colour);
         for (float x = 0; x < 1; x += step)
         { 
             //First line:
@@ -189,6 +187,22 @@ void Redraw() //When it is true, it should be "normal"
             //Connect those lines :)
             D3R_AddLine(ndp1, ndp2, colour);
         }
+        //Draw lines. Bzt dont forget to Adjust them all:
+        //Move the Points:
+        p1.x += Data[1];
+        p1.y += Data[2];
+        p1.z += Data[3];
+        p2.x += Data[1];
+        p2.y += Data[2];
+        p2.z += Data[3];
+        p3.x += Data[1];
+        p3.y += Data[2];
+        p3.z += Data[3];
+        p1 = D3_MULf(p1, Data[0]);
+        p2 = D3_MULf(p2, Data[0]);
+        p3 = D3_MULf(p3, Data[0]);
+        D3R_AddLine(p1,p2, colour);
+        D3R_AddLine(p1,p3, colour);
         nextPlane = nextPlane->next;
         colour++;
     }

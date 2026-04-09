@@ -21,6 +21,7 @@ typedef struct
 
 float fov = 90.0f;
 Vector3 WorldRotation = {0,0,0};
+const Vector3 NULLVector = {0,0,0};
 //float aspectRatio = 320.0f / 240.0f;
 //float near = 0.1f;
 //float far = 100.0f;

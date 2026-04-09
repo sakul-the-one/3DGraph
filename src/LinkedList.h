@@ -19,6 +19,7 @@ typedef struct
 
 LinkedList * CreateList();
 void AddItem(LinkedList * List, void * Data, int DataLenght);
+LinkedItem * GetItem(LinkedList * List, int which);
 void RemoveItem(LinkedList * List, uint8_t pos);
 void DestroyList(LinkedList * List);
 #endif
