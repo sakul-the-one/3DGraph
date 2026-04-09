@@ -232,7 +232,7 @@ void CalcDistance()
     GUIMenu * VectorMenu = CreateVectorMenu(true);
     GUIMenu * PlaneMenu = CreatePlaneMenu(true);
     GUIMenu * LineMenu = CreateLineMenu(true);
-    char * AdditionalString = NULL;
+    char * AdditionalString = EmptyStr;
     bool freeString = false;
     int16_d result1;
     int16_d result2;
@@ -240,7 +240,7 @@ void CalcDistance()
     Vector3 v2;
     float CalcResult = 0;
     //For Getting all vars:
-    Vector3 i1, i2, i3, ii1, ii2 = NULLVector; 
+    Vector3 i1, i2, i3, ii1, ii2 = NULL_VECTOR; 
     int * Data = NULL;
     LinkedItem * Line = NULL;
     LinkedItem * Plane = NULL;
@@ -277,6 +277,20 @@ void CalcDistance()
     if(result1.val.x == 1 && result2.val.x == 1) //Both Single Vectors
     {
         CalcResult = D3_VectorDistance(v1, v2);
+    }
+    else if (result1.val.x == 1 && result2.val.x == 2 || result1.val.x == 2 && result2.val.x == 1) //Line and single Vector
+    {
+        if (result1.val.x == 2 && result2.val.x == 1) //Make sure, that first Vector is the normal one
+        {
+            Vector3 v0 = v1;
+            v1 = v2;
+            v2 = v0; 
+        }
+        Vector3 p = D3_SUB(D3_ADD(v2, NULL_VECTOR), v1);
+        float RevVal = D3_Skalar(v1, p);
+        float rValue = D3_Skalar(v1,v1);
+        RevVal *= -1;
+        CalcResult = RevVal/rValue;
     }
     else 
     {
