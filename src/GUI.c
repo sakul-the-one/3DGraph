@@ -233,6 +233,7 @@ void CalcDistance()
     GUIMenu * PlaneMenu = CreatePlaneMenu(true);
     GUIMenu * LineMenu = CreateLineMenu(true);
     char * AdditionalString = EmptyStr;
+    char * WhatCalced = EmptyStr;
     bool freeString = false;
     int16_d result1;
     int16_d result2;
@@ -277,6 +278,8 @@ void CalcDistance()
     if(result1.val.x == 1 && result2.val.x == 1) //Both Single Vectors
     {
         CalcResult = D3_VectorDistance(v1, v2);
+        static char * VecVec = "Distance between two Vectors";
+        WhatCalced = VecVec;
     }
     else if (result1.val.x == 1 && result2.val.x == 2 || result1.val.x == 2 && result2.val.x == 1) //Line and single Vector
     {
@@ -291,6 +294,8 @@ void CalcDistance()
         float rValue = D3_Skalar(v1,v1);
         RevVal *= -1;
         CalcResult = RevVal/rValue;
+        static char * Linevector = "Distance between Vector and Line";
+        WhatCalced = Linevector;
     }
     else 
     {
@@ -301,7 +306,8 @@ void CalcDistance()
     ResetScreen();
     gfx_PrintStringXY("The Distance between the two is: ", 1,1);
     GFX_PrintFloat(CalcResult);
-    gfx_PrintStringXY(AdditionalString, 1,12);
+    gfx_PrintStringXY(WhatCalced, 1,12);
+    gfx_PrintStringXY(AdditionalString, 1,24);
     os_GetKey();
     //Free Vars
     freeGUIMenu(VectorMenu, 0);
